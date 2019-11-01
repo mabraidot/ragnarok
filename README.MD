@@ -21,3 +21,18 @@ Python environment
     source ./venv/Scripts/activate
     git clone {this_repo}
 ~~~
+
+Running apps
+------------
+The Python API is executed as follows:
+~~~
+    source ./venv/Scripts/activate
+    flask run
+~~~
+The server will be listening on http://localhost:5000/
+
+To run the React front-end, execute this:
+~~~
+    cd ./web/app
+    yarn start
+~~~
