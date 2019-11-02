@@ -14,14 +14,6 @@ On the software side:
 * Flask
 * React
 
-Python environment
-------------------
-~~~
-    virtualenv venv --python=python3
-    source ./venv/Scripts/activate
-    git clone {this_repo}
-~~~
-
 Running apps
 ------------
 The Python API is executed as follows:
@@ -35,4 +27,12 @@ To run the React front-end, execute this:
 ~~~
     cd ./web/app
     yarn start
+~~~
+
+Python environment
+------------------
+~~~
+    virtualenv venv --python=python3
+    source ./venv/Scripts/activate
+    git clone {this_repo}
 ~~~
