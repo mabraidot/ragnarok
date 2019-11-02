@@ -1,5 +1,6 @@
 from app import app
 from flask import jsonify
+import random
 
 app.config['JSON_AS_ASCII'] = False
 
@@ -13,7 +14,7 @@ def home():
 @app.route('/mashtun', methods=['GET'])
 @app.route('/mashtun/get/temperature', methods=['GET'])
 def getMashTunTemperature():
-    return jsonify(temperature='34')
+    return jsonify(temperature=random.randrange(0, 100))
 
 
 @app.route('/mashtun/set/temperature/<int:degrees>', methods=['POST'])
