@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './TemperatureGauge.scss';
+import homeApi from '../../apiClient/homeApi';
 
 class TemperatureGauge extends Component {
   constructor(props) {
@@ -8,6 +9,13 @@ class TemperatureGauge extends Component {
       id: props.id,
       value: 0,
     };
+  }
+  
+  async componentDidMount() {
+    this.homeApi = new homeApi();
+    this.homeApi.getMashTunTemperature().then((data) => {
+      this.setState({ value: data });
+    });
   }
 
   render() {

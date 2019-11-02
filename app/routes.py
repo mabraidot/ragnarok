@@ -13,7 +13,7 @@ def home():
 @app.route('/mashtun', methods=['GET'])
 @app.route('/mashtun/get/temperature', methods=['GET'])
 def getMashTunTemperature():
-    return '34'
+    return jsonify(temperature='34')
 
 
 @app.route('/mashtun/set/temperature/<int:degrees>', methods=['POST'])
