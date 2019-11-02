@@ -11,7 +11,7 @@ This project is based on the following hardware:
 
 On the software side:
 * Python
-* Flask
+* AIOHTTP
 * React
 
 Running apps
@@ -19,9 +19,9 @@ Running apps
 The Python API is executed as follows:
 ~~~
     source ./venv/Scripts/activate
-    flask run
+    adev runserver app --livereload
 ~~~
-The server will be listening on http://localhost:5000/
+The server will be listening on http://localhost:8000/
 
 To run the React front-end, execute this:
 ~~~

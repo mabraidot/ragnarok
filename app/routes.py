@@ -1,22 +1,24 @@
-from app import app
-from flask import jsonify
 import random
+from aiohttp import web
 
-app.config['JSON_AS_ASCII'] = False
-
-
-@app.route('/', methods=['GET'])
-@app.route('/index', methods=['GET'])
-def home():
-    return jsonify(response='The Ragnarök is coming ...')
-
-
-@app.route('/mashtun', methods=['GET'])
-@app.route('/mashtun/get/temperature', methods=['GET'])
-def getMashTunTemperature():
-    return jsonify(temperature=random.randrange(0, 100))
+def setup_routes(app):
+    app.add_routes([
+        web.get('/', home),
+        web.get('/index', home),
+        web.get('/mashtun', getMashTunTemperature),
+        web.get('/mashtun/get/temperature', getMashTunTemperature),
+        web.get('/mashtun/set/temperature/{degrees}', setMashTunTemperature)
+    ])
 
 
-@app.route('/mashtun/set/temperature/<int:degrees>', methods=['POST'])
-def setMashTunTemperature(degrees):
-    return str(degrees)
+def home(request):
+    return web.json_response({'response': 'The Ragnarök is coming ...'})
+
+
+def getMashTunTemperature(request):
+    return web.json_response({'temperature': random.randrange(0, 100)})
+
+
+def setMashTunTemperature(request):
+    degrees = request.match_info.get('degrees', 0)
+    return web.json_response({'response': str(degrees)})
