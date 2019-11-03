@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URI = 'http://localhost:5000';
+const BASE_URI = 'http://localhost:8000';
 
 const client = axios.create({
   baseURL: BASE_URI,
@@ -8,8 +8,6 @@ const client = axios.create({
 });
 
 class homeApi {
-  constructor() {}
-
   async getMashTunTemperature() {
     return client({
       method: 'GET',
