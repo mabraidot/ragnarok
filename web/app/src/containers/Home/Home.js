@@ -16,11 +16,9 @@ class Home extends Component {
     const { socket } = this.state;
     socket.onopen = () => {
         console.log('WS: Socket connected!');
-        // socket.send('Sucessfully connected!');
     };
     socket.onmessage = (result) => {
       console.log('WS: message!:', result.data);
-      // socket.send('Sucessfully recevied!');
     };
     socket.onerror = (error) => {
       console.log('WS: error!:', error.message);

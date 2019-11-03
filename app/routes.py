@@ -33,8 +33,9 @@ class routes:
 
 
     async def getMashTunTemperature(self, request):
-        temp = random.randrange(0, 100)
-        await self.app.ws.send(temp, 'MashTunTemp')
+        # temp = random.randrange(0, 100)
+        # await self.app.ws.send(temp, 'MashTunTemp')
+        temp = self.app.mashTunTempProbe.get()
         return web.json_response({'temperature': temp})
 
 
