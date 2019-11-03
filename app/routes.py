@@ -1,4 +1,5 @@
 import random
+import aiohttp_cors
 from aiohttp import web
 
 class routes:
@@ -6,7 +7,7 @@ class routes:
         self.app = app
 
     def setup_routes(self):
-        self.app.add_routes([
+        self.app.router.add_routes([
             web.get('/', self.home),
             web.get('/index', self.home),
             web.get('/mashtun', self.getMashTunTemperature),
@@ -14,13 +15,27 @@ class routes:
             web.get('/mashtun/set/temperature/{degrees}', self.setMashTunTemperature)
         ])
 
+        # Configure default CORS settings.
+        cors = aiohttp_cors.setup(self.app, defaults={
+            "*": aiohttp_cors.ResourceOptions(
+                    allow_credentials=True,
+                    expose_headers="*",
+                    allow_headers="*",
+                )
+        })
+        # Configure CORS on all routes.
+        for route in list(self.app.router.routes()):
+            cors.add(route)
+
 
     def home(self, request):
         return web.json_response({'response': 'The Ragnarök is coming ...'})
 
 
-    def getMashTunTemperature(self, request):
-        return web.json_response({'temperature': random.randrange(0, 100)})
+    async def getMashTunTemperature(self, request):
+        temp = random.randrange(0, 100)
+        await self.app.ws.send(temp, 'MashTunTemp')
+        return web.json_response({'temperature': temp})
 
 
     def setMashTunTemperature(self, request):

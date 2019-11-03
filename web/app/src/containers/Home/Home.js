@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './Home.scss';
 import TemperatureGauge from '../../components/TemperatureGauge';
-import io from 'socket.io-client';
 
 const BASE_URI = 'ws://localhost:8000/ws';
 
@@ -9,20 +8,27 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      socket: io(BASE_URI, {})
+      socket: new WebSocket(BASE_URI)
     };
   }
 
   componentDidMount() {
     const { socket } = this.state;
-    socket.on('connect', () => {
-        console.log('Socket connected!');
-        socket.emit('Sucessfully connected!');
-    });
-    socket.on('message', (result) => {
-      console.log('message!:', result);
-      socket.emit('Sucessfully recevied!');
-    });
+    socket.onopen = () => {
+        console.log('WS: Socket connected!');
+        // socket.send('Sucessfully connected!');
+    };
+    socket.onmessage = (result) => {
+      console.log('WS: message!:', result.data);
+      // socket.send('Sucessfully recevied!');
+    };
+    socket.onerror = (error) => {
+      console.log('WS: error!:', error.message);
+      socket.close();
+    };
+    socket.onclose = (close) => {
+      console.log('WS: Closing:', close.code, close.reason);
+    };
   }
 
   render() {
