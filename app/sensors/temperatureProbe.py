@@ -7,9 +7,10 @@ class temperatureProbe:
         self.value = 0
     
     def get(self):
-        # return self.value
-        temp = random.randrange(0, 100)
-        return temp
+        # test value
+        self.value = random.randrange(0, 100)
+        return self.value
     
     async def sendToWebSocket(self):
-        await self.app.ws.send(self.get, self.name)
+        tempValue = self.get()
+        await self.app.ws.send(tempValue, self.name)
