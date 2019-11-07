@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './Home.scss';
+import Grid from '@material-ui/core/Grid';
 import TemperatureGauge from '../../components/TemperatureGauge';
 
 const BASE_URI = 'ws://localhost:8000/ws';
@@ -51,8 +52,10 @@ class Home extends Component {
         <p>
           The Ragnarök is coming ...
         </p>
-        <TemperatureGauge id='MashTunTemperatureGauge' title='Mash Tun' value={MashTunTemperatureProbe} />
-        <TemperatureGauge id='BoilKettleTemperatureGauge' title='Boil Kettle' value={BoilKettleTemperatureProbe} />
+        <Grid container justify="space-evenly">
+          <TemperatureGauge id='MashTunTemperatureGauge' title='Mash Tun' value={MashTunTemperatureProbe} />
+          <TemperatureGauge id='BoilKettleTemperatureGauge' title='Boil Kettle' value={BoilKettleTemperatureProbe} />
+        </Grid>
       </div>
     );
   }
