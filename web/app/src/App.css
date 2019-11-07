@@ -1,44 +1,18 @@
 .App {
   text-align: center;
+  padding: 10px;
 }
 
-.App-logo {
-  height: 40vmin;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 20vh;
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  justify-content: left;
+.App-menu {
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.App-menu .MuiGrid-item {
+  padding: 10px;
 }
 
 .App-main {
-  background-color: #282c34;
-  min-height: 70vh;
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  justify-content: left;
   font-size: calc(10px + 2vmin);
   color: white;
-}
-
-.App-footer {
-  background-color: #282c34;
-  min-height: 10vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #09d3ac;
 }

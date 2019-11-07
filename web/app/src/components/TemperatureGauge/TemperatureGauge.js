@@ -6,6 +6,7 @@ class TemperatureGauge extends Component {
     super(props);
     this.state = {
       id: props.id,
+      title: props.title
     };
   }
   
@@ -15,7 +16,7 @@ class TemperatureGauge extends Component {
   render() {
     return(
       <div>
-        <p>{this.state.id}</p>
+        <h3>{this.state.title}</h3>
         <p>{this.props.value}°</p>
       </div>
     );

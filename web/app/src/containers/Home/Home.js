@@ -38,15 +38,21 @@ class Home extends Component {
     };
   }
 
+  componentWillUnmount() {
+    const { socket } = this.state;
+    socket.close();
+  }
+
   render() {
     const { MashTunTemperatureProbe, BoilKettleTemperatureProbe } = this.state;
     return(
       <div>
+        <h1>Home Screen</h1>
         <p>
           The Ragnarök is coming ...
         </p>
-        <TemperatureGauge id='MashTunTemperatureGauge' value={MashTunTemperatureProbe} />
-        <TemperatureGauge id='BoilKettleTemperatureGauge' value={BoilKettleTemperatureProbe} />
+        <TemperatureGauge id='MashTunTemperatureGauge' title='Mash Tun' value={MashTunTemperatureProbe} />
+        <TemperatureGauge id='BoilKettleTemperatureGauge' title='Boil Kettle' value={BoilKettleTemperatureProbe} />
       </div>
     );
   }
