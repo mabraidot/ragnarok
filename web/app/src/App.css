@@ -1,18 +1,22 @@
 .App {
   text-align: center;
   padding: 10px;
+  align-content: center;
 }
 
-.App-menu {
-  font-size: calc(10px + 2vmin);
+.App-header .MuiTabs-root {
+  color: white;
+}
+.App-header .MuiTabs-indicator {
+  background-color: white;
+}
+.App-header .Mui-selected {
   color: white;
 }
 
-.App-menu .MuiGrid-item {
-  padding: 10px;
-}
-
 .App-main {
+  display: flex;
+  height: calc(80vh);
   font-size: calc(10px + 2vmin);
   color: white;
 }

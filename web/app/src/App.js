@@ -26,25 +26,25 @@ function App() {
             path="/"
             render={({ location }) => (
               <Fragment>
-                <Tabs
-                  value={location.pathname}
-                  // onChange={handleTabChange}
-                  variant="fullWidth"
-                  indicatorColor="secondary"
-                  textColor="secondary"
-                  aria-label="icon tabs"
-                >
-                  <Tab component={Link} value="/" to="/" label="Home" icon={<HomeIcon />} aria-label="home" />
-                  <Tab component={Link} value="/recipes" to="/recipes" label="Recipes" icon={<RecipesIcon />} aria-label="recipes" />
-                  <Tab component={Link} value="/settings" to="/settings" label="Settings" icon={<SettingsIcon />} aria-label="settings" />
-                  <Tab component={Link} value="/power" to="/power" label="Power" icon={<PowerIcon />} aria-label="power" />
-                </Tabs>
+                <div className="App-header">
+                  <Tabs
+                    value={location.pathname}
+                    // onChange={handleTabChange}
+                    variant="fullWidth"
+                    aria-label="icon tabs"
+                  >
+                    <Tab component={Link} value="/" to="/" label="Home" icon={<HomeIcon />} aria-label="home" />
+                    <Tab component={Link} value="/recipes" to="/recipes" label="Recipes" icon={<RecipesIcon />} aria-label="recipes" />
+                    <Tab component={Link} value="/settings" to="/settings" label="Settings" icon={<SettingsIcon />} aria-label="settings" />
+                    <Tab component={Link} value="/power" to="/power" label="Power" icon={<PowerIcon />} aria-label="power" />
+                  </Tabs>
+                </div>
                 <div className="App-main">
                   <Switch>
-                    <Route path="/" push component={Home} />
                     <Route path="/recipes" push component={Home} />
                     <Route path="/settings" push component={Settings} />
                     <Route path="/power" push component={Power} />
+                    <Route path="/" push component={Home} />
                   </Switch>
                 </div>
               </Fragment>

@@ -1,0 +1,18 @@
+.Power-button {
+    flex: 1 0 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.Power-button .button {
+    font-size: 70vw; 
+    color: white;
+}
+
+.Power-button .button-hover {
+    font-size: 68vw;
+    opacity: 0.7;
+    color: rgb(255, 255, 255);
+}
