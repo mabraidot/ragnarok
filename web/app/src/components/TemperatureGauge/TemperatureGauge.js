@@ -8,7 +8,7 @@ class TemperatureGauge extends Component {
     this.state = {
       id: props.id,
       title: props.title,
-      setPoint: 100
+      setPoint: props.setPoint || 100
     };
   }
   

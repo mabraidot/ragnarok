@@ -55,8 +55,8 @@ class Home extends Component {
             The Ragnarök is coming ...
           </p>
           <Grid container justify="space-evenly">
-            <TemperatureGauge id='MashTunTemperatureGauge' title='Mash Tun' value={MashTunTemperatureProbe} />
-            <TemperatureGauge id='BoilKettleTemperatureGauge' title='Boil Kettle' value={BoilKettleTemperatureProbe} />
+            <TemperatureGauge id='MashTunTemperatureGauge' title='Mash Tun' setPoint={65} value={MashTunTemperatureProbe} />
+            <TemperatureGauge id='BoilKettleTemperatureGauge' title='Boil Kettle' setPoint={100} value={BoilKettleTemperatureProbe} />
           </Grid>
         </div>
       </Grow>
