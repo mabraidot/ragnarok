@@ -8,6 +8,7 @@ import {
 
 import './App.css';
 import Home from './containers/Home';
+import Recipes from './containers/Recipes';
 import Settings from './containers/Settings';
 import Power from './containers/Power';
 import Tabs from '@material-ui/core/Tabs';
@@ -41,7 +42,7 @@ function App() {
                 </div>
                 <div className="App-main">
                   <Switch>
-                    <Route path="/recipes" push component={Home} />
+                    <Route path="/recipes" push component={Recipes} />
                     <Route path="/settings" push component={Settings} />
                     <Route path="/power" push component={Power} />
                     <Route path="/" push component={Home} />

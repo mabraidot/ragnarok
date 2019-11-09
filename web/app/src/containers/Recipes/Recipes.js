@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import './Settings.scss';
+import './Recipes.scss';
 import Grow from '@material-ui/core/Grow';
 
-class Settings extends Component {
+class Recipes extends Component {
 
   render() {
     return(
       <Grow in={true}>
-        <div className="Settings">
-          <h1>Settings</h1>
+        <div className="Recipes">
+          <h1>Recipes</h1>
           <p>
-            Settings' page
+            Recipes' page
           </p>
         </div>
       </Grow>
@@ -18,4 +18,4 @@ class Settings extends Component {
   }
 }
 
-export default Settings;
+export default Recipes;
