@@ -1,0 +1,44 @@
+.TemperatureGauge .gauge {
+    justify-content: center;
+    position: relative;
+    width: 37vw;
+}
+
+.TemperatureGauge .MuiCircularProgress-root {
+    width: 37vw !important;
+    height: 37vw !important;
+}
+
+.TemperatureGauge .setPointGauge {
+    color: white;
+    opacity: 0.1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.TemperatureGauge .currentGauge {
+    color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.TemperatureGauge .temperature {
+    height: 37vw;
+    z-index: 10;
+    justify-content: center;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.TemperatureGauge .temperature span {
+    vertical-align: top;
+}
+.TemperatureGauge .temperature .current {
+    font-size: 13vw;
+    font-weight: bold;
+}
