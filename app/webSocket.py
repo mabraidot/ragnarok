@@ -17,7 +17,7 @@ class webSocket:
         self._clients.add(ws)
 
         try:
-            self.send('connection/success')
+            await self.send('connection/success')
             async for msg in ws:
                 if msg.type == aiohttp.WSMsgType.TEXT:
                     if msg.data == 'close':

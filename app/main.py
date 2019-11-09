@@ -1,6 +1,7 @@
 from aiohttp import web
 from app.routes import routes
 from app.webSocket import webSocket
+from app.cooking import Cooking
 from app.hardware.temperatureProbe import temperatureProbe
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -10,6 +11,9 @@ app.ws = webSocket(app)
 # Jobs scheduler
 app.jobs = AsyncIOScheduler()
 app.jobs.start()
+
+# Main cooking process
+app.cooking = Cooking(app)
 
 # Hardware
 app.mashTunTempProbe = temperatureProbe(app, 'MashTunTemperatureProbe')
