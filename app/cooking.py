@@ -8,7 +8,8 @@ RECIPE
 
 MASH STEP
 ---------
-* INFUSE_AMOUNT: hot water to add at the start of the step. If it's zero, is a temperature ramp for saccharification.
+* TYPE: it can be 'Infusion', 'Temperature' or 'Decoction'. Respectively, adding water, raising temp only and draw off some mash for boiling.
+* INFUSE_AMOUNT: hot water to add at the start of the step expressed in liters. If it's zero, is a temperature ramp for saccharification.
 * INFUSE_TEMP: temperature to pre-heat the infused water (format '00.0 C'. Transform to number).
 * STEP_TIME: duration of the step after water reach the target step temperature.
 * STEP_TEMP: target temperature for the step.
