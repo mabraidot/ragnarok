@@ -4,6 +4,10 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    background-image: url('../../background.png');
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .Power-button .button {

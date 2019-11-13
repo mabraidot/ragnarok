@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  padding: 10px;
+  padding: 0px;
   align-content: center;
 }
 
@@ -16,7 +16,7 @@
 
 .App-main {
   display: flex;
-  height: calc(80vh);
+  height: calc(90vh);
   font-size: calc(10px + 2vmin);
   color: white;
 }

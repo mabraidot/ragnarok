@@ -6,11 +6,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: white;
-  background-color: #282c34;
+  background-color: black;
+  /* background-color: #282c34;
   background-image: url('./background.png');
   background-position: top;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: cover; */
 }
 
 a {

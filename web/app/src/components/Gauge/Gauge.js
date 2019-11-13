@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './Gauge.scss';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { maxWidth } from '@material-ui/system';
 
 class Gauge extends Component {
   constructor(props) {
@@ -8,22 +9,34 @@ class Gauge extends Component {
     this.state = {
       id: props.id,
       title: props.title,
-      setPoint: props.setPoint || 100
     };
   }
   
   // async componentDidMount() {
   // }
+  intToMinutes(number) {
+    var minutes = parseInt(Number(number));
+    var seconds = Math.round((Number(number)-minutes) * 60);
+    return `${minutes.toString().padStart(2,"00")}:${seconds.toString().padStart(2,"00")}`;
+  }
 
   render() {
-    let currentTemp = this.props.value * 100 / this.state.setPoint;
 
-    const maxRadious = 74;
-    const timeRadious = 74;
-    const waterRadious = 64;
-    const temperatureRadious = 58;
+    let currentTemp = this.props.valueTemperature * 100 / 110;
+    let currentTime = this.props.valueTime * 100 / this.props.setPointTime;
+    let currentWater = this.props.valueWater * 100 / this.props.setPointWater;
 
-    const timeBorder = 2;
+    const multiplier = (this.props.focus) ? 1 : 0.4 ;
+    const maxDiameter = 80 * multiplier;
+    const timeDiameter = 80 * multiplier;
+    const waterDiameter = 70 * multiplier;
+    const temperatureDiameter = 64 * multiplier;
+    const fontSize = 4.4 * multiplier;
+    const fontSizeBig = 12 * multiplier;
+    const labelRightPadding = 0.2 * multiplier;
+    const labelTopPadding = 0.4 * multiplier;
+
+    const timeBorder = 1.8;
     const waterBorder = 1;
     const temperatureBorder = 2;
 
@@ -32,82 +45,94 @@ class Gauge extends Component {
     const temperatureColour = "crimson";
 
     const setPointTimeStyle = {
-      width: `${timeRadious}vw`,
-      height: `${timeRadious}vw`,
+      width: `${timeDiameter}vw`,
+      height: `${timeDiameter}vw`,
       color: timeColour,
       opacity: "0.1",
       position: "absolute",
-      top: `${(maxRadious-timeRadious)/2}vw`,
-      left: `${(maxRadious-timeRadious)/2}vw`,
+      top: `${(maxDiameter-timeDiameter)/2}vw`,
+      left: `${(maxDiameter-timeDiameter)/2}vw`,
       zIndex: "0",
     };
     const currentTimeStyle = {
-      width: `${timeRadious}vw`,
-      height: `${timeRadious}vw`,
+      width: `${timeDiameter}vw`,
+      height: `${timeDiameter}vw`,
       color: timeColour,
       position: "absolute",
-      top: `${(maxRadious-timeRadious)/2}vw`,
-      left: `${(maxRadious-timeRadious)/2}vw`,
+      top: `${(maxDiameter-timeDiameter)/2}vw`,
+      left: `${(maxDiameter-timeDiameter)/2}vw`,
       zIndex: "0",
     };
 
     const setPointWaterStyle = {
-      width: `${waterRadious}vw`,
-      height: `${waterRadious}vw`,
+      width: `${waterDiameter}vw`,
+      height: `${waterDiameter}vw`,
       color: waterColour,
       opacity: "0.1",
       position: "absolute",
-      top: `${(maxRadious-waterRadious)/2}vw`,
-      left: `${(maxRadious-waterRadious)/2}vw`,
+      top: `${(maxDiameter-waterDiameter)/2}vw`,
+      left: `${(maxDiameter-waterDiameter)/2}vw`,
       zIndex: "0",
     };
     const currentWaterStyle = {
-      width: `${waterRadious}vw`,
-      height: `${waterRadious}vw`,
+      width: `${waterDiameter}vw`,
+      height: `${waterDiameter}vw`,
       color: waterColour,
       position: "absolute",
-      top: `${(maxRadious-waterRadious)/2}vw`,
-      left: `${(maxRadious-waterRadious)/2}vw`,
+      top: `${(maxDiameter-waterDiameter)/2}vw`,
+      left: `${(maxDiameter-waterDiameter)/2}vw`,
       zIndex: "0",
     };
 
     const setPointTemperatureStyle = {
-      width: `${temperatureRadious}vw`,
-      height: `${temperatureRadious}vw`,
+      width: `${temperatureDiameter}vw`,
+      height: `${temperatureDiameter}vw`,
       color: temperatureColour,
       opacity: "0.1",
       position: "absolute",
-      top: `${(maxRadious-temperatureRadious)/2}vw`,
-      left: `${(maxRadious-temperatureRadious)/2}vw`,
+      top: `${(maxDiameter-temperatureDiameter)/2}vw`,
+      left: `${(maxDiameter-temperatureDiameter)/2}vw`,
       zIndex: "0",
     };
     const currentTemperatureStyle = {
-      width: `${temperatureRadious}vw`,
-      height: `${temperatureRadious}vw`,
+      width: `${temperatureDiameter}vw`,
+      height: `${temperatureDiameter}vw`,
       color: temperatureColour,
       position: "absolute",
-      top: `${(maxRadious-temperatureRadious)/2}vw`,
-      left: `${(maxRadious-temperatureRadious)/2}vw`,
+      top: `${(maxDiameter-temperatureDiameter)/2}vw`,
+      left: `${(maxDiameter-temperatureDiameter)/2}vw`,
       zIndex: "0",
     };
 
     const componentStyle = {
       justifyContent: 'center',
       position: 'relative',
-      width: `${maxRadious}vw`,
+      width: `${maxDiameter}vw`,
       verticalAlign: 'top',
+      height: `${(maxDiameter/7)*5}vw`,
+      paddingTop: `${(maxDiameter/7)*2}vw`,
     }
     const labelsStyle = {
-      height: `${maxRadious}vw`,
       zIndex: '10',
       justifyContent: 'center',
       display: 'flex',
       flex: '1',
-      flexDirection: 'column',
+      flexDirection: 'row',
+    }
+    const labelsSetPointStyle = {
+      width: `${(maxDiameter/10)*4}vw`,
+      textAlign: 'right',
+      fontSize: `${fontSize}vw`,
+      paddingRight: '0.4em',
+      zIndex: '10',
     }
     const labelsCurrentStyle = {
-      fontSize: '13vw',
+      width: `${(maxDiameter/10)*6}vw`,
+      textAlign: 'left',
+      lineHeight: '1em',
+      fontSize: `${fontSizeBig}vw`,
       fontWeight: 'bold',
+      zIndex: '10',
     }
 
     return(
@@ -115,16 +140,24 @@ class Gauge extends Component {
         <h3>{this.state.title}</h3>
         <div style={componentStyle}>
           <CircularProgress style={setPointTimeStyle} thickness={timeBorder} variant="static" value={100} />
-          <CircularProgress style={currentTimeStyle} thickness={timeBorder} variant="static" value={55} />
+          <CircularProgress style={currentTimeStyle} thickness={timeBorder} variant="static" value={currentTime} />
 
           <CircularProgress style={setPointWaterStyle} thickness={waterBorder} variant="static" value={100} />
-          <CircularProgress style={currentWaterStyle} thickness={waterBorder} variant="static" value={75} />
+          <CircularProgress style={currentWaterStyle} thickness={waterBorder} variant="static" value={currentWater} />
 
           <CircularProgress style={setPointTemperatureStyle} thickness={temperatureBorder} variant="static" value={100} />
           <CircularProgress style={currentTemperatureStyle} thickness={temperatureBorder} variant="static" value={currentTemp} />
           <div style={labelsStyle}>
-            <div style={labelsCurrentStyle}>{this.props.value}°</div>
-            <div className="setPoint">{this.state.setPoint}°</div>
+            <div style={labelsSetPointStyle}><span style={{fontSize: '0.5em'}}>TEMPERATURE<br /></span> <strong>{this.props.setPointTemperature}°</strong></div>
+            <div style={labelsCurrentStyle}><span style={{color: temperatureColour}}>{this.props.valueTemperature}°</span></div>
+          </div>
+          <div style={labelsStyle}>
+            <div style={labelsSetPointStyle}><span style={{fontSize: '0.5em'}}>PROCESS TIME<br /></span> <strong>{this.intToMinutes(this.props.setPointTime)}</strong> </div>
+            <div style={labelsCurrentStyle}><span style={{color: timeColour}}>{this.intToMinutes(this.props.valueTime)}</span></div>
+          </div>
+          <div style={labelsStyle}>
+            <div style={labelsSetPointStyle}><span style={{fontSize: '0.5em'}}>WATER VOLUME<br /></span> <strong>{this.props.setPointWater} l</strong> </div>
+            <div style={labelsCurrentStyle}><span style={{color: waterColour}}>{this.props.valueWater}l</span></div>
           </div>
         </div>
       </div>
