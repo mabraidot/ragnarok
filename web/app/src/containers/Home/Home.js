@@ -3,6 +3,7 @@ import './Home.scss';
 import Grid from '@material-ui/core/Grid';
 import Grow from '@material-ui/core/Grow';
 import TemperatureGauge from '../../components/TemperatureGauge';
+import Gauge from '../../components/Gauge';
 
 const BASE_URI = 'ws://localhost:8000/ws';
 
@@ -50,11 +51,10 @@ class Home extends Component {
     return(
       <Grow in={true}>
         <div className="Home">
-          <h1>Home Screen</h1>
-          <p>
-            The Ragnarök is coming ...
-          </p>
+          {/* <h1>Home Screen</h1>
+          <p>The Ragnarök is coming ...</p> */}
           <Grid container justify="space-evenly">
+            <Gauge id='MashTunGauge' title='Mash Tun' setPoint={65} value={24} />
             <TemperatureGauge id='MashTunTemperatureGauge' title='Mash Tun' setPoint={65} value={MashTunTemperatureProbe} />
             <TemperatureGauge id='BoilKettleTemperatureGauge' title='Boil Kettle' setPoint={100} value={BoilKettleTemperatureProbe} />
           </Grid>
