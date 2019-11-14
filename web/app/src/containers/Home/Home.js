@@ -11,6 +11,8 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      MashTunFocus: true,
+      BoilKettleFocus: false,
       socket: new WebSocket(BASE_URI),
       MashTunTemperatureSetPoint: 65,
       MashTunTemperatureProbe: 23.2,
@@ -59,26 +61,27 @@ class Home extends Component {
 
   render() {
     const { 
-      MashTunTemperatureSetPoint, 
-      MashTunTemperatureProbe, 
-      MashTunWaterSetPoint, 
-      MashTunWaterProbe, 
-      MashTunTimeSetPoint, 
-      MashTunTimeProbe, 
-
-      BoilKettleTemperatureSetPoint, 
-      BoilKettleTemperatureProbe, 
-      BoilKettleWaterSetPoint, 
-      BoilKettleWaterProbe, 
-      BoilKettleTimeSetPoint, 
-      BoilKettleTimeProbe, 
+      MashTunTemperatureSetPoint,
+      MashTunTemperatureProbe,
+      MashTunWaterSetPoint,
+      MashTunWaterProbe,
+      MashTunTimeSetPoint,
+      MashTunTimeProbe,
+      MashTunFocus,
+      BoilKettleTemperatureSetPoint,
+      BoilKettleTemperatureProbe,
+      BoilKettleWaterSetPoint,
+      BoilKettleWaterProbe,
+      BoilKettleTimeSetPoint,
+      BoilKettleTimeProbe,
+      BoilKettleFocus,
     } = this.state;
     return(
       <Grow in={true}>
         <div className="Home">
           {/* <h1>Home Screen</h1>
           <p>The Ragnarök is coming ...</p> */}
-          <Grid container justify="space-evenly">
+          <Grid container>
             <Gauge
               id='MashTunGauge'
               title='Mash Tun'
@@ -88,7 +91,7 @@ class Home extends Component {
               valueWater={MashTunWaterProbe}
               setPointTime={MashTunTimeSetPoint}
               valueTime={MashTunTimeProbe}
-              focus={true}
+              focus={MashTunFocus}
             />
             <Gauge
               id='BoilKettleGauge'
@@ -99,7 +102,7 @@ class Home extends Component {
               valueWater={BoilKettleWaterProbe}
               setPointTime={BoilKettleTimeSetPoint}
               valueTime={BoilKettleTimeProbe}
-              focus={false}
+              focus={BoilKettleFocus}
             />
             {/* <TemperatureGauge id='MashTunTemperatureGauge' title='Mash Tun' setPoint={65} value={MashTunTemperatureProbe} />
             <TemperatureGauge id='BoilKettleTemperatureGauge' title='Boil Kettle' setPoint={100} value={BoilKettleTemperatureProbe} /> */}

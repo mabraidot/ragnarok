@@ -33,8 +33,6 @@ class Gauge extends Component {
     const temperatureDiameter = 64 * multiplier;
     const fontSize = 4.4 * multiplier;
     const fontSizeBig = 12 * multiplier;
-    const labelRightPadding = 0.2 * multiplier;
-    const labelTopPadding = 0.4 * multiplier;
 
     const timeBorder = 1.8;
     const waterBorder = 1;
@@ -135,9 +133,22 @@ class Gauge extends Component {
       zIndex: '10',
     }
 
+    const gaugeStyle = {
+      order: (this.props.focus) ? '1' : '2',
+      alignSelf: (this.props.focus) ? 'center' : 'flex-end',
+    }
+
+    let title;
+    if (this.props.focus) {
+      title = <h2>{this.state.title}</h2>
+    } else {
+      title = <h5 style={{margin: '1em'}}>{this.state.title}</h5>
+    }
+
     return(
-      <div className="Gauge">
-        <h3>{this.state.title}</h3>
+      
+      <div className="Gauge" style={gaugeStyle}>
+        {title}
         <div style={componentStyle}>
           <CircularProgress style={setPointTimeStyle} thickness={timeBorder} variant="static" value={100} />
           <CircularProgress style={currentTimeStyle} thickness={timeBorder} variant="static" value={currentTime} />

@@ -5,3 +5,9 @@
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+.Home .MuiGrid-root {
+    padding: 1em;
+    flex: 1;
+    flex-direction: column;
+}
