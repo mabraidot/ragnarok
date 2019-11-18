@@ -11,6 +11,7 @@ import Home from './containers/Home';
 import Recipes from './containers/Recipes';
 import Settings from './containers/Settings';
 import Power from './containers/Power';
+import Advanced from './containers/Advanced';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
@@ -20,6 +21,14 @@ import SettingsIcon from '@material-ui/icons/SettingsRounded';
 import PowerIcon from '@material-ui/icons/PowerSettingsNewRounded';
 
 function App() {
+
+  const pages = [
+    '/',
+    '/recipes',
+    '/settings',
+    '/power',
+  ];
+
   return (
       <BrowserRouter>
         <div className="App">
@@ -29,7 +38,7 @@ function App() {
               <Fragment>
                 <div className="App-header">
                   <Tabs
-                    value={location.pathname}
+                    value={(pages.indexOf(location.pathname) === -1) ? '/' : location.pathname}
                     // onChange={handleTabChange}
                     variant="fullWidth"
                     aria-label="icon tabs"
@@ -42,6 +51,7 @@ function App() {
                 </div>
                 <div className="App-main">
                   <Switch>
+                    <Route path="/advanced" push component={Advanced} />
                     <Route path="/recipes" push component={Recipes} />
                     <Route path="/settings" push component={Settings} />
                     <Route path="/power" push component={Power} />

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './Home.scss';
 import Grid from '@material-ui/core/Grid';
 import Grow from '@material-ui/core/Grow';
+import Fab from '@material-ui/core/Fab';
+import AdvancedIcon from '@material-ui/icons/TouchAppRounded';
 import Gauge from '../../components/Gauge';
 
 const BASE_URI = 'ws://localhost:8000/ws';
@@ -27,6 +29,7 @@ class Home extends Component {
       BoilKettleTimeSetPoint: 60.0,
       BoilKettleTimeProbe: 20.5,
     };
+    this.handleAdvancedClick = this.handleAdvancedClick.bind(this);
   }
 
   componentDidMount() {
@@ -64,6 +67,10 @@ class Home extends Component {
     socket.close();
   }
 
+  handleAdvancedClick() {
+    this.props.history.push('/advanced')
+  }
+
   render() {
     const { 
       MashTunTemperatureSetPoint,
@@ -81,34 +88,47 @@ class Home extends Component {
       BoilKettleTimeProbe,
       BoilKettleFocus,
     } = this.state;
+
     return(
       <Grow in={true}>
         <div className="Home">
           {/* <h1>Home Screen</h1>
           <p>The Ragnarök is coming ...</p> */}
           <Grid container>
-            <Gauge
-              id='MashTunGauge'
-              title='Mash Tun'
-              setPointTemperature={MashTunTemperatureSetPoint}
-              valueTemperature={MashTunTemperatureProbe}
-              setPointWater={MashTunWaterSetPoint}
-              valueWater={MashTunWaterProbe}
-              setPointTime={MashTunTimeSetPoint}
-              valueTime={MashTunTimeProbe}
-              focus={MashTunFocus}
-            />
-            <Gauge
-              id='BoilKettleGauge'
-              title='Boil Kettle'
-              setPointTemperature={BoilKettleTemperatureSetPoint}
-              valueTemperature={BoilKettleTemperatureProbe}
-              setPointWater={BoilKettleWaterSetPoint}
-              valueWater={BoilKettleWaterProbe}
-              setPointTime={BoilKettleTimeSetPoint}
-              valueTime={BoilKettleTimeProbe}
-              focus={BoilKettleFocus}
-            />
+            <Grid item xs>
+              <Gauge
+                id='MashTunGauge'
+                title='Mash Tun'
+                setPointTemperature={MashTunTemperatureSetPoint}
+                valueTemperature={MashTunTemperatureProbe}
+                setPointWater={MashTunWaterSetPoint}
+                valueWater={MashTunWaterProbe}
+                setPointTime={MashTunTimeSetPoint}
+                valueTime={MashTunTimeProbe}
+                focus={MashTunFocus}
+              />
+            </Grid>
+            <Grid item xs>
+              <div className="button-advanced">
+                <Fab variant="extended" onClick={this.handleAdvancedClick} size="large" aria-label="advanced">
+                  <AdvancedIcon />
+                  Advanced
+                </Fab>
+              </div>
+            </Grid>
+            <Grid item xs>
+              <Gauge
+                id='BoilKettleGauge'
+                title='Boil Kettle'
+                setPointTemperature={BoilKettleTemperatureSetPoint}
+                valueTemperature={BoilKettleTemperatureProbe}
+                setPointWater={BoilKettleWaterSetPoint}
+                valueWater={BoilKettleWaterProbe}
+                setPointTime={BoilKettleTimeSetPoint}
+                valueTime={BoilKettleTimeProbe}
+                focus={BoilKettleFocus}
+              />
+            </Grid>
             {/* <TemperatureGauge id='MashTunTemperatureGauge' title='Mash Tun' setPoint={65} value={MashTunTemperatureProbe} />
             <TemperatureGauge id='BoilKettleTemperatureGauge' title='Boil Kettle' setPoint={100} value={BoilKettleTemperatureProbe} /> */}
           </Grid>

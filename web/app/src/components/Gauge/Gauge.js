@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './Gauge.scss';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { maxWidth } from '@material-ui/system';
 
 class Gauge extends Component {
   constructor(props) {
@@ -11,7 +10,7 @@ class Gauge extends Component {
       title: props.title,
     };
   }
-  
+
   // async componentDidMount() {
   // }
   intToMinutes(number) {
@@ -134,7 +133,7 @@ class Gauge extends Component {
     }
 
     const gaugeStyle = {
-      order: (this.props.focus) ? '1' : '2',
+      order: (this.props.focus) ? '1' : '3',
       alignSelf: (this.props.focus) ? 'center' : 'flex-end',
       // transition: 'order 2s',
     }
@@ -147,7 +146,7 @@ class Gauge extends Component {
     }
 
     return(
-      
+
       <div className="Gauge" style={gaugeStyle}>
         {title}
         <div style={componentStyle}>
