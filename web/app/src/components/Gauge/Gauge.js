@@ -136,6 +136,7 @@ class Gauge extends Component {
     const gaugeStyle = {
       order: (this.props.focus) ? '1' : '2',
       alignSelf: (this.props.focus) ? 'center' : 'flex-end',
+      // transition: 'order 2s',
     }
 
     let title;

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './Home.scss';
 import Grid from '@material-ui/core/Grid';
 import Grow from '@material-ui/core/Grow';
-import TemperatureGauge from '../../components/TemperatureGauge';
 import Gauge from '../../components/Gauge';
 
 const BASE_URI = 'ws://localhost:8000/ws';
@@ -38,6 +37,12 @@ class Home extends Component {
     socket.onmessage = (result) => {
       const data = JSON.parse(result.data)
       if (data.MashTunTemperatureProbe) {
+        // TESTING GAUGE ORDER CHANGE
+        // if(data.MashTunTemperatureProbe > 50){
+        //   this.setState({MashTunFocus: true, BoilKettleFocus: false});
+        // }else{
+        //   this.setState({MashTunFocus: false, BoilKettleFocus: true});
+        // }
         this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe});
       }
       if (data.BoilKettleTemperatureProbe) {
