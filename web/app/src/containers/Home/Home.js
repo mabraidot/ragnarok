@@ -92,8 +92,6 @@ class Home extends Component {
     return(
       <Grow in={true}>
         <div className="Home">
-          {/* <h1>Home Screen</h1>
-          <p>The Ragnarök is coming ...</p> */}
           <Grid container>
             <Grid item xs>
               <Gauge
@@ -129,8 +127,6 @@ class Home extends Component {
                 focus={BoilKettleFocus}
               />
             </Grid>
-            {/* <TemperatureGauge id='MashTunTemperatureGauge' title='Mash Tun' setPoint={65} value={MashTunTemperatureProbe} />
-            <TemperatureGauge id='BoilKettleTemperatureGauge' title='Boil Kettle' setPoint={100} value={BoilKettleTemperatureProbe} /> */}
           </Grid>
         </div>
       </Grow>

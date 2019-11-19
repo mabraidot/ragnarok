@@ -5,3 +5,25 @@
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+.Advanced h4 {
+    border-bottom: steelblue solid 0.05em;
+    text-align: start;
+    padding-left: 1em;
+}
+
+.Advanced .button-set, .Advanced .button-set:hover {
+    background-color: seagreen;
+    color: white;
+}
+
+.Advanced .button-stop, .Advanced .button-stop:hover {
+    background-color: crimson;
+    color: white;
+}
+
+.Advanced .MuiButton-contained.Mui-disabled {
+    background-color: crimson;
+    opacity: 0.3;
+    color: white;
+}

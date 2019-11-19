@@ -11,8 +11,6 @@ class Gauge extends Component {
     };
   }
 
-  // async componentDidMount() {
-  // }
   intToMinutes(number) {
     var minutes = parseInt(Number(number));
     var seconds = Math.round((Number(number)-minutes) * 60);
