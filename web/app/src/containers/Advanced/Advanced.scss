@@ -6,10 +6,72 @@
     background-size: cover;
 }
 
-.Advanced h4 {
-    border-bottom: steelblue solid 0.05em;
+.Advanced .MuiPaper-root {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 0.2em;
+    margin: 0.3em;
     text-align: start;
-    padding-left: 1em;
+}
+
+/******* SLIDER *******/
+.Advanced .MuiSlider-root {
+    margin: 0.7em 0 0.7em 0.7em; // 0.7em 0 0.7em 1.4em
+    width: 40vw;// 85vw;
+    height: 8px;
+}
+
+.Advanced .MuiSlider-root.temperature {
+    color: crimson;
+}
+
+.Advanced .MuiSlider-root.water {
+    color: aqua;
+}
+
+.Advanced .MuiSlider-root.time {
+    color: gold;
+}
+
+.Advanced .MuiSlider-root .PrivateValueLabel-label-192 {
+    background-color: black;
+    border-radius: 20%;
+    padding: 0 0.1em;
+}
+
+.Advanced .MuiSlider-thumb {
+    margin: 2.4em 0 0.7em 1.4em;
+    height: 18px;
+    width: 18px;
+    margin-top: -5px;
+    margin-left: -5px;
+}
+
+.Advanced .MuiSlider-track,
+.Advanced .MuiSlider-rail,
+.Advanced .MuiSlider-mark {
+    height: 8px;
+}
+
+.Advanced .MuiSlider-valueLabel {
+    left: calc(-50% + 2px);
+}
+
+.Advanced .MuiSlider-markLabel {
+    color: rgba(255, 255, 255, 1);
+    margin-top: 0.5em;
+}
+
+/******* ITEMS *******/
+.Advanced h4 {
+    text-align: start;
+    padding: 0;//0 0 0 1em;
+    margin: 0.5em;
+}
+
+.Advanced .label {
+    padding-left: 0.5em;//1.4em;
+    font-size: 0.5em;
 }
 
 .Advanced .button-set, .Advanced .button-set:hover {
