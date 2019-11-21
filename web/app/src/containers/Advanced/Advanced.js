@@ -2,11 +2,30 @@ import React, { Component } from 'react';
 import './Advanced.scss';
 import Grow from '@material-ui/core/Grow';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Slider from '@material-ui/core/Slider';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 
 class Advanced extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      checkedA: false,
+      checkedB: false,
+    };
+  }
+  
+  handleChange = name => event => {
+    const { state } = this.state;
+    this.setState({ ...state, [name]: event.target.checked });
+  };
+
+  handleSliderSetPoint = name => (event, value) => {
+    const { state } = this.state;
+    alert(value[1]);
+  }
+
   render() {
     const marksTemperature = [
       {
@@ -80,7 +99,7 @@ class Advanced extends Component {
     return(
       <Grow in={true}>
         <div className="Advanced">
-          <h2>Advanced Mode</h2>
+        <div className="label" style={{padding: '0.5rem'}}>Advanced Mode</div>
           <Grid container>
 
             <Grid item xs={6}>
@@ -88,134 +107,159 @@ class Advanced extends Component {
                 <h4>Mash Tun</h4>
                 <Slider
                   className="temperature"
-                  defaultValue={0}
+                  defaultValue={[0, 0]}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={marksTemperature[4].value}
                   marks={marksTemperature}
-                  valueLabelDisplay="auto"
+                  valueLabelDisplay="on"
+                  onChangeCommitted={this.handleSliderSetPoint("mashTunTemperature")}
                 />
                 <div className="label">Temperature</div>
 
                 <Slider
                   className="water"
-                  defaultValue={0}
+                  defaultValue={[0, 0]}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
                   max={marksWater[4].value}
                   marks={marksWater}
-                  valueLabelDisplay="auto"
+                  valueLabelDisplay="on"
+                  onChangeCommitted={this.handleSliderSetPoint("mashTunWater")}
                 />
                 <div className="label">Water level</div>
 
                 <Slider
                   className="time"
-                  defaultValue={0}
+                  defaultValue={[0, 0]}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={marksTime[4].value}
                   marks={marksTime}
-                  valueLabelDisplay="auto"
+                  valueLabelDisplay="on"
+                  onChangeCommitted={this.handleSliderSetPoint("mashTunTime")}
                 />
                 <div className="label">Process time</div>
-
-                <Button variant="contained" className="button-set">Inlet</Button>
-                <Button variant="contained" className="button-set">Outlet</Button>
+                
+                <p> </p>
+                <h4>Valves</h4>
+                <FormControlLabel
+                  control={<Switch checked={this.state.checkedA} onChange={this.handleChange('checkedA')}  value="checkedA" className="heater" />}
+                  label="Heater"
+                />
+                <FormControlLabel
+                  control={<Switch checked={this.state.checkedA} onChange={this.handleChange('checkedA')}  value="checkedA" />}
+                  label="Inlet"
+                />
+                <FormControlLabel
+                  control={<Switch checked={this.state.checkedB} onChange={this.handleChange('checkedB')}  value="checkedB" />}
+                  label="Outlet"
+                />
               </Paper>
             </Grid>
             
             
-            {/* <Grid item xs={12}>
-              <h4>Mash Tun</h4>
-            </Grid>
-            <Grid item xs={4}>
-              <Paper elevation={2}>
-                <div>Temperature</div>
-                <Button variant="contained" className="button-set">Set</Button>
-                <Button variant="contained" className="button-stop" disabled>Stop</Button>
-              </Paper>
-            </Grid>
-            <Grid item xs={4}>
-              <Paper elevation={2}>
-                <div>Water</div>
-                <Button variant="contained" className="button-set">Set</Button>
-                <Button variant="contained" className="button-stop">Stop</Button>
-              </Paper>
-            </Grid>
-            <Grid item xs={4}>
-              <Paper elevation={2}>
-                <div>Time</div>
-                <Button variant="contained" className="button-set">Set</Button>
-                <Button variant="contained" className="button-stop">Stop</Button>
-              </Paper>
-            </Grid>
-
-
-            <Grid item xs={12}>
-              <h4>Boil Kettle</h4>
-            </Grid> */}
+            
 
             <Grid item xs={6}>
               <Paper elevation={2}>
                 <h4>Boil Kettle</h4>
                 <Slider
                   className="temperature"
-                  defaultValue={0}
+                  defaultValue={[0, 0]}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={marksTemperature[4].value}
                   marks={marksTemperature}
-                  valueLabelDisplay="auto"
+                  valueLabelDisplay="on"
+                  onChangeCommitted={this.handleSliderSetPoint("boilKettleTemperature")}
                 />
                 <div className="label">Temperature</div>
 
                 <Slider
                   className="water"
-                  defaultValue={0}
+                  defaultValue={[0, 12]}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
                   max={marksWater[4].value}
                   marks={marksWater}
-                  valueLabelDisplay="auto"
+                  valueLabelDisplay="on"
+                  onChangeCommitted={this.handleSliderSetPoint("boilKettleWater")}
                 />
                 <div className="label">Water level</div>
 
                 <Slider
                   className="time"
-                  defaultValue={0}
+                  defaultValue={[0, 0]}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={marksTime[4].value}
                   marks={marksTime}
-                  valueLabelDisplay="auto"
+                  valueLabelDisplay="on"
+                  onChangeCommitted={this.handleSliderSetPoint("boilKettleTime")}
                 />
                 <div className="label">Process time</div>
 
-                <Button variant="contained" className="button-set">Inlet</Button>
-                <Button variant="contained" className="button-set">Pump In</Button>
-                <Button variant="contained" className="button-set">Outlet</Button>
+                <p> </p>
+                <h4>Valves</h4>
+                <FormControlLabel
+                  control={<Switch checked={this.state.checkedA} onChange={this.handleChange('checkedA')}  value="checkedA" className="heater" />}
+                  label="Heater"
+                />
+                <FormControlLabel
+                  control={<Switch checked={this.state.checkedA} onChange={this.handleChange('checkedA')}  value="checkedA" />}
+                  label="Water"
+                />
+                <FormControlLabel
+                  control={<Switch checked={this.state.checkedB} onChange={this.handleChange('checkedB')}  value="checkedB" />}
+                  label="Inlet"
+                />
+                <FormControlLabel
+                  control={<Switch checked={this.state.checkedB} onChange={this.handleChange('checkedB')}  value="checkedB" />}
+                  label="Outlet"
+                />
               </Paper>
             </Grid>
 
-            <Grid item xs={4}>
+
+
+
+
+
+
+
+
+            <Grid item xs={6}>
+              <Paper elevation={2}>
+                <h4>Chiller valves</h4>
+                <FormControlLabel
+                  control={<Switch checked={this.state.checkedB} onChange={this.handleChange('checkedB')}  value="checkedB" />}
+                  label="Water"
+                />
+                <FormControlLabel
+                  control={<Switch checked={this.state.checkedB} onChange={this.handleChange('checkedB')}  value="checkedB" />}
+                  label="Wort"
+                />
+              </Paper>
+            </Grid>
+            
+            <Grid item xs={6}>
+              <Paper elevation={2}>
+                <h4>Outlet valve</h4>
+                <FormControlLabel
+                  control={<Switch checked={this.state.checkedB} onChange={this.handleChange('checkedB')}  value="checkedB" />}
+                  label="Dump"
+                />
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12}>
               <Paper elevation={2}>
                 <h4>Pump</h4>
-                <Button variant="contained" className="button-set">Motor</Button>
-              </Paper>
-            </Grid>
-
-            <Grid item xs={4}>
-              <Paper elevation={2}>
-                <h4>Outlet</h4>
-                <Button variant="contained" className="button-set">Dump</Button>
-              </Paper>
-            </Grid>
-
-            <Grid item xs={4}>
-              <Paper elevation={2}>
-                <h4>Chiller</h4>
-                <Button variant="contained" className="button-set">Water</Button>
-                <Button variant="contained" className="button-set">Wort</Button>
+                <FormControlLabel
+                  control={<Switch checked={this.state.checkedB} onChange={this.handleChange('checkedB')}  value="checkedB" className="heater" />}
+                  label="Motor"
+                /> 
               </Paper>
             </Grid>
 
