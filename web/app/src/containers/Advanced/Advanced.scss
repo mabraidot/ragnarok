@@ -17,7 +17,7 @@
 /******* SLIDER *******/
 .Advanced .MuiSlider-root {
     margin: 2em 0 0.7em 0.7em; // 0.7em 0 0.7em 1.4em
-    width: 40vw;// 85vw;
+    width: 37vw;// 85vw;
     height: 8px;
 }
 
@@ -41,20 +41,20 @@
 
 .Advanced .MuiSlider-thumb {
     margin: 2.4em 0 0.7em 1.4em;
-    height: 18px;
-    width: 18px;
-    margin-top: -5px;
+    height: 12px;
+    width: 12px;
+    margin-top: -4px;
     margin-left: -5px;
 }
 
 .Advanced .MuiSlider-track,
 .Advanced .MuiSlider-rail,
 .Advanced .MuiSlider-mark {
-    height: 8px;
+    height: 4px;
 }
 
 .Advanced .MuiSlider-valueLabel {
-    left: calc(-50% + 2px);
+    left: calc(-50% - 4px);
 }
 
 .Advanced .MuiSlider-markLabel {

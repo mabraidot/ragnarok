@@ -12,16 +12,17 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      MashTunFocus: true,
-      BoilKettleFocus: false,
       socket: new WebSocket(BASE_URI),
+      
+      MashTunFocus: true,
       MashTunTemperatureSetPoint: 65,
       MashTunTemperatureProbe: 23.2,
       MashTunWaterSetPoint: 14.5,
       MashTunWaterProbe: 12.8,
       MashTunTimeSetPoint: 9.5,
       MashTunTimeProbe: 5.2,
-
+      
+      BoilKettleFocus: false,
       BoilKettleTemperatureSetPoint: 100,
       BoilKettleTemperatureProbe: 99.8,
       BoilKettleWaterSetPoint: 7.5,
