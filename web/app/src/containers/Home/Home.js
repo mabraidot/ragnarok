@@ -14,19 +14,19 @@ class Home extends Component {
       socket: new Socket(),
 
       MashTunFocus: true,
-      MashTunTemperatureSetPoint: 65,
+      MashTunTemperatureSetPoint: 110,
       MashTunTemperatureProbe: 23.2,
-      MashTunWaterSetPoint: 14.5,
-      MashTunWaterProbe: 12.8,
-      MashTunTimeSetPoint: 9.5,
+      MashTunWaterLevelSetPoint: 16,
+      MashTunWaterLevelProbe: 12.8,
+      MashTunTimeSetPoint: 120,
       MashTunTimeProbe: 5.2,
       
       BoilKettleFocus: false,
-      BoilKettleTemperatureSetPoint: 100,
+      BoilKettleTemperatureSetPoint: 110,
       BoilKettleTemperatureProbe: 99.8,
-      BoilKettleWaterSetPoint: 7.5,
-      BoilKettleWaterProbe: 3.4,
-      BoilKettleTimeSetPoint: 60.0,
+      BoilKettleWaterLevelSetPoint: 16,
+      BoilKettleWaterLevelProbe: 3.4,
+      BoilKettleTimeSetPoint: 120.0,
       BoilKettleTimeProbe: 20.5,
     };
     this.handleAdvancedClick = this.handleAdvancedClick.bind(this);
@@ -49,11 +49,11 @@ class Home extends Component {
       if (data.MashTunTemperatureSetPoint) {
         this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint});
       }
-      if (data.MashTunWaterProbe) {
-        this.setState({MashTunWaterProbe: data.MashTunWaterProbe});
+      if (data.MashTunWaterLevelProbe) {
+        this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe});
       }
-      if (data.MashTunWaterSetPoint) {
-        this.setState({MashTunWaterSetPoint: data.MashTunWaterSetPoint});
+      if (data.MashTunWaterLevelSetPoint) {
+        this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint});
       }
       if (data.MashTunTimeProbe) {
         this.setState({MashTunTimeProbe: data.MashTunTimeProbe});
@@ -68,11 +68,11 @@ class Home extends Component {
       if (data.BoilKettleTemperatureSetPoint) {
         this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint});
       }
-      if (data.BoilKettleWaterProbe) {
-        this.setState({BoilKettleWaterProbe: data.BoilKettleWaterProbe});
+      if (data.BoilKettleWaterLevelProbe) {
+        this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe});
       }
-      if (data.BoilKettleWaterSetPoint) {
-        this.setState({BoilKettleWaterSetPoint: data.BoilKettleWaterSetPoint});
+      if (data.BoilKettleWaterLevelSetPoint) {
+        this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint});
       }
       if (data.BoilKettleTimeProbe) {
         this.setState({BoilKettleTimeProbe: data.BoilKettleTimeProbe});
@@ -80,7 +80,7 @@ class Home extends Component {
       if (data.BoilKettleTimeSetPoint) {
         this.setState({BoilKettleTimeSetPoint: data.BoilKettleTimeSetPoint});
       }
-      console.log('[WS]: message!:', data);
+      // console.log('[WS]: message!:', data);
     };
   }
 
@@ -97,15 +97,15 @@ class Home extends Component {
     const { 
       MashTunTemperatureSetPoint,
       MashTunTemperatureProbe,
-      MashTunWaterSetPoint,
-      MashTunWaterProbe,
+      MashTunWaterLevelSetPoint,
+      MashTunWaterLevelProbe,
       MashTunTimeSetPoint,
       MashTunTimeProbe,
       MashTunFocus,
       BoilKettleTemperatureSetPoint,
       BoilKettleTemperatureProbe,
-      BoilKettleWaterSetPoint,
-      BoilKettleWaterProbe,
+      BoilKettleWaterLevelSetPoint,
+      BoilKettleWaterLevelProbe,
       BoilKettleTimeSetPoint,
       BoilKettleTimeProbe,
       BoilKettleFocus,
@@ -121,8 +121,8 @@ class Home extends Component {
                 title='Mash Tun'
                 setPointTemperature={MashTunTemperatureSetPoint}
                 valueTemperature={MashTunTemperatureProbe}
-                setPointWater={MashTunWaterSetPoint}
-                valueWater={MashTunWaterProbe}
+                setPointWater={MashTunWaterLevelSetPoint}
+                valueWater={MashTunWaterLevelProbe}
                 setPointTime={MashTunTimeSetPoint}
                 valueTime={MashTunTimeProbe}
                 focus={MashTunFocus}
@@ -142,8 +142,8 @@ class Home extends Component {
                 title='Boil Kettle'
                 setPointTemperature={BoilKettleTemperatureSetPoint}
                 valueTemperature={BoilKettleTemperatureProbe}
-                setPointWater={BoilKettleWaterSetPoint}
-                valueWater={BoilKettleWaterProbe}
+                setPointWater={BoilKettleWaterLevelSetPoint}
+                valueWater={BoilKettleWaterLevelProbe}
                 setPointTime={BoilKettleTimeSetPoint}
                 valueTime={BoilKettleTimeProbe}
                 focus={BoilKettleFocus}

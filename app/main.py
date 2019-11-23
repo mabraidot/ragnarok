@@ -3,6 +3,7 @@ from app.routes import routes
 from app.webSocket import webSocket
 from app.cooking import Cooking
 from app.hardware.temperatureProbe import temperatureProbe
+from app.hardware.waterLevelProbe import waterLevelProbe
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 app = web.Application()
@@ -18,6 +19,8 @@ app.cooking = Cooking(app)
 # Hardware
 app.mashTunTempProbe = temperatureProbe(app, 'MashTunTemperatureProbe')
 app.boilKettleTempProbe = temperatureProbe(app, 'BoilKettleTemperatureProbe')
+app.mashTunWaterLevelProbe = waterLevelProbe(app, 'MashTunWaterLevelProbe')
+app.boilKettleWaterLevelProbe = waterLevelProbe(app, 'BoilKettleWaterLevelProbe')
 
 # API routes definition
 r = routes(app)

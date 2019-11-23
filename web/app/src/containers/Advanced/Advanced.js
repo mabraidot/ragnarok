@@ -20,8 +20,8 @@ class Advanced extends Component {
       
       MashTunTemperatureSetPoint: 65,
       MashTunTemperatureProbe: 23.2,
-      MashTunWaterSetPoint: 14.5,
-      MashTunWaterProbe: 12.8,
+      MashTunWaterLevelSetPoint: 14.5,
+      MashTunWaterLevelProbe: 12.8,
       MashTunTimeSetPoint: 15,
       MashTunTimeProbe: 5,
       
@@ -32,8 +32,8 @@ class Advanced extends Component {
 
       BoilKettleTemperatureSetPoint: 100,
       BoilKettleTemperatureProbe: 40.8,
-      BoilKettleWaterSetPoint: 7.5,
-      BoilKettleWaterProbe: 3.4,
+      BoilKettleWaterLevelSetPoint: 7.5,
+      BoilKettleWaterLevelProbe: 3.4,
       BoilKettleTimeSetPoint: 60,
       BoilKettleTimeProbe: 20,
 
@@ -56,11 +56,11 @@ class Advanced extends Component {
       if (data.MashTunTemperatureSetPoint) {
         this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint});
       }
-      if (data.MashTunWaterProbe) {
-        this.setState({MashTunWaterProbe: data.MashTunWaterProbe});
+      if (data.MashTunWaterLevelProbe) {
+        this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe});
       }
-      if (data.MashTunWaterSetPoint) {
-        this.setState({MashTunWaterSetPoint: data.MashTunWaterSetPoint});
+      if (data.MashTunWaterLevelSetPoint) {
+        this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint});
       }
       if (data.MashTunTimeProbe) {
         this.setState({MashTunTimeProbe: data.MashTunTimeProbe});
@@ -75,11 +75,11 @@ class Advanced extends Component {
       if (data.BoilKettleTemperatureSetPoint) {
         this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint});
       }
-      if (data.BoilKettleWaterProbe) {
-        this.setState({BoilKettleWaterProbe: data.BoilKettleWaterProbe});
+      if (data.BoilKettleWaterLevelProbe) {
+        this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe});
       }
-      if (data.BoilKettleWaterSetPoint) {
-        this.setState({BoilKettleWaterSetPoint: data.BoilKettleWaterSetPoint});
+      if (data.BoilKettleWaterLevelSetPoint) {
+        this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint});
       }
       if (data.BoilKettleTimeProbe) {
         this.setState({BoilKettleTimeProbe: data.BoilKettleTimeProbe});
@@ -165,14 +165,14 @@ class Advanced extends Component {
 
                 <Slider
                   className="water"
-                  defaultValue={this.state.MashTunWaterSetPoint}
+                  defaultValue={this.state.MashTunWaterLevelSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
                   max={16}
                   valueLabelDisplay="auto"
-                  onChangeCommitted={this.handleSliderSetPoint("MashTunWaterSetPoint")}
+                  onChangeCommitted={this.handleSliderSetPoint("MashTunWaterLevelSetPoint")}
                 />
-                <div className="label"><span>{this.state.MashTunWaterProbe}L</span> / {this.state.MashTunWaterSetPoint}L</div>
+                <div className="label"><span>{this.state.MashTunWaterLevelProbe}L</span> / {this.state.MashTunWaterLevelSetPoint}L</div>
                 <div className="foot">Water Level</div>
 
                 <Slider
@@ -224,14 +224,14 @@ class Advanced extends Component {
 
                 <Slider
                   className="water"
-                  defaultValue={this.state.BoilKettleWaterSetPoint}
+                  defaultValue={this.state.BoilKettleWaterLevelSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
                   max={16}
                   valueLabelDisplay="auto"
-                  onChangeCommitted={this.handleSliderSetPoint("BoilKettleWaterSetPoint")}
+                  onChangeCommitted={this.handleSliderSetPoint("BoilKettleWaterLevelSetPoint")}
                 />
-                <div className="label"><span>{this.state.BoilKettleWaterProbe}L</span> / {this.state.BoilKettleWaterSetPoint}L</div>
+                <div className="label"><span>{this.state.BoilKettleWaterLevelProbe}L</span> / {this.state.BoilKettleWaterLevelSetPoint}L</div>
                 <div className="foot">Water Level</div>
 
                 <Slider
