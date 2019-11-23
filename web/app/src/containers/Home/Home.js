@@ -5,15 +5,14 @@ import Grow from '@material-ui/core/Grow';
 import Fab from '@material-ui/core/Fab';
 import AdvancedIcon from '@material-ui/icons/TouchAppRounded';
 import Gauge from '../../components/Gauge';
-
-const BASE_URI = 'ws://localhost:8000/ws';
+import Socket from './../../components/Socket/Socket';
 
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      socket: new WebSocket(BASE_URI),
-      
+      socket: new Socket(),
+
       MashTunFocus: true,
       MashTunTemperatureSetPoint: 65,
       MashTunTemperatureProbe: 23.2,
@@ -34,10 +33,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    const { socket } = this.state;
-    socket.onopen = () => {
-        console.log('[WS]: Socket connected!');
-    };
+    const { socket } = this.state.socket;
     socket.onmessage = (result) => {
       const data = JSON.parse(result.data)
       if (data.MashTunTemperatureProbe) {
@@ -54,17 +50,10 @@ class Home extends Component {
       }
       console.log('[WS]: message!:', data, data[0]);
     };
-    socket.onerror = (error) => {
-      console.log('[WS]: error!:', error.message);
-      socket.close();
-    };
-    socket.onclose = (close) => {
-      console.log('[WS]: Closing:', close.code, close.reason);
-    };
   }
 
   componentWillUnmount() {
-    const { socket } = this.state;
+    const { socket } = this.state.socket;
     socket.close();
   }
 

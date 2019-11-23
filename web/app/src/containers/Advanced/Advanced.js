@@ -6,13 +6,13 @@ import Paper from '@material-ui/core/Paper';
 import Slider from '@material-ui/core/Slider';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import Socket from './../../components/Socket/Socket';
 
 class Advanced extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      checkedA: false,
-      checkedB: false,
+      socket: new Socket(),
 
       MashTunHeater: false,
       MashTunValveInlet: false,
@@ -45,15 +45,36 @@ class Advanced extends Component {
     };
   }
   
-  handleChange = name => event => {
+  componentDidMount() {
+    const { socket } = this.state.socket;
+    socket.onmessage = (result) => {
+      const data = JSON.parse(result.data)
+      // if (data.MashTunTemperatureProbe) {
+      //   this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe});
+      // }
+      // if (data.BoilKettleTemperatureProbe) {
+      //   this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe});
+      // }
+      console.log('[WS]: message!:', data, data[0]);
+    };
+  }
+
+  componentWillUnmount() {
+    const { socket } = this.state.socket;
+    socket.close();
+  }
+
+  handleSwitchChange = name => event => {
     const { state } = this.state;
     this.setState({ ...state, [name]: event.target.checked });
+    console.log('[ADV]: Switch:', name, (event.target.checked) ? 'ON' : 'OFF');
   };
 
   handleSliderSetPoint = name => (event, value) => {
     const { state } = this.state;
     this.setState({ ...state, [name]: value[1] });
-    // alert(this.state.MashTunTemperatureSetPoint);
+    console.log('[ADV]: CurrentPoint:', name, value[0]);
+    console.log('[ADV]: SetPoint:', name, value[1]);
   }
 
   render() {
@@ -127,17 +148,17 @@ class Advanced extends Component {
                 <div className="label">Process time</div>
                 
                 <p> </p>
-                <h4>Valves</h4>
+                <h4>Mash Tun Valves</h4>
                 <FormControlLabel
-                  control={<Switch checked={this.state.MashTunHeater} onChange={this.handleChange('MashTunHeater')}  value="MashTunHeater" className="heater" />}
+                  control={<Switch checked={this.state.MashTunHeater} onChange={this.handleSwitchChange('MashTunHeater')}  value="MashTunHeater" className="heater" />}
                   label="Heater"
                 />
                 <FormControlLabel
-                  control={<Switch checked={this.state.MashTunValveInlet} onChange={this.handleChange('MashTunValveInlet')}  value="MashTunValveInlet" />}
+                  control={<Switch checked={this.state.MashTunValveInlet} onChange={this.handleSwitchChange('MashTunValveInlet')}  value="MashTunValveInlet" />}
                   label="Inlet"
                 />
                 <FormControlLabel
-                  control={<Switch checked={this.state.MashTunValveOutlet} onChange={this.handleChange('MashTunValveOutlet')}  value="MashTunValveOutlet" />}
+                  control={<Switch checked={this.state.MashTunValveOutlet} onChange={this.handleSwitchChange('MashTunValveOutlet')}  value="MashTunValveOutlet" />}
                   label="Outlet"
                 />
               </Paper>
@@ -186,21 +207,21 @@ class Advanced extends Component {
                 <div className="label">Process time</div>
 
                 <p> </p>
-                <h4>Valves</h4>
+                <h4>Boil Kettle Valves</h4>
                 <FormControlLabel
-                  control={<Switch checked={this.state.BoilKettleHeater} onChange={this.handleChange('BoilKettleHeater')}  value="BoilKettleHeater" className="heater" />}
+                  control={<Switch checked={this.state.BoilKettleHeater} onChange={this.handleSwitchChange('BoilKettleHeater')}  value="BoilKettleHeater" className="heater" />}
                   label="Heater"
                 />
                 <FormControlLabel
-                  control={<Switch checked={this.state.BoilKettleValveWater} onChange={this.handleChange('BoilKettleValveWater')}  value="BoilKettleValveWater" />}
+                  control={<Switch checked={this.state.BoilKettleValveWater} onChange={this.handleSwitchChange('BoilKettleValveWater')}  value="BoilKettleValveWater" />}
                   label="Water"
                 />
                 <FormControlLabel
-                  control={<Switch checked={this.state.BoilKettleValveInlet} onChange={this.handleChange('BoilKettleValveInlet')}  value="BoilKettleValveInlet" />}
+                  control={<Switch checked={this.state.BoilKettleValveInlet} onChange={this.handleSwitchChange('BoilKettleValveInlet')}  value="BoilKettleValveInlet" />}
                   label="Inlet"
                 />
                 <FormControlLabel
-                  control={<Switch checked={this.state.BoilKettleValveOutlet} onChange={this.handleChange('BoilKettleValveOutlet')}  value="BoilKettleValveOutlet" />}
+                  control={<Switch checked={this.state.BoilKettleValveOutlet} onChange={this.handleSwitchChange('BoilKettleValveOutlet')}  value="BoilKettleValveOutlet" />}
                   label="Outlet"
                 />
               </Paper>
@@ -218,11 +239,11 @@ class Advanced extends Component {
               <Paper elevation={2}>
                 <h4>Chiller valves</h4>
                 <FormControlLabel
-                  control={<Switch checked={this.state.ChillerValveWater} onChange={this.handleChange('ChillerValveWater')}  value="ChillerValveWater" />}
+                  control={<Switch checked={this.state.ChillerValveWater} onChange={this.handleSwitchChange('ChillerValveWater')}  value="ChillerValveWater" />}
                   label="Water"
                 />
                 <FormControlLabel
-                  control={<Switch checked={this.state.ChillerValveWort} onChange={this.handleChange('ChillerValveWort')}  value="ChillerValveWort" />}
+                  control={<Switch checked={this.state.ChillerValveWort} onChange={this.handleSwitchChange('ChillerValveWort')}  value="ChillerValveWort" />}
                   label="Wort"
                 />
               </Paper>
@@ -232,17 +253,17 @@ class Advanced extends Component {
               <Paper elevation={2}>
                 <h4>Outlet valve</h4>
                 <FormControlLabel
-                  control={<Switch checked={this.state.OutletValveDump} onChange={this.handleChange('OutletValveDump')}  value="OutletValveDump" />}
+                  control={<Switch checked={this.state.OutletValveDump} onChange={this.handleSwitchChange('OutletValveDump')}  value="OutletValveDump" />}
                   label="Dump"
                 />
               </Paper>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <Paper elevation={2}>
                 <h4>Pump</h4>
                 <FormControlLabel
-                  control={<Switch checked={this.state.Pump} onChange={this.handleChange('Pump')}  value="Pump" className="heater" />}
+                  control={<Switch checked={this.state.Pump} onChange={this.handleSwitchChange('Pump')}  value="Pump" className="heater" />}
                   label="Motor"
                 /> 
               </Paper>
