@@ -45,8 +45,40 @@ class Home extends Component {
         // }
         this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe});
       }
+
+      if (data.MashTunTemperatureSetPoint) {
+        this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint});
+      }
+      if (data.MashTunWaterProbe) {
+        this.setState({MashTunWaterProbe: data.MashTunWaterProbe});
+      }
+      if (data.MashTunWaterSetPoint) {
+        this.setState({MashTunWaterSetPoint: data.MashTunWaterSetPoint});
+      }
+      if (data.MashTunTimeProbe) {
+        this.setState({MashTunTimeProbe: data.MashTunTimeProbe});
+      }
+      if (data.MashTunTimeSetPoint) {
+        this.setState({MashTunTimeSetPoint: data.MashTunTimeSetPoint});
+      }
+
       if (data.BoilKettleTemperatureProbe) {
         this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe});
+      }
+      if (data.BoilKettleTemperatureSetPoint) {
+        this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint});
+      }
+      if (data.BoilKettleWaterProbe) {
+        this.setState({BoilKettleWaterProbe: data.BoilKettleWaterProbe});
+      }
+      if (data.BoilKettleWaterSetPoint) {
+        this.setState({BoilKettleWaterSetPoint: data.BoilKettleWaterSetPoint});
+      }
+      if (data.BoilKettleTimeProbe) {
+        this.setState({BoilKettleTimeProbe: data.BoilKettleTimeProbe});
+      }
+      if (data.BoilKettleTimeSetPoint) {
+        this.setState({BoilKettleTimeSetPoint: data.BoilKettleTimeSetPoint});
       }
       console.log('[WS]: message!:', data);
     };
