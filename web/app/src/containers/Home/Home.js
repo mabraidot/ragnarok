@@ -48,7 +48,7 @@ class Home extends Component {
       if (data.BoilKettleTemperatureProbe) {
         this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe});
       }
-      console.log('[WS]: message!:', data, data[0]);
+      console.log('[WS]: message!:', data);
     };
   }
 

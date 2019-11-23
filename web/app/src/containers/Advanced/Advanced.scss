@@ -16,8 +16,8 @@
 
     /******* SLIDER *******/
     .MuiSlider-root {
-        margin: 2em 0 0.7em 0.7em; // 0.7em 0 0.7em 1.4em
-        width: 37vw;// 85vw;
+        margin: 2em 0 -0.2em 0.7em; // 2em 0 0.7em 0.7em
+        width: 40vw;// 85vw;
         height: 8px;
     }
 
@@ -59,7 +59,6 @@
 
     .MuiSlider-markLabel {
         color: rgba(255, 255, 255, 1);
-        margin-top: 0.5em;
     }
 
 
@@ -95,10 +94,22 @@
         margin: 0.5em;
     }
 
-    .label {
-        padding-left: 0.5em;//1.4em;
+    .foot {
+        padding-left: 0.5em;
+        margin: -0.5em 1.5em 0.5em 0.9em;
         font-size: 0.5em;
         text-align: right;
+    }
+
+    .label {
+        padding-left: 1em;
+        font-size: 0.7em;
+        text-transform: uppercase;
+        margin-top: -3.8em;
+        margin-bottom: 2em;
+        span {
+            font-size: 1.6em;
+        }
     }
 
     .button-set, .button-set:hover {

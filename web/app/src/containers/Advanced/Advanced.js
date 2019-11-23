@@ -22,8 +22,8 @@ class Advanced extends Component {
       MashTunTemperatureProbe: 23.2,
       MashTunWaterSetPoint: 14.5,
       MashTunWaterProbe: 12.8,
-      MashTunTimeSetPoint: 9.5,
-      MashTunTimeProbe: 5.2,
+      MashTunTimeSetPoint: 15,
+      MashTunTimeProbe: 5,
       
       BoilKettleHeater: false,
       BoilKettleValveWater: false,
@@ -34,8 +34,8 @@ class Advanced extends Component {
       BoilKettleTemperatureProbe: 40.8,
       BoilKettleWaterSetPoint: 7.5,
       BoilKettleWaterProbe: 3.4,
-      BoilKettleTimeSetPoint: 60.0,
-      BoilKettleTimeProbe: 20.5,
+      BoilKettleTimeSetPoint: 60,
+      BoilKettleTimeProbe: 20,
 
       ChillerValveWater: false,
       ChillerValveWort: false,
@@ -48,20 +48,59 @@ class Advanced extends Component {
   componentDidMount() {
     const { socket } = this.state.socket;
     socket.onmessage = (result) => {
-      const data = JSON.parse(result.data)
-      // if (data.MashTunTemperatureProbe) {
-      //   this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe});
-      // }
-      // if (data.BoilKettleTemperatureProbe) {
-      //   this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe});
-      // }
-      console.log('[WS]: message!:', data, data[0]);
+      const data = JSON.parse(result.data);
+
+      if (data.MashTunTemperatureProbe) {
+        this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe});
+      }
+      if (data.MashTunTemperatureSetPoint) {
+        this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint});
+      }
+      if (data.MashTunWaterProbe) {
+        this.setState({MashTunWaterProbe: data.MashTunWaterProbe});
+      }
+      if (data.MashTunWaterSetPoint) {
+        this.setState({MashTunWaterSetPoint: data.MashTunWaterSetPoint});
+      }
+      if (data.MashTunTimeProbe) {
+        this.setState({MashTunTimeProbe: data.MashTunTimeProbe});
+      }
+      if (data.MashTunTimeSetPoint) {
+        this.setState({MashTunTimeSetPoint: data.MashTunTimeSetPoint});
+      }
+
+      if (data.BoilKettleTemperatureProbe) {
+        this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe});
+      }
+      if (data.BoilKettleTemperatureSetPoint) {
+        this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint});
+      }
+      if (data.BoilKettleWaterProbe) {
+        this.setState({BoilKettleWaterProbe: data.BoilKettleWaterProbe});
+      }
+      if (data.BoilKettleWaterSetPoint) {
+        this.setState({BoilKettleWaterSetPoint: data.BoilKettleWaterSetPoint});
+      }
+      if (data.BoilKettleTimeProbe) {
+        this.setState({BoilKettleTimeProbe: data.BoilKettleTimeProbe});
+      }
+      if (data.BoilKettleTimeSetPoint) {
+        this.setState({BoilKettleTimeSetPoint: data.BoilKettleTimeSetPoint});
+      }
+
+      // console.log('[WS]: message!:', data);
     };
   }
 
   componentWillUnmount() {
     const { socket } = this.state.socket;
     socket.close();
+  }
+
+  intToMinutes = (number) => {
+    var minutes = parseInt(Number(number));
+    var seconds = Math.round((Number(number)-minutes) * 60);
+    return `${minutes.toString().padStart(2,"00")}:${seconds.toString().padStart(2,"00")}`;
   }
 
   handleSwitchChange = name => event => {
@@ -72,40 +111,41 @@ class Advanced extends Component {
 
   handleSliderSetPoint = name => (event, value) => {
     const { state } = this.state;
-    this.setState({ ...state, [name]: value[1] });
-    console.log('[ADV]: CurrentPoint:', name, value[0]);
-    console.log('[ADV]: SetPoint:', name, value[1]);
+    this.setState({ ...state, [name]: value });
+    console.log('[ADV]: SetPoint:', name, value);
   }
 
   render() {
-    const marksTemperature = [
-      { value: 0, label: '0°C' },
-      { value: 25, label: '25°C' },
-      { value: 50, label: '50°C' },
-      { value: 75, label: '75°C' },
-      { value: 100, label: '100°C' },
-    ];
+    
+    // const marksTemperature = [
+    //   { value: 0, label: '0°C' },
+    //   { value: 25, label: '25°C' },
+    //   { value: 50, label: '50°C' },
+    //   { value: 75, label: '75°C' },
+    //   { value: 100, label: '100°C' },
+    // ];
 
-    const marksWater = [
-      { value: 0, label: '0L' },
-      { value: 4, label: '4L' },
-      { value: 8, label: '8L' },
-      { value: 12, label: '12L' },
-      { value: 16, label: '16L' },
-    ];
+    // const marksWater = [
+    //   { value: 0, label: '0L' },
+    //   { value: 4, label: '4L' },
+    //   { value: 8, label: '8L' },
+    //   { value: 12, label: '12L' },
+    //   { value: 16, label: '16L' },
+    // ];
 
-    const marksTime = [
-      { value: 0, label: '0\'' },
-      { value: 30, label: '30\'' },
-      { value: 60, label: '60\'' },
-      { value: 90, label: '90\'' },
-      { value: 120, label: '120\'' },
-    ];
+    // const marksTime = [
+    //   { value: 0, label: '0\'' },
+    //   { value: 30, label: '30\'' },
+    //   { value: 60, label: '60\'' },
+    //   { value: 90, label: '90\'' },
+    //   { value: 120, label: '120\'' },
+    // ];
 
     return(
       <Grow in={true}>
         <div className="Advanced">
-        <div className="label" style={{padding: '0.5rem'}}>Advanced Mode</div>
+        {/* <div className="label" style={{padding: '0.5rem'}}>Advanced Mode</div> */}
+        <h4>Advanced Mode</h4>
           <Grid container>
 
             <Grid item xs={6}>
@@ -113,40 +153,40 @@ class Advanced extends Component {
                 <h4>Mash Tun</h4>
                 <Slider
                   className="temperature"
-                  defaultValue={[this.state.MashTunTemperatureProbe, this.state.MashTunTemperatureSetPoint]}
+                  defaultValue={this.state.MashTunTemperatureSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={1}
-                  max={marksTemperature[4].value}
-                  marks={marksTemperature}
-                  valueLabelDisplay="on"
+                  max={110}
+                  valueLabelDisplay="auto"
                   onChangeCommitted={this.handleSliderSetPoint("MashTunTemperatureSetPoint")}
                 />
-                <div className="label">Temperature</div>
+                <div className="label"><span>{this.state.MashTunTemperatureProbe}°</span> / {this.state.MashTunTemperatureSetPoint}°</div>
+                <div className="foot">Temperature</div>
 
                 <Slider
                   className="water"
-                  defaultValue={[this.state.MashTunWaterProbe, this.state.MashTunWaterSetPoint]}
+                  defaultValue={this.state.MashTunWaterSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
-                  max={marksWater[4].value}
-                  marks={marksWater}
-                  valueLabelDisplay="on"
+                  max={16}
+                  valueLabelDisplay="auto"
                   onChangeCommitted={this.handleSliderSetPoint("MashTunWaterSetPoint")}
                 />
-                <div className="label">Water level</div>
+                <div className="label"><span>{this.state.MashTunWaterProbe}L</span> / {this.state.MashTunWaterSetPoint}L</div>
+                <div className="foot">Water Level</div>
 
                 <Slider
                   className="time"
-                  defaultValue={[this.state.MashTunTimeProbe, this.state.MashTunTimeSetPoint]}
+                  defaultValue={this.state.MashTunTimeSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={1}
-                  max={marksTime[4].value}
-                  marks={marksTime}
-                  valueLabelDisplay="on"
+                  max={120}
+                  valueLabelDisplay="auto"
                   onChangeCommitted={this.handleSliderSetPoint("MashTunTimeSetPoint")}
                 />
-                <div className="label">Process time</div>
-                
+                <div className="label"><span>{this.intToMinutes(this.state.MashTunTimeProbe)}'</span> / {this.intToMinutes(this.state.MashTunTimeSetPoint)}</div>
+                <div className="foot">Process time</div>
+
                 <p> </p>
                 <h4>Mash Tun Valves</h4>
                 <FormControlLabel
@@ -172,39 +212,39 @@ class Advanced extends Component {
                 <h4>Boil Kettle</h4>
                 <Slider
                   className="temperature"
-                  defaultValue={[this.state.BoilKettleTemperatureProbe, this.state.BoilKettleTemperatureSetPoint]}
+                  defaultValue={this.state.BoilKettleTemperatureSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={1}
-                  max={marksTemperature[4].value}
-                  marks={marksTemperature}
-                  valueLabelDisplay="on"
+                  max={110}
+                  valueLabelDisplay="auto"
                   onChangeCommitted={this.handleSliderSetPoint("BoilKettleTemperatureSetPoint")}
                 />
-                <div className="label">Temperature</div>
+                <div className="label"><span>{this.state.BoilKettleTemperatureProbe}°</span> / {this.state.BoilKettleTemperatureSetPoint}°</div>
+                <div className="foot">Temperature</div>
 
                 <Slider
                   className="water"
-                  defaultValue={[this.state.BoilKettleWaterProbe, this.state.BoilKettleWaterSetPoint]}
+                  defaultValue={this.state.BoilKettleWaterSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
-                  max={marksWater[4].value}
-                  marks={marksWater}
-                  valueLabelDisplay="on"
+                  max={16}
+                  valueLabelDisplay="auto"
                   onChangeCommitted={this.handleSliderSetPoint("BoilKettleWaterSetPoint")}
                 />
-                <div className="label">Water level</div>
+                <div className="label"><span>{this.state.BoilKettleWaterProbe}L</span> / {this.state.BoilKettleWaterSetPoint}L</div>
+                <div className="foot">Water Level</div>
 
                 <Slider
                   className="time"
-                  defaultValue={[this.state.BoilKettleTimeProbe, this.state.BoilKettleTimeSetPoint]}
+                  defaultValue={this.state.BoilKettleTimeSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={1}
-                  max={marksTime[4].value}
-                  marks={marksTime}
-                  valueLabelDisplay="on"
+                  max={120}
+                  valueLabelDisplay="auto"
                   onChangeCommitted={this.handleSliderSetPoint("BoilKettleTimeSetPoint")}
                 />
-                <div className="label">Process time</div>
+                <div className="label"><span>{this.intToMinutes(this.state.BoilKettleTimeProbe)}</span> / {this.intToMinutes(this.state.BoilKettleTimeSetPoint)}</div>
+                <div className="foot">Process Time</div>
 
                 <p> </p>
                 <h4>Boil Kettle Valves</h4>
