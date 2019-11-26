@@ -7,6 +7,7 @@ import Slider from '@material-ui/core/Slider';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Socket from './../../components/Socket/Socket';
+import ApiClient from './../../apiClient/ApiClient';
 
 class Advanced extends Component {
   constructor(props) {
@@ -113,6 +114,46 @@ class Advanced extends Component {
     const { state } = this.state;
     this.setState({ ...state, [name]: value });
     console.log('[ADV]: SetPoint:', name, value);
+
+    switch (name) {
+      default:
+      case 'MashTunTemperatureSetPoint':
+          ApiClient.setMashTunTemperature(value).then((resp) => {
+            console.log('---->', resp);
+          });
+          break;
+
+      case 'MashTunWaterLevelSetPoint':
+          ApiClient.setMashTunWaterLevel(value).then((resp) => {
+            console.log('---->', resp);
+          });
+          break;
+
+      case 'MashTunTimeSetPoint':
+          ApiClient.setMashTunTime(value).then((resp) => {
+            console.log('---->', resp);
+          });
+          break;
+
+      case 'BoilKettleTemperatureSetPoint':
+          ApiClient.setBoilKettleTemperature(value).then((resp) => {
+            console.log('---->', resp);
+          });
+          break;
+
+      case 'BoilKettleWaterLevelSetPoint':
+          ApiClient.setBoilKettleWaterLevel(value).then((resp) => {
+            console.log('---->', resp);
+          });
+          break;
+
+      case 'BoilKettleTimeSetPoint':
+          ApiClient.setBoilKettleTime(value).then((resp) => {
+            console.log('---->', resp);
+          });
+          break;
+
+    }
   }
 
   render() {

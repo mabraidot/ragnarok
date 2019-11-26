@@ -1,2 +1,0 @@
-FLASK_APP=ragnarok.py
-FLASK_DEBUG=1
