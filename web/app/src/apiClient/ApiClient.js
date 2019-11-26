@@ -9,11 +9,37 @@ const client = axios.create({
 
 class ApiClient {
   
-  // MASH TUN ///////////////
-  async setMashTunTemperature(newValue = 0) {
+  async setPoint(hardware = 'MashTunTemperatureSetPoint', newValue = 0) {
+
+    let url;
+    switch (hardware) {
+      case 'MashTunTemperatureSetPoint':
+        url = `/mashtun/set/temperature/${newValue}`;
+        break;
+      case 'MashTunWaterLevelSetPoint':
+        url = `/mashtun/set/water/${newValue}`;
+        break;
+
+      case 'MashTunTimeSetPoint':
+        url = `/mashtun/set/time/${newValue}`;
+        break;
+
+      case 'BoilKettleTemperatureSetPoint':
+        url = `/boilkettle/set/temperature/${newValue}`;
+        break;
+
+      case 'BoilKettleWaterLevelSetPoint':
+        url = `/boilkettle/set/water/${newValue}`;
+        break;
+
+      case 'BoilKettleTimeSetPoint':
+        url = `/boilkettle/set/time/${newValue}`;
+        break;
+    }
+
     return client({
       method: 'GET',
-      url: `/mashtun/set/temperature/${newValue}`,
+      url,
       data: null
     }).then(resp => {
       if (resp.data.error) {
@@ -24,10 +50,49 @@ class ApiClient {
     })
   };
 
-  async setMashTunWaterLevel(newValue = 0) {
+
+  async setSwitch(hardware = 'MashTunValveInlet', newValue = false) {
+    
+    let url;
+    switch (hardware) {
+      case 'MashTunHeater':
+        url = `/mashtun/set/heater/${newValue}`;
+        break;
+      case 'MashTunValveInlet':
+        url = `/mashtun/valve/set/inlet/${newValue}`;
+        break;
+      case 'MashTunValveOutlet':
+        url = `/mashtun/valve/set/outlet/${newValue}`;
+        break;
+      case 'BoilKettleHeater':
+        url = `/boilkettle/set/heater/${newValue}`;
+        break;
+      case 'BoilKettleValveWater':
+        url = `/boilkettle/valve/set/water/${newValue}`;
+        break;
+      case 'BoilKettleValveInlet':
+        url = `/boilkettle/valve/set/inlet/${newValue}`;
+        break;
+      case 'BoilKettleValveOutlet':
+        url = `/boilkettle/valve/set/outlet/${newValue}`;
+        break;
+      case 'ChillerValveWater':
+        url = `/chiller/set/water/${newValue}`;
+        break;
+      case 'ChillerValveWort':
+        url = `/chiller/set/wort/${newValue}`;
+        break;
+      case 'OutletValveDump':
+        url = `/outlet/set/${newValue}`;
+        break;
+      case 'Pump':
+        url = `/pump/set/${newValue}`;
+        break;
+    }
+
     return client({
       method: 'GET',
-      url: `/mashtun/set/water/${newValue}`,
+      url,
       data: null
     }).then(resp => {
       if (resp.data.error) {
@@ -38,62 +103,6 @@ class ApiClient {
     })
   };
 
-  async setMashTunTime(newValue = 0) {
-    return client({
-      method: 'GET',
-      url: `/mashtun/set/time/${newValue}`,
-      data: null
-    }).then(resp => {
-      if (resp.data.error) {
-        return resp.data.error;
-      } else {
-        return resp.data.response;
-      }
-    })
-  };
-
-  // BOIL KETTLE ///////////////
-  async setBoilKettleTemperature(newValue = 0) {
-    return client({
-      method: 'GET',
-      url: `/boilkettle/set/temperature/${newValue}`,
-      data: null
-    }).then(resp => {
-      if (resp.data.error) {
-        return resp.data.error;
-      } else {
-        return resp.data.response;
-      }
-    })
-  };
-
-  async setBoilKettleWaterLevel(newValue = 0) {
-    return client({
-      method: 'GET',
-      url: `/boilkettle/set/water/${newValue}`,
-      data: null
-    }).then(resp => {
-      if (resp.data.error) {
-        return resp.data.error;
-      } else {
-        return resp.data.response;
-      }
-    })
-  };
-
-  async setBoilKettleTime(newValue = 0) {
-    return client({
-      method: 'GET',
-      url: `/boilkettle/set/time/${newValue}`,
-      data: null
-    }).then(resp => {
-      if (resp.data.error) {
-        return resp.data.error;
-      } else {
-        return resp.data.response;
-      }
-    })
-  };
 
 }
 

@@ -108,52 +108,22 @@ class Advanced extends Component {
     const { state } = this.state;
     this.setState({ ...state, [name]: event.target.checked });
     console.log('[ADV]: Switch:', name, (event.target.checked) ? 'ON' : 'OFF');
+
+    ApiClient.setSwitch(name, event.target.checked).then((resp) => {
+      console.log('[API]', resp);
+    });
+
   };
 
   handleSliderSetPoint = name => (event, value) => {
     const { state } = this.state;
     this.setState({ ...state, [name]: value });
     console.log('[ADV]: SetPoint:', name, value);
+  
+    ApiClient.setPoint(name, value).then((resp) => {
+      console.log('[API]', resp);
+    });
 
-    switch (name) {
-      default:
-      case 'MashTunTemperatureSetPoint':
-          ApiClient.setMashTunTemperature(value).then((resp) => {
-            console.log('---->', resp);
-          });
-          break;
-
-      case 'MashTunWaterLevelSetPoint':
-          ApiClient.setMashTunWaterLevel(value).then((resp) => {
-            console.log('---->', resp);
-          });
-          break;
-
-      case 'MashTunTimeSetPoint':
-          ApiClient.setMashTunTime(value).then((resp) => {
-            console.log('---->', resp);
-          });
-          break;
-
-      case 'BoilKettleTemperatureSetPoint':
-          ApiClient.setBoilKettleTemperature(value).then((resp) => {
-            console.log('---->', resp);
-          });
-          break;
-
-      case 'BoilKettleWaterLevelSetPoint':
-          ApiClient.setBoilKettleWaterLevel(value).then((resp) => {
-            console.log('---->', resp);
-          });
-          break;
-
-      case 'BoilKettleTimeSetPoint':
-          ApiClient.setBoilKettleTime(value).then((resp) => {
-            console.log('---->', resp);
-          });
-          break;
-
-    }
   }
 
   render() {
