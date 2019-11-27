@@ -11,6 +11,10 @@ class webSocket:
         for ws in self._clients:
             await ws.send_json({topic: data})
 
+    async def sendJson(self, jsonData):
+        for ws in self._clients:
+            await ws.send_json(jsonData)
+
     async def websocket_handler(self, request):
         ws = web.WebSocketResponse()
         await ws.prepare(request)

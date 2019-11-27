@@ -15,19 +15,19 @@ class Home extends Component {
 
       MashTunFocus: true,
       MashTunTemperatureSetPoint: 110,
-      MashTunTemperatureProbe: 23.2,
+      MashTunTemperatureProbe: 0,
       MashTunWaterLevelSetPoint: 16,
-      MashTunWaterLevelProbe: 12.8,
+      MashTunWaterLevelProbe: 0,
       MashTunTimeSetPoint: 120,
-      MashTunTimeProbe: 5.2,
+      MashTunTimeProbe: 0,
       
       BoilKettleFocus: false,
       BoilKettleTemperatureSetPoint: 110,
-      BoilKettleTemperatureProbe: 99.8,
+      BoilKettleTemperatureProbe: 0,
       BoilKettleWaterLevelSetPoint: 16,
-      BoilKettleWaterLevelProbe: 3.4,
+      BoilKettleWaterLevelProbe: 0,
       BoilKettleTimeSetPoint: 120.0,
-      BoilKettleTimeProbe: 20.5,
+      BoilKettleTimeProbe: 0,
     };
     this.handleAdvancedClick = this.handleAdvancedClick.bind(this);
   }
@@ -80,7 +80,7 @@ class Home extends Component {
       if (data.BoilKettleTimeSetPoint) {
         this.setState({BoilKettleTimeSetPoint: data.BoilKettleTimeSetPoint});
       }
-      // console.log('[WS]: message!:', data);
+      console.log('[WS]: message!:', data);
     };
   }
 

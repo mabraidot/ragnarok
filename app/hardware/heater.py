@@ -5,7 +5,7 @@ class heater:
         self.value = False
         self.pwm = 0
         # Start sending the heater state to websocket
-        self.app.jobs.add_job(self.sendToWebSocket, 'interval', seconds=1)
+        # self.app.jobs.add_job(self.sendToWebSocket, 'interval', seconds=1)
     
     def get(self):
         return self.value

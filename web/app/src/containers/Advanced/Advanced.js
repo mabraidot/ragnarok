@@ -20,11 +20,11 @@ class Advanced extends Component {
       MashTunValveOutlet: false,
       
       MashTunTemperatureSetPoint: 65,
-      MashTunTemperatureProbe: 23.2,
+      MashTunTemperatureProbe: 0,
       MashTunWaterLevelSetPoint: 14.5,
-      MashTunWaterLevelProbe: 12.8,
+      MashTunWaterLevelProbe: 0,
       MashTunTimeSetPoint: 15,
-      MashTunTimeProbe: 5,
+      MashTunTimeProbe: 0,
       
       BoilKettleHeater: false,
       BoilKettleValveWater: false,
@@ -32,11 +32,11 @@ class Advanced extends Component {
       BoilKettleValveOutlet: false,
 
       BoilKettleTemperatureSetPoint: 100,
-      BoilKettleTemperatureProbe: 40.8,
+      BoilKettleTemperatureProbe: 0,
       BoilKettleWaterLevelSetPoint: 7.5,
-      BoilKettleWaterLevelProbe: 3.4,
+      BoilKettleWaterLevelProbe: 0,
       BoilKettleTimeSetPoint: 60,
-      BoilKettleTimeProbe: 20,
+      BoilKettleTimeProbe: 0,
 
       ChillerValveWater: false,
       ChillerValveWort: false,
@@ -55,50 +55,60 @@ class Advanced extends Component {
         this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe});
       }
       if (data.MashTunTemperatureSetPoint) {
-        this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint});
+        if (data.MashTunTemperatureSetPoint !== this.state.MashTunTemperatureSetPoint) {
+          this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint});
+        }
       }
       if (data.MashTunWaterLevelProbe) {
         this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe});
       }
       if (data.MashTunWaterLevelSetPoint) {
-        this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint});
+        if (data.MashTunWaterLevelSetPoint !== this.state.MashTunWaterLevelSetPoint) {
+          this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint});
+        }
       }
       if (data.MashTunTimeProbe) {
         this.setState({MashTunTimeProbe: data.MashTunTimeProbe});
       }
       if (data.MashTunTimeSetPoint) {
-        this.setState({MashTunTimeSetPoint: data.MashTunTimeSetPoint});
+        if (data.MashTunTimeSetPoint !== this.state.MashTunTimeSetPoint) {
+          this.setState({MashTunTimeSetPoint: data.MashTunTimeSetPoint});
+        }
       }
 
       if (data.BoilKettleTemperatureProbe) {
         this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe});
       }
       if (data.BoilKettleTemperatureSetPoint) {
-        this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint});
+        if (data.BoilKettleTemperatureSetPoint !== this.state.BoilKettleTemperatureSetPoint) {
+          this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint});
+        }
       }
       if (data.BoilKettleWaterLevelProbe) {
         this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe});
       }
       if (data.BoilKettleWaterLevelSetPoint) {
-        this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint});
+        if (data.BoilKettleWaterLevelSetPoint !== this.state.BoilKettleWaterLevelSetPoint) {
+          this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint});
+        }
       }
       if (data.BoilKettleTimeProbe) {
         this.setState({BoilKettleTimeProbe: data.BoilKettleTimeProbe});
       }
       if (data.BoilKettleTimeSetPoint) {
-        this.setState({BoilKettleTimeSetPoint: data.BoilKettleTimeSetPoint});
+        if (data.BoilKettleTimeSetPoint !== this.state.BoilKettleTimeSetPoint) {
+          this.setState({BoilKettleTimeSetPoint: data.BoilKettleTimeSetPoint});
+        }
       }
 
       if (data.MashTunHeater) {
         this.setState({MashTunHeater: data.MashTunHeater});
-        console.log('[WS]: message!:', data);
       }
       if (data.BoilKettleHeater) {
         this.setState({BoilKettleHeater: data.BoilKettleHeater});
-        console.log('[WS]: message!:', data);
       }
 
-      // console.log('[WS]: message!:', data);
+      console.log('[WS]: message!:', data);
     };
   }
 
