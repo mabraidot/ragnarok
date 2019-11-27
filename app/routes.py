@@ -98,43 +98,44 @@ class routes:
 
     ## VALVES ###########################
     def setMashTunValveInlet(self, request):
-        on = request.match_info.get('on', False)
+        on = request.match_info.get('on', 0)
         return web.json_response({'response': str(on)})
 
 
     def setMashTunValveOutlet(self, request):
-        on = request.match_info.get('on', False)
+        on = request.match_info.get('on', 0)
         return web.json_response({'response': str(on)})
 
 
     def setBoilKettleValveWater(self, request):
-        on = request.match_info.get('on', False)
+        on = request.match_info.get('on', 0)
         return web.json_response({'response': str(on)})
 
 
     def setBoilKettleValveInlet(self, request):
-        on = request.match_info.get('on', False)
+        on = request.match_info.get('on', 0)
         return web.json_response({'response': str(on)})
 
 
     def setBoilKettleValveOutlet(self, request):
-        on = request.match_info.get('on', False)
+        on = request.match_info.get('on', 0)
         return web.json_response({'response': str(on)})
 
 
     def setChillerValveWater(self, request):
-        on = request.match_info.get('on', False)
+        on = request.match_info.get('on', 0)
         return web.json_response({'response': str(on)})
 
 
     def setChillerValveWort(self, request):
-        on = request.match_info.get('on', False)
+        on = request.match_info.get('on', 0)
         return web.json_response({'response': str(on)})
 
 
     def setOutletValve(self, request):
-        degrees = request.match_info.get('on', False)
-        return web.json_response({'response': str(degrees)})
+        on = request.match_info.get('on', 0)
+        self.app.outletValveDump.set(on)
+        return web.json_response({'response': str(on)})
 
 
     ## PUMP #########################

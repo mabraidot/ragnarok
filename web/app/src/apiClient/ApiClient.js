@@ -60,31 +60,31 @@ class ApiClient {
         url = `/mashtun/set/heater/${newValue}`;
         break;
       case 'MashTunValveInlet':
-        url = `/mashtun/valve/set/inlet/${newValue}`;
+        url = `/mashtun/valve/set/inlet/${(newValue) ? 100 : 0}`;
         break;
       case 'MashTunValveOutlet':
-        url = `/mashtun/valve/set/outlet/${newValue}`;
+        url = `/mashtun/valve/set/outlet/${(newValue) ? 100 : 0}`;
         break;
       case 'BoilKettleHeater':
         url = `/boilkettle/set/heater/${newValue}`;
         break;
       case 'BoilKettleValveWater':
-        url = `/boilkettle/valve/set/water/${newValue}`;
+        url = `/boilkettle/valve/set/water/${(newValue) ? 100 : 0}`;
         break;
       case 'BoilKettleValveInlet':
-        url = `/boilkettle/valve/set/inlet/${newValue}`;
+        url = `/boilkettle/valve/set/inlet/${(newValue) ? 100 : 0}`;
         break;
       case 'BoilKettleValveOutlet':
-        url = `/boilkettle/valve/set/outlet/${newValue}`;
+        url = `/boilkettle/valve/set/outlet/${(newValue) ? 100 : 0}`;
         break;
       case 'ChillerValveWater':
-        url = `/chiller/set/water/${newValue}`;
+        url = `/chiller/set/water/${(newValue) ? 100 : 0}`;
         break;
       case 'ChillerValveWort':
-        url = `/chiller/set/wort/${newValue}`;
+        url = `/chiller/set/wort/${(newValue) ? 100 : 0}`;
         break;
       case 'OutletValveDump':
-        url = `/outlet/set/${newValue}`;
+        url = `/outlet/set/${(newValue) ? 100 : 0}`;
         break;
       default:
       case 'Pump':

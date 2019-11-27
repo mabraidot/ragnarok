@@ -3,6 +3,7 @@ from app.routes import routes
 from app.webSocket import webSocket
 from app.cooking import Cooking
 from app.hardware.kettle import kettle
+from app.hardware.valve import valve
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 app = web.Application()
@@ -18,6 +19,7 @@ app.cooking = Cooking(app)
 # Hardware
 app.mashTun = kettle(app, 'MashTun')
 app.boilKettle = kettle(app, 'BoilKettle')
+app.outletValveDump = valve(app, 'OutletValveDump')
 
 # API routes definition
 r = routes(app)

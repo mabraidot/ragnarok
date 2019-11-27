@@ -108,6 +108,10 @@ class Advanced extends Component {
         this.setState({BoilKettleHeater: data.BoilKettleHeater});
       }
 
+      if (data.OutletValveDump) {
+        this.setState({OutletValveDump: (data.OutletValveDump === '0') ? false : true});
+      }
+
       console.log('[WS]: message!:', data);
     };
   }
