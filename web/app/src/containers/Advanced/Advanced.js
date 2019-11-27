@@ -89,6 +89,15 @@ class Advanced extends Component {
         this.setState({BoilKettleTimeSetPoint: data.BoilKettleTimeSetPoint});
       }
 
+      if (data.MashTunHeater) {
+        this.setState({MashTunHeater: data.MashTunHeater});
+        console.log('[WS]: message!:', data);
+      }
+      if (data.BoilKettleHeater) {
+        this.setState({BoilKettleHeater: data.BoilKettleHeater});
+        console.log('[WS]: message!:', data);
+      }
+
       // console.log('[WS]: message!:', data);
     };
   }

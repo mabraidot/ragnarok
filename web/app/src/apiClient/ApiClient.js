@@ -13,6 +13,7 @@ class ApiClient {
 
     let url;
     switch (hardware) {
+      default:
       case 'MashTunTemperatureSetPoint':
         url = `/mashtun/set/temperature/${newValue}`;
         break;
@@ -85,6 +86,7 @@ class ApiClient {
       case 'OutletValveDump':
         url = `/outlet/set/${newValue}`;
         break;
+      default:
       case 'Pump':
         url = `/pump/set/${newValue}`;
         break;
