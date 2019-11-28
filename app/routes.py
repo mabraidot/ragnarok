@@ -103,36 +103,43 @@ class routes:
     ## VALVES ###########################
     def setMashTunValveInlet(self, request):
         on = request.match_info.get('on', 0)
+        self.app.mashTunValveInlet.set(on)
         return web.json_response({'response': str(on)})
 
 
     def setMashTunValveOutlet(self, request):
         on = request.match_info.get('on', 0)
+        self.app.mashTunValveOutlet.set(on)
         return web.json_response({'response': str(on)})
 
 
     def setBoilKettleValveWater(self, request):
         on = request.match_info.get('on', 0)
+        self.app.boilKettleValveWater.set(on)
         return web.json_response({'response': str(on)})
 
 
     def setBoilKettleValveInlet(self, request):
         on = request.match_info.get('on', 0)
+        self.app.boilKettleValveInlet.set(on)
         return web.json_response({'response': str(on)})
 
 
     def setBoilKettleValveOutlet(self, request):
         on = request.match_info.get('on', 0)
+        self.app.boilKettleValveOutlet.set(on)
         return web.json_response({'response': str(on)})
 
 
     def setChillerValveWater(self, request):
         on = request.match_info.get('on', 0)
+        self.app.chillerValveWater.set(on)
         return web.json_response({'response': str(on)})
 
 
     def setChillerValveWort(self, request):
         on = request.match_info.get('on', 0)
+        self.app.chillerValveWort.set(on)
         return web.json_response({'response': str(on)})
 
 

@@ -111,6 +111,31 @@ class Advanced extends Component {
       if (data.OutletValveDump) {
         this.setState({OutletValveDump: (data.OutletValveDump === '0') ? false : true});
       }
+      if (data.ChillerValveWort) {
+        this.setState({ChillerValveWort: (data.ChillerValveWort === '0') ? false : true});
+      }
+      if (data.ChillerValveWater) {
+        this.setState({ChillerValveWater: (data.ChillerValveWater === '0') ? false : true});
+      }
+      if (data.BoilKettleValveOutlet) {
+        this.setState({BoilKettleValveOutlet: (data.BoilKettleValveOutlet === '0') ? false : true});
+      }
+      if (data.BoilKettleValveInlet) {
+        this.setState({BoilKettleValveInlet: (data.BoilKettleValveInlet === '0') ? false : true});
+      }
+      if (data.BoilKettleValveWater) {
+        this.setState({BoilKettleValveWater: (data.BoilKettleValveWater === '0') ? false : true});
+      }
+      if (data.MashTunValveOutlet) {
+        this.setState({MashTunValveOutlet: (data.MashTunValveOutlet === '0') ? false : true});
+      }
+      if (data.MashTunValveInlet) {
+        this.setState({MashTunValveInlet: (data.MashTunValveInlet === '0') ? false : true});
+      }
+      
+      if (data.Pump) {
+        this.setState({Pump: (data.Pump === '0') ? false : true});
+      }
 
       console.log('[WS]: message!:', data);
     };

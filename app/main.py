@@ -19,7 +19,15 @@ app.cooking = Cooking(app)
 # Hardware
 app.mashTun = kettle(app, 'MashTun')
 app.boilKettle = kettle(app, 'BoilKettle')
+
 app.outletValveDump = valve(app, 'OutletValveDump')
+app.chillerValveWort = valve(app, 'ChillerValveWort')
+app.chillerValveWater = valve(app, 'ChillerValveWater')
+app.boilKettleValveOutlet = valve(app, 'BoilKettleValveOutlet')
+app.boilKettleValveInlet = valve(app, 'BoilKettleValveInlet')
+app.boilKettleValveWater = valve(app, 'BoilKettleValveWater')
+app.mashTunValveOutlet = valve(app, 'MashTunValveOutlet')
+app.mashTunValveInlet = valve(app, 'MashTunValveInlet')
 
 # API routes definition
 r = routes(app)
