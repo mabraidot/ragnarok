@@ -15,7 +15,9 @@ class Power extends Component {
   
   handleClick = () => {
     this.setState({hover: !this.state.hover})
-
+    if (!this.state.hover) {
+      console.log('[SYS]: Powering down ...');
+    }
     // Logic to Turn off the machine
   }
   
@@ -23,7 +25,7 @@ class Power extends Component {
     return(
       <Grow in={true}>
         <div className="Power-button">
-          <PowerIcon className={(this.state.hover) ? "button-hover" : "button"} onMouseDown={this.handleClick} onMouseUp={this.handleClick} />
+          <PowerIcon className={(this.state.hover) ? "button-hover" : "button"} onTouchStart={this.handleClick} onTouchEnd={this.handleClick} />
           <p>Power Off</p>
         </div>
       </Grow>
