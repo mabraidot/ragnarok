@@ -89,13 +89,13 @@ class routes:
 
     ## HEATERS ###########################
     def setMashTunHeater(self, request):
-        on = request.match_info.get('on', 0)
+        on = request.match_info.get('on', False)
         self.app.mashTun.setHeater(on)
         return web.json_response({'response': str(on)})
 
 
     def setBoilKettleHeater(self, request):
-        on = request.match_info.get('on', 0)
+        on = request.match_info.get('on', False)
         self.app.boilKettle.setHeater(on)
         return web.json_response({'response': str(on)})
 
@@ -152,4 +152,5 @@ class routes:
     ## PUMP #########################
     def setPump(self, request):
         on = request.match_info.get('on', False)
+        self.app.pump.set(on)
         return web.json_response({'response': str(on)})

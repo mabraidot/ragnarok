@@ -134,7 +134,7 @@ class Advanced extends Component {
       }
       
       if (data.Pump) {
-        this.setState({Pump: (data.Pump === '0') ? false : true});
+        this.setState({Pump: data.Pump});
       }
 
       console.log('[WS]: message!:', data);

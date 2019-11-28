@@ -4,6 +4,7 @@ from app.webSocket import webSocket
 from app.cooking import Cooking
 from app.hardware.kettle import kettle
 from app.hardware.valve import valve
+from app.hardware.pump import pump
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 app = web.Application()
@@ -19,6 +20,8 @@ app.cooking = Cooking(app)
 # Hardware
 app.mashTun = kettle(app, 'MashTun')
 app.boilKettle = kettle(app, 'BoilKettle')
+
+app.pump = pump(app, 'Pump')
 
 app.outletValveDump = valve(app, 'OutletValveDump')
 app.chillerValveWort = valve(app, 'ChillerValveWort')
