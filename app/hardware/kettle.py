@@ -36,7 +36,9 @@ class kettle:
     
     async def sendToWebSocket(self):
         data = {}
+        data[self.name + 'TemperatureSetPoint'] = self.temperatureSetPoint
         data[self.name + 'TemperatureProbe'] = self.getTemperature()
+        data[self.name + 'WaterLevelSetPoint'] = self.waterSetPoint
         data[self.name + 'WaterLevelProbe'] = self.getWaterLevel()
         data[self.name + 'Heater'] = self.getHeater()
         

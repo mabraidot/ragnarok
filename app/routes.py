@@ -54,11 +54,13 @@ class routes:
     ## MASH TUN ###########################
     def setMashTunTemperature(self, request):
         degrees = request.match_info.get('degrees', 0)
+        self.app.mashTun.setTemperature(degrees)
         return web.json_response({'response': str(degrees)})
     
 
     def setMashTunWaterLevel(self, request):
         liters = request.match_info.get('liters', 0)
+        self.app.mashTun.setWaterLevel(liters)
         return web.json_response({'response': str(liters)})
     
     
@@ -70,11 +72,13 @@ class routes:
     ## BOILER KETTLE #########################
     def setBoilKettleTemperature(self, request):
         degrees = request.match_info.get('degrees', 0)
+        self.app.boilKettle.setTemperature(degrees)
         return web.json_response({'response': str(degrees)})
     
     
     def setBoilKettleWaterLevel(self, request):
         liters = request.match_info.get('liters', 0)
+        self.app.boilKettle.setWaterLevel(liters)
         return web.json_response({'response': str(liters)})
     
     
@@ -86,13 +90,13 @@ class routes:
     ## HEATERS ###########################
     def setMashTunHeater(self, request):
         on = request.match_info.get('on', 0)
-        self.app.mashTunHeater.set(on)
+        self.app.mashTun.setHeater(on)
         return web.json_response({'response': str(on)})
 
 
     def setBoilKettleHeater(self, request):
         on = request.match_info.get('on', 0)
-        self.app.boilKettleHeater.set(on)
+        self.app.boilKettle.setHeater(on)
         return web.json_response({'response': str(on)})
 
 
