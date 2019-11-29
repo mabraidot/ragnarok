@@ -1,7 +1,8 @@
 class heater:
-    def __init__(self, app, name = 'MashTunHeater'):
+    def __init__(self, app, pin, name = 'MashTunHeater'):
         self.app = app
         self.name = name
+        self.pin = pin
         self.value = False
         self.pwm = 0
         # Start sending the heater state to websocket
@@ -18,4 +19,4 @@ class heater:
     
     async def sendToWebSocket(self):
         state = self.get()
-        await self.app.ws.send(state, self.name)
+        await self.app.ws.send(str(state), self.name)

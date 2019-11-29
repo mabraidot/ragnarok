@@ -102,10 +102,10 @@ class Advanced extends Component {
       }
 
       if (data.MashTunHeater) {
-        this.setState({MashTunHeater: data.MashTunHeater});
+        this.setState({MashTunHeater: (data.MashTunHeater === 'False') ? false : true});
       }
       if (data.BoilKettleHeater) {
-        this.setState({BoilKettleHeater: data.BoilKettleHeater});
+        this.setState({BoilKettleHeater: (data.BoilKettleHeater === 'False') ? false : true});
       }
 
       if (data.OutletValveDump) {
@@ -134,7 +134,7 @@ class Advanced extends Component {
       }
       
       if (data.Pump) {
-        this.setState({Pump: data.Pump});
+        this.setState({Pump: (data.Pump === 'False') ? false : true});
       }
 
       console.log('[WS]: message!:', data);

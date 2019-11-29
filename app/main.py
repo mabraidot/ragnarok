@@ -6,6 +6,10 @@ from app.hardware.kettle import kettle
 from app.hardware.valve import valve
 from app.hardware.pump import pump
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import configparser
+
+config = configparser.ConfigParser()
+config.read('app/config/config.ini')
 
 app = web.Application()
 app.ws = webSocket(app)
@@ -18,8 +22,8 @@ app.jobs.start()
 app.cooking = Cooking(app)
 
 # Hardware
-app.mashTun = kettle(app, 'MashTun')
-app.boilKettle = kettle(app, 'BoilKettle')
+app.mashTun = kettle(app, config['MASH_TUN_PINS'], 'MashTun')
+app.boilKettle = kettle(app, config['BOIL_KETTLE_PINS'], 'BoilKettle')
 
 app.pump = pump(app, 'Pump')
 
