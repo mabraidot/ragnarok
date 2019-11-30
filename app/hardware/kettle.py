@@ -9,7 +9,6 @@ class kettle:
         self.name = name
         self.config = config
         self.PIDAutoTune = PIDAutoTune(self.app, self, self.config)
-        self.log = []
 
         self.temperatureProbe = temperatureProbe(app, self.name + 'TemperatureProbe')
         self.temperatureSetPoint = 0
@@ -50,14 +49,6 @@ class kettle:
         else:
             self.heater.set('false')
     
-    def setLog(self, message = ''):
-        self.log.append(message)
-
-    def getLog(self):
-        messages = self.log
-        self.log = []
-        return messages
-    
     async def sendToWebSocket(self):
         data = {}
         data[self.name + 'TemperatureSetPoint'] = self.getTemperatureSetPoint()
@@ -65,6 +56,5 @@ class kettle:
         data[self.name + 'WaterLevelSetPoint'] = self.getWaterLevelSetPoint()
         data[self.name + 'WaterLevelProbe'] = self.getWaterLevel()
         data[self.name + 'Heater'] = str(self.getHeater())
-        data['log'] = self.getLog()
         
         await self.app.ws.sendJson(data)

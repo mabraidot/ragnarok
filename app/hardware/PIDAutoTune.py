@@ -16,7 +16,7 @@ class PIDAutoTune:
         # Default: 30. How far back to look for min/max temps.
         self.c_lookback = self.config.getint('LOOKBACK')
 
-    def run(self):
+    async def run(self):
 
         sampleTime = 5
         wait_time = 5
@@ -27,20 +27,13 @@ class PIDAutoTune:
         try:
             atune = AutoTuner(setpoint, outstep, sampleTime, lookbackSec, 0, outmax)
         except Exception as e:
-            # self.sendMessageToWebSocket('[PIDAUTOTUNE] Error: ' + e)
-            self.kettle.setLog('[PIDAUTOTUNE] Error: ' + e)
+            self.app.ws.send('[PIDAUTOTUNE] Error: ' + e, self.config['LOG_ERROR_LABEL'])
 
         # i = 0
         # while i < 10:
         #     time.sleep(1)
-        #     self.kettle.setLog('[PIDAUTOTUNE] Autotune process will now begin ' + str(i))
+        #     await self.app.ws.send('[PIDAUTOTUNE] Autotune process will now begin ' + str(i), self.config['LOG_NOTICE_LABEL'])
         #     i += 1
-
-
-
-    async def sendMessageToWebSocket(self, message):
-        data = {'log': message}
-        await self.app.ws.sendJson(data)
 
 
 

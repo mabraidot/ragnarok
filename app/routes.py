@@ -97,8 +97,8 @@ class routes:
         self.app.mashTun.setHeater(on)
         return web.json_response({'response': str(on)})
     
-    def sartMashTunPIDAutoTune(self, request):
-        self.app.mashTun.PIDAutoTune.run()
+    async def sartMashTunPIDAutoTune(self, request):
+        await self.app.mashTun.PIDAutoTune.run()
         return web.json_response({'response': 'success'})
 
     def setBoilKettleHeater(self, request):
@@ -106,8 +106,8 @@ class routes:
         self.app.boilKettle.setHeater(on)
         return web.json_response({'response': str(on)})
 
-    def sartBoilKettlePIDAutoTune(self, request):
-        self.app.boilKettle.PIDAutoTune.run()
+    async def sartBoilKettlePIDAutoTune(self, request):
+        await self.app.boilKettle.PIDAutoTune.run()
         return web.json_response({'response': 'success'})
 
 
