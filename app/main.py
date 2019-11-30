@@ -9,7 +9,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import configparser
 
 config = configparser.ConfigParser()
-config.read('app/config/config.ini')
+config.read('app/config/config.cfg')
 
 app = web.Application()
 app.ws = webSocket(app)

@@ -18,6 +18,8 @@ class routes:
             web.get('/mashtun/valve/set/inlet/{on}', self.setMashTunValveInlet),
             web.get('/mashtun/valve/set/outlet/{on}', self.setMashTunValveOutlet),
 
+            web.get('/mashtun/PIDAutoTune', self.sartMashTunPIDAutoTune),
+
             web.get('/boilkettle/set/temperature/{degrees}', self.setBoilKettleTemperature),
             web.get('/boilkettle/set/water/{liters}', self.setBoilKettleWaterLevel),
             web.get('/boilkettle/set/time/{minutes}', self.setBoilKettleTime),
@@ -26,6 +28,8 @@ class routes:
             web.get('/boilkettle/valve/set/water/{on}', self.setBoilKettleValveWater),
             web.get('/boilkettle/valve/set/inlet/{on}', self.setBoilKettleValveInlet),
             web.get('/boilkettle/valve/set/outlet/{on}', self.setBoilKettleValveOutlet),
+
+            web.get('/boilkettle/PIDAutoTune', self.sartBoilKettlePIDAutoTune),
 
             web.get('/chiller/set/water/{on}', self.setChillerValveWater),
             web.get('/chiller/set/wort/{on}', self.setChillerValveWort),
@@ -92,12 +96,19 @@ class routes:
         on = request.match_info.get('on', False)
         self.app.mashTun.setHeater(on)
         return web.json_response({'response': str(on)})
-
+    
+    def sartMashTunPIDAutoTune(self, request):
+        self.app.mashTun.PIDAutoTune.run()
+        return web.json_response({'response': 'success'})
 
     def setBoilKettleHeater(self, request):
         on = request.match_info.get('on', False)
         self.app.boilKettle.setHeater(on)
         return web.json_response({'response': str(on)})
+
+    def sartBoilKettlePIDAutoTune(self, request):
+        self.app.boilKettle.PIDAutoTune.run()
+        return web.json_response({'response': 'success'})
 
 
     ## VALVES ###########################

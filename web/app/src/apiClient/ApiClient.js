@@ -9,6 +9,29 @@ const client = axios.create({
 
 class ApiClient {
   
+  async startPIDAutotune(hardware = 'MashTun') {
+
+    let url = '';
+    if (hardware === 'MashTun') {
+      url = '/mashtun/PIDAutoTune';
+    } else {
+      url = '/boilkettle/PIDAutoTune';
+    }
+
+    return client({
+      method: 'GET',
+      url,
+      data: null
+    }).then(resp => {
+      if (resp.data.error) {
+        return resp.data.error;
+      } else {
+        return resp.data.response;
+      }
+    })
+  }
+
+
   async setPoint(hardware = 'MashTunTemperatureSetPoint', newValue = 0) {
 
     let url;

@@ -4,4 +4,17 @@
     background-position: top;
     background-repeat: no-repeat;
     background-size: cover;
+
+    .pid-autotune {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+
+        .MuiFab-root {
+            background-color: crimson;
+            color: white;
+            font-weight: bold;
+        }
+    }
+
 }
