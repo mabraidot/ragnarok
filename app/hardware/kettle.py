@@ -30,8 +30,9 @@ class kettle:
     
     def getWaterLevel(self):
         currentLevel = self.waterLevelProbe.get()
-        if currentLevel < self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
-            self.setHeater('false')
+        # @TODO: restore this safety water level condition
+        # if currentLevel < self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
+        #     self.setHeater('false')
         return currentLevel
     
     def setWaterLevel(self, newValue = 0):
@@ -44,8 +45,10 @@ class kettle:
         return self.heater.get()
     
     def setHeater(self, newState = 'false'):
-        if newState == 'true' and self.getWaterLevel() >= self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
-            self.heater.set(newState)
+        # @TODO: restore this safety water level condition
+        # if newState == 'true' and self.getWaterLevel() >= self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
+        if newState == 'true':
+            self.heater.set('true')
         else:
             self.heater.set('false')
     

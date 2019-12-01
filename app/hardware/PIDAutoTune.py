@@ -15,6 +15,9 @@ class PIDAutoTune:
         self.b_maxout = self.config.getint('MAXOUT')
         # Default: 30. How far back to look for min/max temps.
         self.c_lookback = self.config.getint('LOOKBACK')
+    
+    def stop(self):
+        self.kettle.setHeater('false')
 
     async def run(self):
 
@@ -34,6 +37,58 @@ class PIDAutoTune:
         #     time.sleep(1)
         #     await self.app.ws.send('[PIDAUTOTUNE] Autotune process will now begin ' + str(i), self.config['LOG_NOTICE_LABEL'])
         #     i += 1
+        await self.app.ws.send('[PIDAUTOTUNE] Autotune process will now begin', self.config['LOG_NOTICE_LABEL'])
+
+        i = 0
+        while not atune.run(self.kettle.getTemperature()):
+            heat_percent = atune.output
+            heating_time = sampleTime * heat_percent / 100
+            wait_time = sampleTime - heating_time
+            # @TODO: set the heater power as heat_percent
+            
+            print('--------------------->' + str(i))
+            print('setpoint: ' + str(setpoint))
+            print('kettle_temp: ' + str(self.kettle.getTemperature()))
+            print('heat_percent: ' + str(heat_percent))
+            print('heating_time: ' + str(heating_time))
+            print('wait_time: ' + str(wait_time))
+            if heating_time == sampleTime:
+                self.kettle.setHeater('true')
+                self.kettle.getTemperature() # testing. DELETE
+                print('HEATER: ' ,self.kettle.getHeater())
+                time.sleep(heating_time)
+            elif wait_time == sampleTime:
+                self.kettle.setHeater('false')
+                self.kettle.getTemperature() # testing. DELETE
+                print('HEATER: ' ,self.kettle.getHeater())
+                time.sleep(wait_time)
+            else:
+                self.kettle.setHeater('true')
+                self.kettle.getTemperature() # testing. DELETE
+                print('HEATER: ' ,self.kettle.getHeater())
+                time.sleep(heating_time)
+                self.kettle.setHeater('false')
+                self.kettle.getTemperature() # testing. DELETE
+                print('HEATER: ' ,self.kettle.getHeater())
+                time.sleep(wait_time)
+            i += 1
+            
+
+        self.stop()
+        if atune.state == atune.STATE_SUCCEEDED:
+            await self.app.ws.send('[PIDAUTOTUNE] PID AutoTune was successful', self.config['LOG_NOTICE_LABEL'])
+            for rule in atune.tuningRules:
+                params = atune.getPIDParameters(rule)
+                atune.log('rule: {0}'.format(rule))
+                atune.log('P: {0}'.format(params.Kp))
+                atune.log('I: {0}'.format(params.Ki))
+                atune.log('D: {0}'.format(params.Kd))
+                if rule == "brewing":
+                    await self.app.ws.send('[PIDAUTOTUNE] AutoTune P Value ' + str(params.Kp), self.config['LOG_ERROR_LABEL'])
+                    await self.app.ws.send('[PIDAUTOTUNE] AutoTune I Value ' + str(params.Ki), self.config['LOG_ERROR_LABEL'])
+                    await self.app.ws.send('[PIDAUTOTUNE] AutoTune D Value ' + str(params.Kd), self.config['LOG_ERROR_LABEL'])
+        elif atune.state == atune.STATE_FAILED:
+            await self.app.ws.send('[PIDAUTOTUNE] PID AutoTune was successful', self.config['LOG_ERROR_LABEL'])
 
 
 
@@ -119,7 +174,7 @@ class AutoTuner(object):
         return AutoTuner.PIDParams(kp, ki, kd)
 
     def log(self, text):
-        filename = "./logs/autotune.log"
+        filename = "./app/logs/autotune.log"
         formatted_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
 
         with open(filename, "a") as file:

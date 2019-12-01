@@ -9,8 +9,13 @@ class temperatureProbe:
         # self.app.jobs.add_job(self.sendToWebSocket, 'interval', seconds=1)
     
     def get(self):
-        # test value
-        self.value = random.randrange(0, 110)
+        # @TODO: this is a TEST. Restore the actual value
+        # self.value = random.randrange(0, 110)
+        if self.app.mashTun.getHeater() and self.value < 110:
+            self.value += 1
+        elif self.value > 0:
+            self.value -= 0.1
+
         return self.value
     
     async def sendToWebSocket(self):
