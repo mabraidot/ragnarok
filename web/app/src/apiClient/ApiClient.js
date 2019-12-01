@@ -23,11 +23,7 @@ class ApiClient {
       url,
       data: null
     }).then(resp => {
-      if (resp.data.error) {
-        return resp.data.error;
-      } else {
-        return resp.data.response;
-      }
+      return resp.data;
     })
   }
 
@@ -66,11 +62,7 @@ class ApiClient {
       url,
       data: null
     }).then(resp => {
-      if (resp.data.error) {
-        return resp.data.error;
-      } else {
-        return resp.data.response;
-      }
+      return resp.data;
     })
   };
 
@@ -120,11 +112,7 @@ class ApiClient {
       url,
       data: null
     }).then(resp => {
-      if (resp.data.error) {
-        return resp.data.error;
-      } else {
-        return resp.data.response;
-      }
+      return resp.data;
     })
   };
 

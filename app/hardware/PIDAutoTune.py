@@ -8,6 +8,7 @@ class PIDAutoTune:
         self.app = app
         self.kettle = kettle
         self.config = config
+        self.running = False
 
         # Default: 100. Sets the output when stepping up/down.
         self.a_outstep = self.config.getint('OUTSTEP')
@@ -35,6 +36,7 @@ class PIDAutoTune:
 
         # await self.app.ws.send('[PIDAUTOTUNE] Autotune process will now begin', self.config['LOG_NOTICE_LABEL'])
         self.kettle.setLog('[PIDAUTOTUNE] Autotune process will now begin')
+        self.running = True
 
         while not atune.run(self.kettle.getTemperature()):
             heat_percent = atune.output
@@ -96,6 +98,8 @@ class PIDAutoTune:
         elif atune.state == atune.STATE_FAILED:
             # await self.app.ws.send('[PIDAUTOTUNE] PID AutoTune was successful', self.config['LOG_ERROR_LABEL'])
             self.kettle.setLog('[PIDAUTOTUNE] PID AutoTune was successful')
+
+        self.running
 
 
 

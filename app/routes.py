@@ -3,8 +3,9 @@ import aiohttp_cors
 from aiohttp import web
 
 class routes:
-    def __init__(self, app):
+    def __init__(self, app, config):
         self.app = app
+        self.config = config
 
     def setup_routes(self):
         self.app.router.add_routes([
@@ -99,10 +100,12 @@ class routes:
         return web.json_response({'response': str(on)})
     
     def sartMashTunPIDAutoTune(self, request):
-        task = threading.Thread(target=self.app.mashTun.PIDAutoTune.run)
-        task.start()
-        # await self.app.mashTun.PIDAutoTune.run()
-        return web.json_response({'response': 'success'})
+        message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A PID auto tunning process is already running'}
+        if not self.app.mashTun.PIDAutoTune.running and not self.app.boilKettle.PIDAutoTune.running:
+            message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'Starting a PID auto tunning process'}
+            task = threading.Thread(target=self.app.mashTun.PIDAutoTune.run)
+            task.start()
+        return web.json_response(message)
 
     def setBoilKettleHeater(self, request):
         on = request.match_info.get('on', 'false')
@@ -110,10 +113,12 @@ class routes:
         return web.json_response({'response': str(on)})
 
     async def sartBoilKettlePIDAutoTune(self, request):
-        task = threading.Thread(target=self.app.boilKettle.PIDAutoTune.run)
-        task.start()
-        # await self.app.boilKettle.PIDAutoTune.run()
-        return web.json_response({'response': 'success'})
+        message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A PID auto tunning process is already running'}
+        if not self.app.mashTun.PIDAutoTune.running and not self.app.boilKettle.PIDAutoTune.running:
+            message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'Starting a PID auto tunning process'}
+            task = threading.Thread(target=self.app.boilKettle.PIDAutoTune.run)
+            task.start()
+        return web.json_response(message)
 
 
     ## VALVES ###########################

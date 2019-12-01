@@ -37,7 +37,7 @@ app.mashTunValveOutlet = valve(app, 'MashTunValveOutlet')
 app.mashTunValveInlet = valve(app, 'MashTunValveInlet')
 
 # API routes definition
-r = routes(app)
+r = routes(app, config)
 r.setup_routes()
 
 if __name__ == '__main__':
