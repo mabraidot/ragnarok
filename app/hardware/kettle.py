@@ -68,6 +68,12 @@ class kettle:
         data[self.name + 'WaterLevelSetPoint'] = float(self.getWaterLevelSetPoint())
         data[self.name + 'WaterLevelProbe'] = float(self.getWaterLevel())
         data[self.name + 'Heater'] = str(self.getHeater())
-        data['logs'] = self.getLogs()
+        # Creating a separation between notices and error messages
+        for log in self.getLogs():
+            key = list(log)[0]
+            if key not in data:
+                data[key] = []
+            data[key].append(log[key])
+
         
         await self.app.ws.sendJson(data)
