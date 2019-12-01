@@ -43,17 +43,17 @@ class Home extends Component {
         // }else{
         //   this.setState({MashTunFocus: false, BoilKettleFocus: true});
         // }
-        this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe});
+        this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe.toFixed(1)});
       }
 
       if (data.MashTunTemperatureSetPoint) {
-        this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint});
+        this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint.toFixed(1)});
       }
       if (data.MashTunWaterLevelProbe) {
-        this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe});
+        this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe.toFixed(1)});
       }
       if (data.MashTunWaterLevelSetPoint) {
-        this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint});
+        this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint.toFixed(1)});
       }
       if (data.MashTunTimeProbe) {
         this.setState({MashTunTimeProbe: data.MashTunTimeProbe});
@@ -63,16 +63,16 @@ class Home extends Component {
       }
 
       if (data.BoilKettleTemperatureProbe) {
-        this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe});
+        this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe.toFixed(1)});
       }
       if (data.BoilKettleTemperatureSetPoint) {
-        this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint});
+        this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint.toFixed(1)});
       }
       if (data.BoilKettleWaterLevelProbe) {
-        this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe});
+        this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe.toFixed(1)});
       }
       if (data.BoilKettleWaterLevelSetPoint) {
-        this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint});
+        this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint.toFixed(1)});
       }
       if (data.BoilKettleTimeProbe) {
         this.setState({BoilKettleTimeProbe: data.BoilKettleTimeProbe});

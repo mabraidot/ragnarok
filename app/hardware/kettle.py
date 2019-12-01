@@ -9,11 +9,12 @@ class kettle:
         self.name = name
         self.config = config
         self.PIDAutoTune = PIDAutoTune(self.app, self, self.config)
+        self.logs = []
 
         self.temperatureProbe = temperatureProbe(app, self.name + 'TemperatureProbe')
-        self.temperatureSetPoint = 0
+        self.temperatureSetPoint = 0.0
         self.waterLevelProbe = waterLevelProbe(app, self.name + 'WaterLevelProbe')
-        self.waterSetPoint = 0
+        self.waterSetPoint = 0.0
         self.heater = heater(app, self.config['HEATER'], self.name + 'Heater')
         
         # Start sending all the values to websocket
@@ -52,12 +53,21 @@ class kettle:
         else:
             self.heater.set('false')
     
+    def setLog(self, message):
+        self.logs.append(message)
+
+    def getLogs(self):
+        messages = self.logs
+        self.logs = []
+        return messages
+
     async def sendToWebSocket(self):
         data = {}
-        data[self.name + 'TemperatureSetPoint'] = self.getTemperatureSetPoint()
-        data[self.name + 'TemperatureProbe'] = self.getTemperature()
-        data[self.name + 'WaterLevelSetPoint'] = self.getWaterLevelSetPoint()
-        data[self.name + 'WaterLevelProbe'] = self.getWaterLevel()
+        data[self.name + 'TemperatureSetPoint'] = float(self.getTemperatureSetPoint())
+        data[self.name + 'TemperatureProbe'] = float(self.getTemperature())
+        data[self.name + 'WaterLevelSetPoint'] = float(self.getWaterLevelSetPoint())
+        data[self.name + 'WaterLevelProbe'] = float(self.getWaterLevel())
         data[self.name + 'Heater'] = str(self.getHeater())
+        data['logs'] = self.getLogs()
         
         await self.app.ws.sendJson(data)

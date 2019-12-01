@@ -52,19 +52,19 @@ class Advanced extends Component {
       const data = JSON.parse(result.data);
 
       if (data.MashTunTemperatureProbe) {
-        this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe});
+        this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe.toFixed(1)});
       }
       if (data.MashTunTemperatureSetPoint) {
         if (data.MashTunTemperatureSetPoint !== this.state.MashTunTemperatureSetPoint) {
-          this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint});
+          this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint.toFixed(1)});
         }
       }
       if (data.MashTunWaterLevelProbe) {
-        this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe});
+        this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe.toFixed(1)});
       }
       if (data.MashTunWaterLevelSetPoint) {
         if (data.MashTunWaterLevelSetPoint !== this.state.MashTunWaterLevelSetPoint) {
-          this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint});
+          this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint.toFixed(1)});
         }
       }
       if (data.MashTunTimeProbe) {
@@ -77,19 +77,19 @@ class Advanced extends Component {
       }
 
       if (data.BoilKettleTemperatureProbe) {
-        this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe});
+        this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe.toFixed(1)});
       }
       if (data.BoilKettleTemperatureSetPoint) {
         if (data.BoilKettleTemperatureSetPoint !== this.state.BoilKettleTemperatureSetPoint) {
-          this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint});
+          this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint.toFixed(1)});
         }
       }
       if (data.BoilKettleWaterLevelProbe) {
-        this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe});
+        this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe.toFixed(1)});
       }
       if (data.BoilKettleWaterLevelSetPoint) {
         if (data.BoilKettleWaterLevelSetPoint !== this.state.BoilKettleWaterLevelSetPoint) {
-          this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint});
+          this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint.toFixed(1)});
         }
       }
       if (data.BoilKettleTimeProbe) {
@@ -136,7 +136,10 @@ class Advanced extends Component {
       if (data.Pump) {
         this.setState({Pump: (data.Pump === 'False') ? false : true});
       }
-
+      
+      // if (data.logs) {
+      //   console.log('[WS]: Logs: ', data.logs);
+      // }
       console.log('[WS]: message!:', data);
     };
   }

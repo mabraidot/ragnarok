@@ -1,3 +1,4 @@
+import threading
 import aiohttp_cors
 from aiohttp import web
 
@@ -97,8 +98,10 @@ class routes:
         self.app.mashTun.setHeater(on)
         return web.json_response({'response': str(on)})
     
-    async def sartMashTunPIDAutoTune(self, request):
-        await self.app.mashTun.PIDAutoTune.run()
+    def sartMashTunPIDAutoTune(self, request):
+        task = threading.Thread(target=self.app.mashTun.PIDAutoTune.run)
+        task.start()
+        # await self.app.mashTun.PIDAutoTune.run()
         return web.json_response({'response': 'success'})
 
     def setBoilKettleHeater(self, request):
@@ -107,7 +110,9 @@ class routes:
         return web.json_response({'response': str(on)})
 
     async def sartBoilKettlePIDAutoTune(self, request):
-        await self.app.boilKettle.PIDAutoTune.run()
+        task = threading.Thread(target=self.app.boilKettle.PIDAutoTune.run)
+        task.start()
+        # await self.app.boilKettle.PIDAutoTune.run()
         return web.json_response({'response': 'success'})
 
 
