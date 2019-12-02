@@ -20,6 +20,8 @@ import RecipesIcon from '@material-ui/icons/ListAltRounded';
 import SettingsIcon from '@material-ui/icons/SettingsRounded';
 import PowerIcon from '@material-ui/icons/PowerSettingsNewRounded';
 
+import { SnackbarProvider } from 'notistack';
+
 function App() {
 
   const pages = [
@@ -30,6 +32,15 @@ function App() {
   ];
 
   return (
+    <SnackbarProvider 
+      dense
+      autoHideDuration={3000}
+      maxSnack={5} 
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left',
+      }}
+    >
       <BrowserRouter>
         <div className="App">
           <Route
@@ -63,6 +74,7 @@ function App() {
           />
         </div>
       </BrowserRouter>
+    </SnackbarProvider>
   );
 }
 

@@ -8,6 +8,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Socket from './../../components/Socket/Socket';
 import ApiClient from './../../apiClient/ApiClient';
+import { withSnackbar } from 'notistack';
 
 class Advanced extends Component {
   constructor(props) {
@@ -42,6 +43,10 @@ class Advanced extends Component {
       ChillerValveWort: false,
       OutletValveDump: false,
       Pump: false,
+
+      notice: true,
+      noticeType: 'error',
+      noticeMessage: 'este es un mensaje de error'
 
     };
   }
@@ -137,9 +142,20 @@ class Advanced extends Component {
         this.setState({Pump: (data.Pump === 'False') ? false : true});
       }
       
-      // if (data.logs) {
-      //   console.log('[WS]: Logs: ', data.logs);
-      // }
+      if (data.notice) {
+        for(const message in data.notice){
+          this.props.enqueueSnackbar(data.notice[message], { 
+            variant: 'info',
+          });
+        }
+      }
+      if (data.error) {
+        for(const message in data.error){
+          this.props.enqueueSnackbar(data.error[message], { 
+            variant: 'error',
+          });
+        }
+      }
       console.log('[WS]: message!:', data);
     };
   }
@@ -159,7 +175,7 @@ class Advanced extends Component {
     const { state } = this.state;
     this.setState({ ...state, [name]: event.target.checked });
     console.log('[ADV]: Switch:', name, (event.target.checked) ? 'ON' : 'OFF');
-
+    
     ApiClient.setSwitch(name, event.target.checked).then((resp) => {
       console.log('[API]', resp);
     });
@@ -379,4 +395,4 @@ class Advanced extends Component {
   }
 }
 
-export default Advanced;
+export default withSnackbar(Advanced);
