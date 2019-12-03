@@ -20,3 +20,10 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+div[class*='variantInfo'] {
+  background-color: seagreen !important;
+}
+div[class*='variantError'] {
+  background-color: crimson !important;
+}

@@ -146,6 +146,7 @@ class Advanced extends Component {
         for(const message in data.notice){
           this.props.enqueueSnackbar(data.notice[message], { 
             variant: 'info',
+            persist: true,
           });
         }
       }
@@ -179,7 +180,6 @@ class Advanced extends Component {
     ApiClient.setSwitch(name, event.target.checked).then((resp) => {
       console.log('[API]', resp);
     });
-
   };
 
   handleSliderSetPoint = name => (event, value) => {
@@ -189,6 +189,11 @@ class Advanced extends Component {
   
     ApiClient.setPoint(name, value).then((resp) => {
       console.log('[API]', resp);
+      if (resp.error) {
+        this.props.enqueueSnackbar(resp.error, { 
+          variant: 'error',
+        });
+      }
     });
 
   }

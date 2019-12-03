@@ -3,6 +3,7 @@ import './Settings.scss';
 import Grow from '@material-ui/core/Grow';
 import Fab from '@material-ui/core/Fab';
 import ApiClient from './../../apiClient/ApiClient';
+import { withSnackbar } from 'notistack';
 
 class Settings extends Component {
   constructor(props) {
@@ -16,6 +17,11 @@ class Settings extends Component {
     
     ApiClient.startPIDAutotune('MashTun').then((resp) => {
       console.log('[API]', resp);
+      if (resp.error) {
+        this.props.enqueueSnackbar(resp.error, { 
+          variant: 'error',
+        });
+      }
     });
     this.props.history.push('/advanced')
   }
@@ -23,6 +29,11 @@ class Settings extends Component {
   handleBoilKettlePIDClick() {
     ApiClient.startPIDAutotune('BoilKettle').then((resp) => {
       console.log('[API]', resp);
+      if (resp.error) {
+        this.props.enqueueSnackbar(resp.error, { 
+          variant: 'error',
+        });
+      }
     });
     this.props.history.push('/advanced')
   }
@@ -47,4 +58,4 @@ class Settings extends Component {
   }
 }
 
-export default Settings;
+export default withSnackbar(Settings);

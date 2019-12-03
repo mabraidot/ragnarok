@@ -19,7 +19,7 @@ import HomeIcon from '@material-ui/icons/HomeRounded';
 import RecipesIcon from '@material-ui/icons/ListAltRounded';
 import SettingsIcon from '@material-ui/icons/SettingsRounded';
 import PowerIcon from '@material-ui/icons/PowerSettingsNewRounded';
-
+import CancelIcon from '@material-ui/icons/Cancel';
 import { SnackbarProvider } from 'notistack';
 
 function App() {
@@ -30,6 +30,10 @@ function App() {
     '/settings',
     '/power',
   ];
+  const notistackRef = React.createRef();
+  const onClickDismiss = key => () => { 
+    notistackRef.current.closeSnackbar(key);
+  }
 
   return (
     <SnackbarProvider 
@@ -40,6 +44,10 @@ function App() {
         vertical: 'bottom',
         horizontal: 'left',
       }}
+      ref={notistackRef}
+      action={(key) => (
+          <CancelIcon onClick={onClickDismiss(key)} />
+      )}
     >
       <BrowserRouter>
         <div className="App">
