@@ -4,4 +4,13 @@
     background-position: top;
     background-repeat: no-repeat;
     background-size: cover;
+
+    .MuiButton-contained, 
+    .MuiButton-contained:hover {
+        background-color: crimson;
+        color: white;
+        font-weight: bold;
+        border-radius: 24px;
+        padding: 10px 20px;
+    }
 }
