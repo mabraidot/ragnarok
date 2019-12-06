@@ -6,6 +6,7 @@ import Fab from '@material-ui/core/Fab';
 import AdvancedIcon from '@material-ui/icons/TouchAppRounded';
 import Gauge from '../../components/Gauge';
 import Socket from './../../components/Socket/Socket';
+import { withSnackbar } from 'notistack';
 
 class Home extends Component {
   constructor(props) {
@@ -79,6 +80,22 @@ class Home extends Component {
       }
       if (data.BoilKettleTimeSetPoint) {
         this.setState({BoilKettleTimeSetPoint: data.BoilKettleTimeSetPoint});
+      }
+
+      if (data.notice) {
+        for(const message in data.notice){
+          this.props.enqueueSnackbar(data.notice[message], { 
+            variant: 'info',
+            persist: true,
+          });
+        }
+      }
+      if (data.error) {
+        for(const message in data.error){
+          this.props.enqueueSnackbar(data.error[message], { 
+            variant: 'error',
+          });
+        }
       }
       console.log('[WS]: message!:', data);
     };
@@ -156,4 +173,4 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default withSnackbar(Home);
