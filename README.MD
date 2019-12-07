@@ -32,7 +32,21 @@ To run the React front-end, execute this:
 Python environment
 ------------------
 ~~~
-    virtualenv venv --python=python3
-    source ./venv/Scripts/activate
     git clone {this_repo}
+
+    ## Install virtualenv and yarn
+    sudo pip install virtualenv
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    sudo apt update && sudo apt install yarn
+
+    ## Create venv and install python dependencies
+    virtualenv venv --python=python3
+    cd ragnarok/
+    source ./venv/Scripts/activate
+    pip install -r requirements.txt
+    
+    ## Install node dependencies
+    cd web/app/
+    yarn install
 ~~~
