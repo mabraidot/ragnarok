@@ -13,11 +13,16 @@ class Recipes extends Component {
       this.fileUploadHandler = this.fileUploadHandler.bind(this);
   }
 
-  fileUploadHandler(event){
+  fileUploadHandler(event) {
     this.setState({
       importedFile: event.target.files[0],
     });
-    console.log('[RECIPES] File upload: ', event.target.files[0]);
+    
+    let fileReader = new FileReader();
+    fileReader.onloadend = (e) => {
+      console.log('[RECIPES] File upload: ', fileReader.result);
+    };
+    fileReader.readAsText(event.target.files[0]);
   }
 
   render() {
