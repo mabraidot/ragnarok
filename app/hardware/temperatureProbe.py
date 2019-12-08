@@ -5,8 +5,6 @@ class temperatureProbe:
         self.app = app
         self.name = name
         self.value = 0
-        # Start sending water level values to websocket
-        # self.app.jobs.add_job(self.sendToWebSocket, 'interval', seconds=1)
     
     def get(self):
         # @TODO: this is a TEST. Restore the actual value
@@ -20,7 +18,3 @@ class temperatureProbe:
             self.value -= 0.1
 
         return self.value
-    
-    async def sendToWebSocket(self):
-        tempValue = self.get()
-        await self.app.ws.send(tempValue, self.name)

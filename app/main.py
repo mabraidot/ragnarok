@@ -12,7 +12,6 @@ config = configparser.ConfigParser()
 config.read('app/config/config.cfg')
 
 app = web.Application()
-app.ws = webSocket(app)
 
 # Jobs scheduler
 app.jobs = AsyncIOScheduler()
@@ -35,6 +34,9 @@ app.boilKettleValveInlet = valve(app, 'BoilKettleValveInlet')
 app.boilKettleValveWater = valve(app, 'BoilKettleValveWater')
 app.mashTunValveOutlet = valve(app, 'MashTunValveOutlet')
 app.mashTunValveInlet = valve(app, 'MashTunValveInlet')
+
+# Start websocket server
+app.ws = webSocket(app)
 
 # API routes definition
 r = routes(app, config)

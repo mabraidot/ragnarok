@@ -32,10 +32,10 @@ class PIDAutoTune:
             atune = AutoTuner(setpoint, outstep, sampleTime, lookbackSec, 0, outmax)
         except Exception as e:
             # await self.app.ws.send('[PIDAUTOTUNE] Error: ' + e, self.config['LOG_ERROR_LABEL'])
-            self.kettle.setLog({self.config['LOG_ERROR_LABEL']: '[PID] Autotune error: ' + e})
+            self.app.ws.setLog({self.config['LOG_ERROR_LABEL']: '[PID] Autotune error: ' + e})
 
         # await self.app.ws.send('[PIDAUTOTUNE] Autotune process will now begin', self.config['LOG_NOTICE_LABEL'])
-        self.kettle.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Autotune process will now begin'})
+        self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Autotune process will now begin'})
         self.running = True
 
         while not atune.run(self.kettle.getTemperature()):
@@ -44,11 +44,11 @@ class PIDAutoTune:
             wait_time = sampleTime - heating_time
             # @TODO: set the heater power as heat_percent
             
-            # self.kettle.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Set Point: ' + str(setpoint)})
-            # self.kettle.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Kettle Temperature: ' + str(self.kettle.getTemperature())})
-            self.kettle.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Heat Percent: ' + str(heat_percent)})
-            # self.kettle.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Heating Time: ' + str(heating_time)})
-            # self.kettle.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Wait Time: ' + str(wait_time)})
+            # self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Set Point: ' + str(setpoint)})
+            # self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Kettle Temperature: ' + str(self.kettle.getTemperature())})
+            self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Heat Percent: ' + str(heat_percent)})
+            # self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Heating Time: ' + str(heating_time)})
+            # self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Wait Time: ' + str(wait_time)})
 
             if heating_time == sampleTime:
                 self.kettle.setHeater('true')
@@ -74,7 +74,7 @@ class PIDAutoTune:
         self.stop()
         if atune.state == atune.STATE_SUCCEEDED:
             # await self.app.ws.send('[PIDAUTOTUNE] PID AutoTune was successful', self.config['LOG_NOTICE_LABEL'])
-            self.kettle.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune was successful'})
+            self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune was successful'})
             for rule in atune.tuningRules:
                 params = atune.getPIDParameters(rule)
                 atune.log('rule: {0}'.format(rule))
@@ -86,12 +86,12 @@ class PIDAutoTune:
                     # await self.app.ws.send('[PIDAUTOTUNE] AutoTune P Value ' + str(params.Kp), self.config['LOG_ERROR_LABEL'])
                     # await self.app.ws.send('[PIDAUTOTUNE] AutoTune I Value ' + str(params.Ki), self.config['LOG_ERROR_LABEL'])
                     # await self.app.ws.send('[PIDAUTOTUNE] AutoTune D Value ' + str(params.Kd), self.config['LOG_ERROR_LABEL'])
-                    self.kettle.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune P Value: ' + str(params.Kp)})
-                    self.kettle.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune I Value: ' + str(params.Ki)})
-                    self.kettle.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune D Value: ' + str(params.Kd)})
+                    self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune P Value: ' + str(params.Kp)})
+                    self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune I Value: ' + str(params.Ki)})
+                    self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune D Value: ' + str(params.Kd)})
         elif atune.state == atune.STATE_FAILED:
             # await self.app.ws.send('[PIDAUTOTUNE] PID AutoTune was successful', self.config['LOG_ERROR_LABEL'])
-            self.kettle.setLog({self.config['LOG_ERROR_LABEL']: '[PIDAUTOTUNE] PID AutoTune was successful'})
+            self.app.ws.setLog({self.config['LOG_ERROR_LABEL']: '[PIDAUTOTUNE] PID AutoTune was successful'})
 
         self.running = False
 

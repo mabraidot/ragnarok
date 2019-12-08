@@ -9,7 +9,6 @@ class kettle:
         self.name = name
         self.config = config
         self.PIDAutoTune = PIDAutoTune(self.app, self, self.config)
-        self.logs = []
 
         self.temperatureProbe = temperatureProbe(app, self.name + 'TemperatureProbe')
         self.temperatureSetPoint = 0.0
@@ -17,9 +16,6 @@ class kettle:
         self.waterSetPoint = 0.0
         self.heater = heater(app, self.config['HEATER'], self.name + 'Heater')
         
-        # Start sending all the values to websocket
-        self.app.jobs.add_job(self.sendToWebSocket, 'interval', seconds=1)
-    
     def getTemperature(self):
         return self.temperatureProbe.get()
     
@@ -52,28 +48,3 @@ class kettle:
             self.heater.set('true')
         else:
             self.heater.set('false')
-    
-    def setLog(self, message):
-        self.logs.append(message)
-
-    def getLogs(self):
-        messages = self.logs
-        self.logs = []
-        return messages
-
-    async def sendToWebSocket(self):
-        data = {}
-        data[self.name + 'TemperatureSetPoint'] = float(self.getTemperatureSetPoint())
-        data[self.name + 'TemperatureProbe'] = float(self.getTemperature())
-        data[self.name + 'WaterLevelSetPoint'] = float(self.getWaterLevelSetPoint())
-        data[self.name + 'WaterLevelProbe'] = float(self.getWaterLevel())
-        data[self.name + 'Heater'] = str(self.getHeater())
-        # Creating a separation between notices and error messages
-        for log in self.getLogs():
-            key = list(log)[0]
-            if key not in data:
-                data[key] = []
-            data[key].append(log[key])
-
-        
-        await self.app.ws.sendJson(data)

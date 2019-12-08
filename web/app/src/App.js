@@ -57,7 +57,7 @@ function App() {
               <Fragment>
                 <div className="App-header">
                   <Tabs
-                    value={(pages.indexOf(location.pathname) === -1) ? '/' : location.pathname}
+                    value={(pages.indexOf(location.pathname) === -1) ? false : location.pathname}
                     // onChange={handleTabChange}
                     variant="fullWidth"
                     aria-label="icon tabs"
