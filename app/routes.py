@@ -12,6 +12,8 @@ class routes:
             web.get('/', self.home),
             web.get('/index', self.home),
 
+            web.post('/recipes/import', self.importRecipe),
+            
             web.get('/mashtun/set/temperature/{degrees}', self.setMashTunTemperature),
             web.get('/mashtun/set/water/{liters}', self.setMashTunWaterLevel),
             web.get('/mashtun/set/time/{minutes}', self.setMashTunTime),
@@ -56,6 +58,23 @@ class routes:
 
     def home(self, request):
         return web.json_response({'response': 'The Ragnarök is coming ...'})
+
+
+    ## RECIPES ############################
+    async def importRecipe(self, request):
+        data = await request.post()
+        response = {'error': 'XML data was empty'}
+        if (data['file']):
+            if self.app.recipes.importRecipe(data['file'].file):
+                response = {'notice': 'XML received successfully'}
+        # if (data['recipe']):
+        #     xml = data['recipe']
+        #     # print(xml)
+        #     self.app.recipes.importRecipe(xml)
+        #     response = {'notice': 'XML received successfully'}
+
+        return web.json_response(response)
+
 
     ## MASH TUN ###########################
     def setMashTunTemperature(self, request):

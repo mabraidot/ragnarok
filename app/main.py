@@ -6,12 +6,16 @@ from app.hardware.kettle import kettle
 from app.hardware.valve import valve
 from app.hardware.pump import pump
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from app.database import Database
+from app.recipes import Recipes
 import configparser
 
 config = configparser.ConfigParser()
 config.read('app/config/config.cfg')
 
 app = web.Application()
+app.recipes = Recipes(app)
+app.DB = Database(app, config)
 
 # Jobs scheduler
 app.jobs = AsyncIOScheduler()

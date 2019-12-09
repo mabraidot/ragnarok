@@ -9,6 +9,20 @@ const client = axios.create({
 
 class ApiClient {
   
+
+  async sendBeerXML(xml = '') {
+
+    return client({
+      method: 'POST',
+      url: '/recipes/import',
+      // data: {'recipe': JSON.stringify(xml)}
+      data: xml
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
   async startPIDAutotune(hardware = 'MashTun') {
 
     let url = '';
