@@ -67,11 +67,6 @@ class routes:
         if (data['file']):
             if self.app.recipes.importRecipe(data['file'].file):
                 response = {'notice': 'XML received successfully'}
-        # if (data['recipe']):
-        #     xml = data['recipe']
-        #     # print(xml)
-        #     self.app.recipes.importRecipe(xml)
-        #     response = {'notice': 'XML received successfully'}
 
         return web.json_response(response)
 
