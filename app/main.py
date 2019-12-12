@@ -14,8 +14,8 @@ config = configparser.ConfigParser()
 config.read('app/config/config.cfg')
 
 app = web.Application()
-app.recipes = Recipes(app)
 app.DB = Database(app, config)
+app.recipes = Recipes(app)
 
 # Jobs scheduler
 app.jobs = AsyncIOScheduler()

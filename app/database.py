@@ -52,4 +52,32 @@ class Database:
         cursor.execute(query, entities)
         self.conn.commit()
 
-# Retrieve json object: select json_extract(beer_json) from recipes;
+
+    def listRecipes(self):
+        cursor = self.conn.cursor()
+        query = "SELECT *, DATETIME(cooked, 'localtime'), DATETIME(created, 'localtime') FROM recipes WHERE 1 ORDER BY created DESC"
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        recipes = {
+            'total_rows': len(rows),
+            'recipes': []
+        }
+        for row in rows:
+            recipes['recipes'].append({
+                'id':               row[0],
+                'name':             row[1],
+                'type_name':        row[2],
+                'style_name':       row[3],
+                'style_category':   row[4],
+                'original_gravity': row[5],
+                'final_gravity':    row[6],
+                'ibu':              row[7],
+                'abv':              row[8],
+                'color':            row[9],
+                # 'beer_json':        row[10],
+                'cooked':           row[13],
+                'created':          row[14],
+            })
+
+        return json.dumps(recipes)

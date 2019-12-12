@@ -13,6 +13,13 @@ class Recipes extends Component {
       //   importedFile: null
       // }
       this.fileUploadHandler = this.fileUploadHandler.bind(this);
+      this.getRecipesHandler();
+  }
+
+  getRecipesHandler() {
+    ApiClient.getRecipes().then((resp) => {
+      console.log('[API]', resp);
+    });
   }
 
   fileUploadHandler(event) {
@@ -34,29 +41,6 @@ class Recipes extends Component {
       }
     });
 
-    // this.setState({
-    //   importedFile: event.target.files[0],
-    // });
-    
-    // let fileReader = new FileReader();
-    // fileReader.onloadend = (e) => {
-    //   // console.log('[RECIPES] File upload: ', fileReader.result);
-    //   ApiClient.sendBeerXML(fileReader.result).then((resp) => {
-    //     console.log('[API]', resp);
-    //     if (resp.notice) {
-    //       this.props.enqueueSnackbar(resp.notice, { 
-    //         variant: 'info',
-    //         persist: true,
-    //       });
-    //     }
-    //     if (resp.error) {
-    //       this.props.enqueueSnackbar(resp.error, { 
-    //         variant: 'error',
-    //       });
-    //     }
-    //   });
-    // };
-    // fileReader.readAsText(event.target.files[0]);
   }
 
   render() {

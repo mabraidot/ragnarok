@@ -9,8 +9,6 @@ class Recipes:
         # try:
         json = xmltodict.parse(xml)
         if(json['RECIPES']['RECIPE']):
-            # @TODO: Save recipe JSON to Database
-            # print(json['RECIPES']['RECIPE']['NAME'])
             name = json['RECIPES']['RECIPE']['NAME']
             type_name = json['RECIPES']['RECIPE']['STYLE']['TYPE']
             style_name = json['RECIPES']['RECIPE']['STYLE']['CATEGORY']
@@ -30,3 +28,7 @@ class Recipes:
         #     success = False
 
         return success
+
+    def listRecipes(self):
+        recipes = self.app.DB.listRecipes()
+        return recipes

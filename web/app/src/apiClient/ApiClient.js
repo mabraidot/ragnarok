@@ -15,8 +15,18 @@ class ApiClient {
     return client({
       method: 'POST',
       url: '/recipes/import',
-      // data: {'recipe': JSON.stringify(xml)}
       data: xml
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+  
+  
+  async getRecipes() {
+
+    return client({
+      method: 'POST',
+      url: '/recipes/list',
     }).then(resp => {
       return resp.data;
     })

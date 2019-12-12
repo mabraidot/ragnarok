@@ -13,6 +13,7 @@ class routes:
             web.get('/index', self.home),
 
             web.post('/recipes/import', self.importRecipe),
+            web.post('/recipes/list', self.listRecipes),
             
             web.get('/mashtun/set/temperature/{degrees}', self.setMashTunTemperature),
             web.get('/mashtun/set/water/{liters}', self.setMashTunWaterLevel),
@@ -69,6 +70,11 @@ class routes:
                 response = {'notice': 'XML received successfully'}
 
         return web.json_response(response)
+
+
+    async def listRecipes(self, request):
+        data = self.app.recipes.listRecipes()
+        return web.json_response(data)
 
 
     ## MASH TUN ###########################
