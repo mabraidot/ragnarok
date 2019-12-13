@@ -13,4 +13,69 @@
         border-radius: 24px;
         padding: 10px 20px;
     }
+
+    .import-button {
+        // padding: 1em;       
+        // display: flex;
+        // justify-content: flex-end;
+        align-self: flex-end;
+    }
+    
+    .total-rows {
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 0.5em 1em;
+        margin: 0 0.3em;
+        text-align: left;
+        border-radius: 0.3em;
+        font-size: 0.6em;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        
+        div {
+            align-self: baseline;
+        }
+    }
+
+    .row {
+        padding: 0.5em;
+        text-align: left;
+        margin: 0.3em;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 0.3em;
+
+        .title {
+            font-size: 1.2em;
+            border-bottom: rgb(61, 94, 124) solid 1px;
+            text-transform: uppercase;
+        }
+        .style {
+            font-size: 1em;
+            color: rgb(61, 94, 124);
+        }
+        .data{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+
+            .type, .og, .fg, .ibu, .abv, .color {
+                padding: 0 0.6em;
+                margin: 0.5em 0;
+                font-size: 0.6em;
+                border-left: rgb(61, 94, 124) solid 2px;
+            }
+        }
+        .dates{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            color: rgb(61, 94, 124);
+
+            .cooked, .created {
+                font-size: 0.6em;
+                padding-right: 0.5em;
+            }
+        }
+    }
+
 }
