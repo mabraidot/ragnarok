@@ -17,8 +17,8 @@ class Power extends Component {
     this.setState({hover: !this.state.hover})
     if (!this.state.hover) {
       console.log('[SYS]: Powering down ...');
+      // Logic to Turn off the machine
     }
-    // Logic to Turn off the machine
   }
   
   render() {

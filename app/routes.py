@@ -14,6 +14,7 @@ class routes:
 
             web.post('/recipes/import', self.importRecipe),
             web.post('/recipes/list', self.listRecipes),
+            web.get('/recipes/{recipe}/delete', self.deleteRecipe),
             
             web.get('/mashtun/set/temperature/{degrees}', self.setMashTunTemperature),
             web.get('/mashtun/set/water/{liters}', self.setMashTunWaterLevel),
@@ -75,6 +76,15 @@ class routes:
     async def listRecipes(self, request):
         data = self.app.recipes.listRecipes()
         return web.json_response(data)
+    
+
+    async def deleteRecipe(self, request):
+        recipe = request.match_info.get('recipe', 0)
+        response = {'notice': 'Recipe was successfully deleted'}
+        result = self.app.recipes.deleteRecipe(recipe)
+        if not result:
+            response = {'error': 'There was an error deleting the recipe'}
+        return web.json_response(response)
 
 
     ## MASH TUN ###########################

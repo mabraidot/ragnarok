@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URI = 'http://localhost:8000';
+const BASE_URI = `http://${window.location.hostname}:8000`;
 
 const client = axios.create({
   baseURL: BASE_URI,
@@ -9,7 +9,6 @@ const client = axios.create({
 
 class ApiClient {
   
-
   async sendBeerXML(xml = '') {
 
     return client({
@@ -22,6 +21,16 @@ class ApiClient {
   }
   
   
+  async deleteRecipe(recipeId) {
+
+    return client({
+      method: 'GET',
+      url: `/recipes/${recipeId}/delete`,
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
   async getRecipes() {
 
     return client({

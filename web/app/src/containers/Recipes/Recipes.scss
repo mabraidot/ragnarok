@@ -45,9 +45,21 @@
         border-radius: 0.3em;
 
         .title {
-            font-size: 1.2em;
-            border-bottom: rgb(61, 94, 124) solid 1px;
-            text-transform: uppercase;
+            display: flex;
+            flex-direction: row;            
+            h1 {
+                // border-bottom: rgb(61, 94, 124) solid 1px;
+                margin: 0;
+                font-size: 1.1em;
+                text-transform: uppercase;
+                flex-grow: 8;
+            }
+            .icons {
+                display: flex;
+                justify-content: space-evenly;
+                flex-grow: 0.5;
+                text-align: right;
+            }
         }
         .style {
             font-size: 1em;
@@ -76,6 +88,38 @@
                 padding-right: 0.5em;
             }
         }
+
+        .button-see {
+            color: white;
+            background-color: seagreen;
+        }
+        .button-delete {
+            color: white;
+            background-color: crimson;
+        }
     }
 
+    
+}
+
+
+.MuiPaper-root {
+    background-color: crimson !important;
+    color: white !important;
+    // padding: 0.2em;
+    // margin: 0.3em;
+    // text-align: start;
+    // border-radius: 0.6em;
+    .MuiTypography-colorTextSecondary {
+        color: white !important;
+    }
+    .MuiButton-textSecondary {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    .MuiButton-textPrimary {
+        color: white !important;
+    }
+    .MuiDialogActions-root {
+        border-top: rgba(255, 255, 255, 0.3) solid 1px;
+    }
 }

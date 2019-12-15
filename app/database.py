@@ -81,3 +81,8 @@ class Database:
             })
 
         return json.dumps(recipes)
+
+    def deleteRecipe(self, recipeId):
+        cursor = self.conn.cursor()
+        query = "DELETE FROM recipes WHERE id = ?"
+        cursor.execute(query, recipeId)

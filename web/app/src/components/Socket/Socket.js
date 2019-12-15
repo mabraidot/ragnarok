@@ -1,4 +1,4 @@
-const BASE_URI = 'ws://localhost:8000/ws';
+const BASE_URI = `ws://${window.location.hostname}:8000/ws`;
 
 class Socket {
   constructor() {
