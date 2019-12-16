@@ -23,12 +23,14 @@ class Recipes extends Component {
       totalRows: 0,
       recipes: [],
       dialogOpen: false,
-      dialogRecipeId: 0
-
+      dialogRecipeId: 0,
+      dialogAction: '',
+      dialogTitle: '',
+      dialogDescription: ''
     }
     this.fileUploadHandler = this.fileUploadHandler.bind(this);
     this.getRecipesHandler = this.getRecipesHandler.bind(this);
-    this.handleDeleteClose = this.handleDeleteClose.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   componentDidMount() {
@@ -68,21 +70,86 @@ class Recipes extends Component {
 
   }
 
+  handleClose = () => {
+    this.setState({ 
+      dialogOpen: false, 
+      dialogRecipeId: 0, 
+      dialogAction: '',
+      dialogTitle: '',
+      dialogDescription: '' 
+    });
+  };
+
   handleSeeClick = (recipeId) => {
-    console.log('see ', recipeId);
+    const recipe = JSON.parse(this.state.recipes[recipeId].beer_json);
+    // console.log('-->', recipe);
+
+    let description = '';
+    let item = '';
+    description += `Boil Time: <strong>${parseFloat(recipe.RECIPES.RECIPE.BOIL_TIME).toFixed(2)} minutes</strong><br />`;
+    description += `Boil Size: <strong>${parseFloat(recipe.RECIPES.RECIPE.BOIL_SIZE).toFixed(2)} liters</strong>`;
+
+    description += '<h3>MASH</h3>';
+    description += `<strong>${recipe.RECIPES.RECIPE.MASH.NAME}</strong><br />`;
+    for (let i in recipe.RECIPES.RECIPE.MASH.MASH_STEPS.MASH_STEP) {
+      item = recipe.RECIPES.RECIPE.MASH.MASH_STEPS.MASH_STEP[i];
+      description += `${(parseInt(i)+1)}). ${item.NAME} ${item.DISPLAY_STEP_TEMP}: <strong>${item.DESCRIPTION}</strong><br />`;
+    }
+
+    description += '<h3>HOPS</h3>';
+    for (let i in recipe.RECIPES.RECIPE.HOPS.HOP) {
+      item = recipe.RECIPES.RECIPE.HOPS.HOP[i];
+      description += `${(parseInt(i)+1)}). ${item.DISPLAY_TIME}: <strong>${item.NAME}</strong> ${item.USE} ${item.DISPLAY_AMOUNT}<br />`;
+    }
+
+    description += '<h3>MISC</h3>';
+    for (let i in recipe.RECIPES.RECIPE.MISCS.MISC) {
+      item = recipe.RECIPES.RECIPE.MISCS.MISC[i];
+      description += `${(parseInt(i)+1)}). ${item.DISPLAY_TIME}: <strong>${item.NAME}</strong> ${item.USE} ${item.DISPLAY_AMOUNT}<br />`;
+    }
+
+
+    this.setState({ 
+      dialogOpen: true, 
+      dialogRecipeId: recipeId, 
+      dialogAction: 'cook',
+      dialogTitle: this.state.recipes[recipeId].name,
+      dialogDescription: description
+    });
+
+  }
+
+  handleSeeAction = (recipeId) => {
+    this.setState({ 
+      dialogOpen: false, 
+      dialogRecipeId: 0, 
+      dialogAction: '',
+      dialogTitle: '',
+      dialogDescription: '' 
+    });
+    console.log('see ', this.state.recipes[recipeId]);
+
   }
 
   handleDeleteClick = (recipeId) => {
-    this.setState({ dialogOpen: true, dialogRecipeId: recipeId });
+    this.setState({ dialogOpen: true, 
+      dialogRecipeId: recipeId, 
+      dialogAction: 'delete',
+      dialogTitle: 'Delete the selected recipe?',
+      dialogDescription: `This operation is going to delete the recipe from the database. It can't be undone.` 
+    });
   }
 
-  handleDeleteClose = () => {
-    this.setState({ dialogOpen: false, dialogRecipeId: 0 });
-  };
-
   handleDeleteAction = (recipeId) => {
-    this.setState({ dialogOpen: false, dialogRecipeId: 0 });
-    if (recipeId > 0){
+    this.setState({ 
+      dialogOpen: false, 
+      dialogRecipeId: 0, 
+      dialogAction: '',
+      dialogTitle: '',
+      dialogDescription: '' 
+    });
+
+    if (recipeId > 0) {
       ApiClient.deleteRecipe(recipeId).then((resp) => {
         console.log('[API]', resp);
         if (resp.notice) {
@@ -107,19 +174,23 @@ class Recipes extends Component {
         <div className="Recipes">
           <Dialog
             open={this.state.dialogOpen}
-            onClose={this.handleDeleteClose}
+            onClose={this.handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{"Delete the selected recipe?"}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{this.state.dialogTitle}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                This operation is going to delete the recipe from the database. It can't be undone.
+                <span dangerouslySetInnerHTML={{__html: this.state.dialogDescription}} />
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={this.handleDeleteClose} color="secondary" autoFocus>Cancel</Button>
-              <Button onClick={() => this.handleDeleteAction(this.state.dialogRecipeId)} color="primary">Delete</Button>
+              <Button onClick={this.handleClose} color="secondary" autoFocus>Cancel</Button>
+              {(this.state.dialogAction === 'delete') ? (
+                <Button onClick={() => this.handleDeleteAction(this.state.dialogRecipeId)} color="primary">Delete</Button>
+              ) : (
+                <Button onClick={() => this.handleSeeAction(this.state.dialogRecipeId)} color="primary">Cook</Button>
+              )}
             </DialogActions>
           </Dialog>
           <h1>Recipes</h1>
@@ -146,7 +217,7 @@ class Recipes extends Component {
               <div className="title">
                 <h1>{recipe.name}</h1>
                 <div className="icons">
-                  <Fab className="button-see" onClick={() => this.handleSeeClick(recipe.id)} size="small" aria-label="see">
+                  <Fab className="button-see" onClick={() => this.handleSeeClick(key)} size="small" aria-label="see">
                     <VisibilityIcon fontSize="large" />
                   </Fab>
                   <Fab className="button-delete" onClick={() => this.handleDeleteClick(recipe.id)} size="small" aria-label="delete">
