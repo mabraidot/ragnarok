@@ -82,6 +82,34 @@ class Database:
 
         return json.dumps(recipes)
 
+    def getRecipe(self, id):
+        cursor = self.conn.cursor()
+        query = "SELECT *, DATETIME(cooked, 'localtime'), DATETIME(created, 'localtime') FROM recipes WHERE id = ?"
+        cursor.execute(query, id)
+        row = cursor.fetchone()
+
+        if len(row) > 0:
+            recipe = {
+                    'id':               row[0],
+                    'name':             row[1],
+                    'type_name':        row[2],
+                    'style_name':       row[3],
+                    'style_category':   row[4],
+                    'original_gravity': row[5],
+                    'final_gravity':    row[6],
+                    'ibu':              row[7],
+                    'abv':              row[8],
+                    'color':            row[9],
+                    'beer_json':        row[10],
+                    'cooked':           row[13],
+                    'created':          row[14],
+                }
+        else:
+            recipe = False
+
+        return recipe
+
+
     def deleteRecipe(self, recipeId):
         cursor = self.conn.cursor()
         query = "DELETE FROM recipes WHERE id = ?"

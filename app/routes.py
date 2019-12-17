@@ -12,6 +12,8 @@ class routes:
             web.get('/', self.home),
             web.get('/index', self.home),
 
+            web.get('/cook/{recipe}', self.cook),
+
             web.post('/recipes/import', self.importRecipe),
             web.post('/recipes/list', self.listRecipes),
             web.get('/recipes/{recipe}/delete', self.deleteRecipe),
@@ -60,6 +62,15 @@ class routes:
 
     def home(self, request):
         return web.json_response({'response': 'The Ragnarök is coming ...'})
+
+
+    ## COOKING ############################
+
+    async def cook(self, request):
+        recipe = request.match_info.get('recipe', 0)
+        self.app.cooking.start(recipe)
+
+        return web.json_response({'notice': 'The cooking process started'})
 
 
     ## RECIPES ############################

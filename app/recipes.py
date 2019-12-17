@@ -4,6 +4,7 @@ class Recipes:
     def __init__(self, app):
         self.app = app
 
+
     def importRecipe(self, xml):
         success = False
         try:
@@ -29,9 +30,17 @@ class Recipes:
 
         return success
 
+
     def listRecipes(self):
         recipes = self.app.DB.listRecipes()
         return recipes
+
+
+    def getRecipe(self, id):
+        recipe = self.app.DB.getRecipe(id)
+
+        return recipe
+
 
     def deleteRecipe(self, recipeId):
         try:
@@ -39,4 +48,5 @@ class Recipes:
             result = True
         except:
             result = False
+
         return result

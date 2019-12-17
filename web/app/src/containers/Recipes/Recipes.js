@@ -82,7 +82,6 @@ class Recipes extends Component {
 
   handleSeeClick = (recipeId) => {
     const recipe = JSON.parse(this.state.recipes[recipeId].beer_json);
-    // console.log('-->', recipe);
 
     let description = '';
     let item = '';
@@ -128,6 +127,24 @@ class Recipes extends Component {
       dialogDescription: '' 
     });
     console.log('see ', this.state.recipes[recipeId]);
+
+    if (typeof this.state.recipes[recipeId].id !== 'undefined') {
+      ApiClient.cook(this.state.recipes[recipeId].id).then((resp) => {
+        console.log('[API]', resp);
+        if (resp.notice) {
+          this.props.enqueueSnackbar(resp.notice, { 
+            variant: 'info',
+            persist: true,
+          });
+          this.props.history.push('/')
+        }
+        if (resp.error) {
+          this.props.enqueueSnackbar(resp.error, { 
+            variant: 'error',
+          });
+        }
+      });
+    }
 
   }
 

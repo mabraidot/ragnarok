@@ -39,3 +39,7 @@ class Cooking:
         self.mashTunTimerSetPoint = 0
         self.boilKettleTemperatureSetPoin = 0
         self.boilKettleTimerSetPoint = 0
+
+    def start(self, recipeId):
+        recipe = self.app.recipes.getRecipe(recipeId)
+        print(recipe["name"])
