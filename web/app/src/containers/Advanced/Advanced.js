@@ -56,89 +56,89 @@ class Advanced extends Component {
     socket.onmessage = (result) => {
       const data = JSON.parse(result.data);
 
-      if (data.MashTunTemperatureProbe) {
+      if (typeof data.MashTunTemperatureProbe !== 'undefined') {
         this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe.toFixed(1)});
       }
-      if (data.MashTunTemperatureSetPoint) {
+      if (typeof data.MashTunTemperatureSetPoint !== 'undefined') {
         if (data.MashTunTemperatureSetPoint !== this.state.MashTunTemperatureSetPoint) {
           this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint.toFixed(1)});
         }
       }
-      if (data.MashTunWaterLevelProbe) {
+      if (typeof data.MashTunWaterLevelProbe !== 'undefined') {
         this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe.toFixed(1)});
       }
-      if (data.MashTunWaterLevelSetPoint) {
+      if (typeof data.MashTunWaterLevelSetPoint !== 'undefined') {
         if (data.MashTunWaterLevelSetPoint !== this.state.MashTunWaterLevelSetPoint) {
           this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint.toFixed(1)});
         }
       }
-      if (data.MashTunTimeProbe) {
+      if (typeof data.MashTunTimeProbe !== 'undefined') {
         this.setState({MashTunTimeProbe: data.MashTunTimeProbe});
       }
-      if (data.MashTunTimeSetPoint) {
+      if (typeof data.MashTunTimeSetPoint !== 'undefined') {
         if (data.MashTunTimeSetPoint !== this.state.MashTunTimeSetPoint) {
           this.setState({MashTunTimeSetPoint: data.MashTunTimeSetPoint});
         }
       }
 
-      if (data.BoilKettleTemperatureProbe) {
+      if (typeof data.BoilKettleTemperatureProbe !== 'undefined') {
         this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe.toFixed(1)});
       }
-      if (data.BoilKettleTemperatureSetPoint) {
+      if (typeof data.BoilKettleTemperatureSetPoint !== 'undefined') {
         if (data.BoilKettleTemperatureSetPoint !== this.state.BoilKettleTemperatureSetPoint) {
           this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint.toFixed(1)});
         }
       }
-      if (data.BoilKettleWaterLevelProbe) {
+      if (typeof data.BoilKettleWaterLevelProbe !== 'undefined') {
         this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe.toFixed(1)});
       }
-      if (data.BoilKettleWaterLevelSetPoint) {
+      if (typeof data.BoilKettleWaterLevelSetPoint !== 'undefined') {
         if (data.BoilKettleWaterLevelSetPoint !== this.state.BoilKettleWaterLevelSetPoint) {
           this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint.toFixed(1)});
         }
       }
-      if (data.BoilKettleTimeProbe) {
+      if (typeof data.BoilKettleTimeProbe !== 'undefined') {
         this.setState({BoilKettleTimeProbe: data.BoilKettleTimeProbe});
       }
-      if (data.BoilKettleTimeSetPoint) {
+      if (typeof data.BoilKettleTimeSetPoint !== 'undefined') {
         if (data.BoilKettleTimeSetPoint !== this.state.BoilKettleTimeSetPoint) {
           this.setState({BoilKettleTimeSetPoint: data.BoilKettleTimeSetPoint});
         }
       }
 
-      if (data.MashTunHeater) {
+      if (typeof data.MashTunHeater !== 'undefined') {
         this.setState({MashTunHeater: (data.MashTunHeater === 'False') ? false : true});
       }
-      if (data.BoilKettleHeater) {
+      if (typeof data.BoilKettleHeater !== 'undefined') {
         this.setState({BoilKettleHeater: (data.BoilKettleHeater === 'False') ? false : true});
       }
 
-      if (data.OutletValveDump) {
+      if (typeof data.OutletValveDump !== 'undefined') {
         this.setState({OutletValveDump: (data.OutletValveDump === '0') ? false : true});
       }
-      if (data.ChillerValveWort) {
+      if (typeof data.ChillerValveWort !== 'undefined') {
         this.setState({ChillerValveWort: (data.ChillerValveWort === '0') ? false : true});
       }
-      if (data.ChillerValveWater) {
+      if (typeof data.ChillerValveWater !== 'undefined') {
         this.setState({ChillerValveWater: (data.ChillerValveWater === '0') ? false : true});
       }
-      if (data.BoilKettleValveOutlet) {
+      if (typeof data.BoilKettleValveOutlet !== 'undefined') {
         this.setState({BoilKettleValveOutlet: (data.BoilKettleValveOutlet === '0') ? false : true});
       }
-      if (data.BoilKettleValveInlet) {
+      if (typeof data.BoilKettleValveInlet !== 'undefined') {
         this.setState({BoilKettleValveInlet: (data.BoilKettleValveInlet === '0') ? false : true});
       }
-      if (data.BoilKettleValveWater) {
+      if (typeof data.BoilKettleValveWater !== 'undefined') {
         this.setState({BoilKettleValveWater: (data.BoilKettleValveWater === '0') ? false : true});
       }
-      if (data.MashTunValveOutlet) {
+      if (typeof data.MashTunValveOutlet !== 'undefined') {
         this.setState({MashTunValveOutlet: (data.MashTunValveOutlet === '0') ? false : true});
       }
-      if (data.MashTunValveInlet) {
+      if (typeof data.MashTunValveInlet !== 'undefined') {
         this.setState({MashTunValveInlet: (data.MashTunValveInlet === '0') ? false : true});
       }
       
-      if (data.Pump) {
+      if (typeof data.Pump !== 'undefined') {
         this.setState({Pump: (data.Pump === 'False') ? false : true});
       }
       
@@ -236,7 +236,7 @@ class Advanced extends Component {
                 <h4>Mash Tun</h4>
                 <Slider
                   className="temperature"
-                  defaultValue={this.state.MashTunTemperatureSetPoint}
+                  value={this.state.MashTunTemperatureSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={110}
@@ -248,7 +248,7 @@ class Advanced extends Component {
 
                 <Slider
                   className="water"
-                  defaultValue={this.state.MashTunWaterLevelSetPoint}
+                  value={this.state.MashTunWaterLevelSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
                   max={16}
@@ -260,7 +260,7 @@ class Advanced extends Component {
 
                 <Slider
                   className="time"
-                  defaultValue={this.state.MashTunTimeSetPoint}
+                  value={this.state.MashTunTimeSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={120}
@@ -295,7 +295,7 @@ class Advanced extends Component {
                 <h4>Boil Kettle</h4>
                 <Slider
                   className="temperature"
-                  defaultValue={this.state.BoilKettleTemperatureSetPoint}
+                  value={this.state.BoilKettleTemperatureSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={110}
@@ -307,7 +307,7 @@ class Advanced extends Component {
 
                 <Slider
                   className="water"
-                  defaultValue={this.state.BoilKettleWaterLevelSetPoint}
+                  value={this.state.BoilKettleWaterLevelSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
                   max={16}
@@ -319,7 +319,7 @@ class Advanced extends Component {
 
                 <Slider
                   className="time"
-                  defaultValue={this.state.BoilKettleTimeSetPoint}
+                  value={this.state.BoilKettleTimeSetPoint}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={120}

@@ -25,23 +25,27 @@ class webSocket:
         data[self.app.mashTun.name + 'WaterLevelSetPoint'] = float(self.app.mashTun.getWaterLevelSetPoint())
         data[self.app.mashTun.name + 'WaterLevelProbe'] = float(self.app.mashTun.getWaterLevel())
         data[self.app.mashTun.name + 'Heater'] = str(self.app.mashTun.getHeater())
+        data[self.app.mashTun.name + 'TimeSetPoint'] = int(self.app.cooking.getMashTunTimeSetPoint())
+        data[self.app.mashTun.name + 'TimeProbe'] = int(self.app.cooking.getMashTunTimeProbe())
 
         data[self.app.boilKettle.name + 'TemperatureSetPoint'] = float(self.app.boilKettle.getTemperatureSetPoint())
         data[self.app.boilKettle.name + 'TemperatureProbe'] = float(self.app.boilKettle.getTemperature())
         data[self.app.boilKettle.name + 'WaterLevelSetPoint'] = float(self.app.boilKettle.getWaterLevelSetPoint())
         data[self.app.boilKettle.name + 'WaterLevelProbe'] = float(self.app.boilKettle.getWaterLevel())
         data[self.app.boilKettle.name + 'Heater'] = str(self.app.boilKettle.getHeater())
+        data[self.app.boilKettle.name + 'TimeSetPoint'] = int(self.app.cooking.getBoilKettleTimeSetPoint())
+        data[self.app.boilKettle.name + 'TimeProbe'] = int(self.app.cooking.getBoilKettleTimeProbe())
 
-        data[self.app.outletValveDump.name] = self.app.outletValveDump.get()
-        data[self.app.chillerValveWort.name] = self.app.chillerValveWort.get()
-        data[self.app.chillerValveWater.name] = self.app.chillerValveWater.get()
-        data[self.app.boilKettleValveOutlet.name] = self.app.boilKettleValveOutlet.get()
-        data[self.app.boilKettleValveInlet.name] = self.app.boilKettleValveInlet.get()
-        data[self.app.boilKettleValveWater.name] = self.app.boilKettleValveWater.get()
-        data[self.app.mashTunValveOutlet.name] = self.app.mashTunValveOutlet.get()
-        data[self.app.mashTunValveInlet.name] = self.app.mashTunValveInlet.get()
+        data[self.app.outletValveDump.name] = str(self.app.outletValveDump.get())
+        data[self.app.chillerValveWort.name] = str(self.app.chillerValveWort.get())
+        data[self.app.chillerValveWater.name] = str(self.app.chillerValveWater.get())
+        data[self.app.boilKettleValveOutlet.name] = str(self.app.boilKettleValveOutlet.get())
+        data[self.app.boilKettleValveInlet.name] = str(self.app.boilKettleValveInlet.get())
+        data[self.app.boilKettleValveWater.name] = str(self.app.boilKettleValveWater.get())
+        data[self.app.mashTunValveOutlet.name] = str(self.app.mashTunValveOutlet.get())
+        data[self.app.mashTunValveInlet.name] = str(self.app.mashTunValveInlet.get())
 
-        data[self.app.pump.name] = self.app.pump.get()
+        data[self.app.pump.name] = str(self.app.pump.get())
 
         for log in self.getLogs():
             key = list(log)[0]
