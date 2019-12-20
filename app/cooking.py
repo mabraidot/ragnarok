@@ -9,7 +9,8 @@ RECIPE
 MASH STEP
 ---------
 * TYPE: it can be 'Infusion', 'Temperature' or 'Decoction'. Respectively, adding water, raising temp only and draw off some mash for boiling.
-* INFUSE_AMOUNT: hot water to add at the start of the step expressed in liters. If it's zero, is a temperature ramp for saccharification.
+* DECOCTION_AMT: if TYPE is 'Decoction', amount of water to draw from mash tun.
+* INFUSE_AMOUNT: hot water to add at the start of the step expressed in liters. If it's zero, is a temperature ramp for saccharification or a decoction.
 * INFUSE_TEMP: temperature to pre-heat the infused water (format '00.0 C'. Transform to number).
 * STEP_TIME: duration of the step after water reach the target step temperature.
 * STEP_TEMP: target temperature for the step.
@@ -31,23 +32,45 @@ Optional:
 * TYPE: can be 'Fining', 'Water Agent', 'Spice', 'Herb', 'Flavor' or 'Other'
 * AMOUNT: weight of the addition expressed in kilograms.
 
+
+CLASS
+-----
+mash = [{
+    state: ('Pending', 'Running', 'Finished'),
+    type: ('Infusion', 'Temperature' or 'Decoction'),
+    decoction_amount: 0,
+    infuse_amount: 0,
+    infuse_temp: 0,
+    step_time: 0,
+    step_temp: 0
+}]
+boil = {
+    state: ('Pending', 'Running', 'Finished'),
+    time: 0
+}
+adjunts = [{
+    state: ('Pending', 'Running', 'Finished'),
+    use: ('Mash', 'First Wort', 'Boil', 'Dry Hop', 'Aroma', 'Primary', 'Secondary' or 'Bottling'),
+    time: 0,
+    amount: 0
+}]
+
 """
 class Cooking:
     def __init__(self, app):
         self.app = app
-        self.mashTunTemperatureSetPoin = 0
-        self.mashTunTimerSetPoint = 0
-        self.boilKettleTemperatureSetPoin = 0
-        self.boilKettleTimerSetPoint = 0
-
         self.mashTunTimeSetPoint = 0
         self.mashTunTimeProbe = 0
         self.boilKettleTimeSetPoint = 0
         self.boilKettleTimeProbe = 0
 
+        self.mash = []
+        self.adjunts = []
+        self.boil = {}
+
 
     def getMashTunTimeSetPoint(self):
-        return self.mashTunTimerSetPoint
+        return self.mashTunTimeSetPoint
 
 
     def getMashTunTimeProbe(self):
