@@ -7,8 +7,7 @@ class temperatureProbe:
         self.value = 0
     
     def get(self):
-        # @TODO: this is a TEST. Restore the actual value
-        # self.value = random.randrange(0, 110)
+        # @TODO: this is a TEST. Return the actual value
         heater = self.app.mashTun.getHeater()
         if self.name == 'BoilKettleTemperatureProbe':
             heater = self.app.boilKettle.getHeater()

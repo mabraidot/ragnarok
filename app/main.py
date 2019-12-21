@@ -22,7 +22,7 @@ app.jobs = AsyncIOScheduler()
 app.jobs.start()
 
 # Main cooking process
-app.cooking = Cooking(app)
+app.cooking = Cooking(app, config)
 
 # Hardware
 app.mashTun = kettle(app, config['MASH_TUN_PINS'], 'MashTun')

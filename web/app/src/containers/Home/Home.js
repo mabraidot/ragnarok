@@ -97,7 +97,7 @@ class Home extends Component {
           });
         }
       }
-      console.log('[WS]: message!:', data);
+      // console.log('[WS]: message!:', data);
     };
   }
 

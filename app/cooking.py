@@ -47,7 +47,8 @@ mash = [{
 }]
 boil = {
     state: ('Pending', 'Running', 'Finished'),
-    time: 0
+    step_time: 0,
+    step_temp: 105
 }
 mashAdjuncts = [{
     state: ('Pending', 'Running', 'Finished'),
@@ -64,8 +65,9 @@ boilAdjuncts = [{
 
 """
 class Cooking:
-    def __init__(self, app):
+    def __init__(self, app, config):
         self.app = app
+        self.config = config
         self.mashTunTimeSetPoint = 0
         self.mashTunTimeProbe = 0
         self.boilKettleTimeSetPoint = 0
@@ -75,6 +77,11 @@ class Cooking:
         self.mashAdjuncts = []
         self.boilAdjuncts = []
         self.boil = {}
+
+        self.currentStep = {
+            'number': -1,
+            'name': 'mash'
+        }
 
 
     def getMashTunTimeSetPoint(self):
@@ -93,7 +100,7 @@ class Cooking:
         return self.boilKettleTimeProbe
 
 
-    def start(self, recipeId):
+    def loadRecipe(self, recipeId):
         recipe = self.app.recipes.getRecipe(recipeId)
         
         mashSteps = recipe["beer_json"]["RECIPES"]["RECIPE"]["MASH"]["MASH_STEPS"]["MASH_STEP"]
@@ -129,7 +136,38 @@ class Cooking:
 
         self.boil =  {
             'state': 'Pending',
-            'time': float("{0:.2f}".format(float(recipe["beer_json"]["RECIPES"]["RECIPE"]["BOIL_TIME"])))
+            'step_time': float("{0:.2f}".format(float(recipe["beer_json"]["RECIPES"]["RECIPE"]["BOIL_TIME"]))),
+            'step_temp': float(self.config['DEFAULT']['BOIL_TEMPERATURE'])
         }
 
-        print(json.dumps(self.boil, indent=2))
+
+    def setNextStep(self):
+        self.currentStep['number'] += 1
+        if self.currentStep['number'] < len(self.mash):
+            # start mash step process
+            print(json.dumps(self.mash[self.currentStep['number']], indent=2))
+
+            if (self.mash[self.currentStep['number']]['type'] == 'Infusion' or
+                    self.mash[self.currentStep['number']]['type'] == 'Temperature'):
+
+                if self.mash[self.currentStep['number']]['infuse_amount'] > 0:
+                    self.app.mashTun.setWaterLevel(self.mash[self.currentStep['number']]['infuse_amount'])
+                    
+                self.app.mashTun.setTemperature(self.mash[self.currentStep['number']]['step_temp'])
+
+
+        else:
+            # start boil process
+            self.currentStep['number'] = -1
+            self.currentStep['name'] = 'boil'
+
+        """
+        for each step:
+            1. set tempsetpoint
+            2. set timer: when temp = tempsetpoint, start step process
+            3. set timer: when step ends, set next step
+        """
+
+    def start(self, recipeId):
+        self.loadRecipe(recipeId)
+        self.setNextStep()

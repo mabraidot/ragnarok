@@ -7,6 +7,9 @@ class waterLevelProbe:
         self.value = 0
     
     def get(self):
-        # test value
-        self.value = random.randrange(0, 16)
+        # @TODO: this is a TEST. Return the actual value
+        # self.value = random.randrange(0, 16)
+        if self.app.pump.get() and self.value < 15:
+            self.value += 0.3
+
         return self.value
