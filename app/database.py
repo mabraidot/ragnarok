@@ -100,7 +100,7 @@ class Database:
                     'ibu':              row[7],
                     'abv':              row[8],
                     'color':            row[9],
-                    'beer_json':        row[10],
+                    'beer_json':        json.loads(row[10]),
                     'cooked':           row[13],
                     'created':          row[14],
                 }

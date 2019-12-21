@@ -1,3 +1,4 @@
+import json
 
 """
 BeerXML Format
@@ -48,9 +49,15 @@ boil = {
     state: ('Pending', 'Running', 'Finished'),
     time: 0
 }
-adjunts = [{
+mashAdjuncts = [{
     state: ('Pending', 'Running', 'Finished'),
-    use: ('Mash', 'First Wort', 'Boil', 'Dry Hop', 'Aroma', 'Primary', 'Secondary' or 'Bottling'),
+    name: 'name',
+    time: 0,
+    amount: 0
+}]
+boilAdjuncts = [{
+    state: ('Pending', 'Running', 'Finished'),
+    name: 'name',
     time: 0,
     amount: 0
 }]
@@ -65,7 +72,8 @@ class Cooking:
         self.boilKettleTimeProbe = 0
 
         self.mash = []
-        self.adjunts = []
+        self.mashAdjuncts = []
+        self.boilAdjuncts = []
         self.boil = {}
 
 
@@ -87,4 +95,41 @@ class Cooking:
 
     def start(self, recipeId):
         recipe = self.app.recipes.getRecipe(recipeId)
-        print(recipe["name"])
+        
+        mashSteps = recipe["beer_json"]["RECIPES"]["RECIPE"]["MASH"]["MASH_STEPS"]["MASH_STEP"]
+        for step in mashSteps:
+            self.mash.append({
+                'state': 'Pending',
+                'type': step['TYPE'],
+                'decoction_amount': float("{0:.2f}".format(float(step['DECOCTION_AMT'].split(" ")[0]))),
+                'infuse_amount': float("{0:.2f}".format(float(step['INFUSE_AMOUNT']))),
+                'infuse_temp': float("{0:.2f}".format(float(step['INFUSE_TEMP'].split(" ")[0]))),
+                'step_time': float("{0:.2f}".format(float(step['STEP_TIME']))),
+                'step_temp': float("{0:.2f}".format(float(step['STEP_TEMP'])))
+            })
+
+        hopAdjuncts = recipe["beer_json"]["RECIPES"]["RECIPE"]["HOPS"]["HOP"]
+        hopAdjuncts += recipe["beer_json"]["RECIPES"]["RECIPE"]["MISCS"]["MISC"]
+        hopAdjuncts = sorted(hopAdjuncts, key = lambda i: float(i['TIME']), reverse=True)
+        for step in hopAdjuncts:
+            if step['USE'] == 'Mash' or step['USE'] == 'First Wort':
+                self.mashAdjuncts.append({
+                    'state': 'Pending',
+                    'name': step['NAME'],
+                    'time': float("{0:.2f}".format(float(step['TIME']))),
+                    'amount': float("{0:.5f}".format(float(step['AMOUNT'])))
+                })
+            elif step['USE'] == 'Boil' or step['USE'] == 'Aroma':
+                self.boilAdjuncts.append({
+                    'state': 'Pending',
+                    'name': step['NAME'],
+                    'time': float("{0:.2f}".format(float(step['TIME']))),
+                    'amount': float("{0:.5f}".format(float(step['AMOUNT'])))
+                })
+
+        self.boil =  {
+            'state': 'Pending',
+            'time': float("{0:.2f}".format(float(recipe["beer_json"]["RECIPES"]["RECIPE"]["BOIL_TIME"])))
+        }
+
+        print(json.dumps(self.boil, indent=2))
