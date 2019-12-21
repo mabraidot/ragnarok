@@ -50,6 +50,11 @@ boil = {
     step_time: 0,
     step_temp: 105
 }
+cool = {
+    state: ('Pending', 'Running', 'Finished'),
+    step_time: 30,
+    step_temp: 25
+}
 mashAdjuncts = [{
     state: ('Pending', 'Running', 'Finished'),
     name: 'name',
@@ -141,32 +146,64 @@ class Cooking:
         }
 
 
+    def timerProcess(self):
+        if self.currentStep['name'] == 'mash':
+            if self.mashTunTimeProbe > 0:
+                self.mashTunTimeProbe -= 1
+            else:
+                self.app.jobs.remove_job('timerProcess')
+                self.mash[self.currentStep['number']]['state'] = 'Finished'
+                self.setNextStep()
+        else:
+            if self.boilKettleTimeProbe > 0:
+                self.boilKettleTimeProbe -= 1
+            else:
+                self.app.jobs.remove_job('timerProcess')
+                self.boil['state'] = 'Finished'
+                self.setNextStep()
+
+
+    def timerHeating(self):
+        if self.currentStep['name'] == 'mash':
+            step = self.mash[self.currentStep['number']]
+            if step['type'] == 'Infusion' or step['type'] == 'Temperature':
+                if self.app.mashTun.getTemperature() >= step['step_temp']:
+                    self.app.jobs.remove_job('timerHeating')
+                    self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess')
+        else:
+            if self.app.boilKettle.getTemperature() >= self.boil['step_temp']:
+                self.app.jobs.remove_job('timerHeating')
+                self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess')
+
+
     def setNextStep(self):
         self.currentStep['number'] += 1
         if self.currentStep['number'] < len(self.mash):
-            # start mash step process
-            print(json.dumps(self.mash[self.currentStep['number']], indent=2))
+            step = self.mash[self.currentStep['number']]
 
-            if (self.mash[self.currentStep['number']]['type'] == 'Infusion' or
-                    self.mash[self.currentStep['number']]['type'] == 'Temperature'):
+            if step['type'] == 'Infusion' or step['type'] == 'Temperature':
+                if step['infuse_amount'] > 0:
+                    # TODO: handle transfer of pre-heated water from the boil kettle
+                    self.app.mashTun.setWaterLevel(step['infuse_amount'])
 
-                if self.mash[self.currentStep['number']]['infuse_amount'] > 0:
-                    self.app.mashTun.setWaterLevel(self.mash[self.currentStep['number']]['infuse_amount'])
-                    
-                self.app.mashTun.setTemperature(self.mash[self.currentStep['number']]['step_temp'])
+                self.app.mashTun.setTemperature(step['step_temp'])
+                self.mashTunTimeSetPoint = self.mashTunTimeProbe = step['step_time']
 
+                self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating')
+                self.mash[self.currentStep['number']]['state'] = 'Running'
+
+            elif step['type'] == 'Decoction':
+                # TODO: handle the decoction process
+                self.setNextStep()
+
+            print('[STEP-MASH: '+str(self.currentStep['number'])+']', json.dumps(self.mash[self.currentStep['number']], indent=2))
 
         else:
             # start boil process
-            self.currentStep['number'] = -1
+            # self.currentStep['number'] = -1
             self.currentStep['name'] = 'boil'
+            self.setNextStep()
 
-        """
-        for each step:
-            1. set tempsetpoint
-            2. set timer: when temp = tempsetpoint, start step process
-            3. set timer: when step ends, set next step
-        """
 
     def start(self, recipeId):
         self.loadRecipe(recipeId)

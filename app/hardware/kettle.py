@@ -17,7 +17,7 @@ class kettle:
         self.heater = heater(app, self.config['HEATER'], self.name + 'Heater')
         
     def getTemperature(self):
-        # @TODO: this is responsability of cooking class, just for testing purpose
+        # TODO: this is responsability of cooking class, just for testing purpose
         if self.temperatureProbe.get() < self.temperatureSetPoint:
             self.setHeater('true')
         else:
@@ -37,11 +37,11 @@ class kettle:
     
     def getWaterLevel(self):
         currentLevel = self.waterLevelProbe.get()
-        # @TODO: restore this safety water level condition
+        # TODO: restore this safety water level condition
         if currentLevel < self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
             self.setHeater('false')
 
-        # @TODO: this is responsability of cooking class, just for testing purpose
+        # TODO: this is responsability of cooking class, just for testing purpose
         if self.getWaterLevelSetPoint() > 0 and currentLevel >= self.getWaterLevelSetPoint():
             self.app.pump.set('false')
 
@@ -59,7 +59,7 @@ class kettle:
         return self.heater.get()
     
     def setHeater(self, newState = 'false'):
-        # @TODO: restore this safety water level condition
+        # TODO: restore this safety water level condition
         if newState == 'true' and self.getWaterLevel() >= self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
         # if newState == 'true':
             self.heater.set('true')

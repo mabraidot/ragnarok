@@ -42,7 +42,7 @@ class PIDAutoTune:
             heat_percent = atune.output
             heating_time = sampleTime * heat_percent / 100
             wait_time = sampleTime - heating_time
-            # @TODO: set the heater power as heat_percent
+            # TODO: set the heater power as heat_percent
             
             # self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Set Point: ' + str(setpoint)})
             # self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Kettle Temperature: ' + str(self.kettle.getTemperature())})
