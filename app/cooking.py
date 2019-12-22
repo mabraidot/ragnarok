@@ -73,10 +73,10 @@ class Cooking:
     def __init__(self, app, config):
         self.app = app
         self.config = config
-        self.mashTunTimeSetPoint = 0
-        self.mashTunTimeProbe = 0
-        self.boilKettleTimeSetPoint = 0
-        self.boilKettleTimeProbe = 0
+        self.mashTunTimeSetPoint = 0.0
+        self.mashTunTimeProbe = 0.0
+        self.boilKettleTimeSetPoint = 0.0
+        self.boilKettleTimeProbe = 0.0
 
         self.mash = []
         self.mashAdjuncts = []
@@ -149,6 +149,7 @@ class Cooking:
     def timerProcess(self):
         if self.currentStep['name'] == 'mash':
             if self.mashTunTimeProbe > 0:
+                # TODO: substract one second at a time (1/60)
                 self.mashTunTimeProbe -= 1
             else:
                 self.app.jobs.remove_job('timerProcess')
@@ -156,6 +157,7 @@ class Cooking:
                 self.setNextStep()
         else:
             if self.boilKettleTimeProbe > 0:
+                # TODO: substract one second at a time (1/60)
                 self.boilKettleTimeProbe -= 1
             else:
                 self.app.jobs.remove_job('timerProcess')
