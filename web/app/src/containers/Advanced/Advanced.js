@@ -20,11 +20,11 @@ class Advanced extends Component {
       MashTunValveInlet: false,
       MashTunValveOutlet: false,
       
-      MashTunTemperatureSetPoint: 65,
+      MashTunTemperatureSetPoint: 0,
       MashTunTemperatureProbe: 0,
-      MashTunWaterLevelSetPoint: 14.5,
+      MashTunWaterLevelSetPoint: 0,
       MashTunWaterLevelProbe: 0,
-      MashTunTimeSetPoint: 15,
+      MashTunTimeSetPoint: 0,
       MashTunTimeProbe: 0,
       
       BoilKettleHeater: false,
@@ -32,11 +32,11 @@ class Advanced extends Component {
       BoilKettleValveInlet: false,
       BoilKettleValveOutlet: false,
 
-      BoilKettleTemperatureSetPoint: 100,
+      BoilKettleTemperatureSetPoint: 0,
       BoilKettleTemperatureProbe: 0,
-      BoilKettleWaterLevelSetPoint: 7.5,
+      BoilKettleWaterLevelSetPoint: 0,
       BoilKettleWaterLevelProbe: 0,
-      BoilKettleTimeSetPoint: 60,
+      BoilKettleTimeSetPoint: 0,
       BoilKettleTimeProbe: 0,
 
       ChillerValveWater: false,

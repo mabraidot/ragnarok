@@ -20,8 +20,8 @@ class Gauge extends Component {
   render() {
 
     let currentTemp = this.props.valueTemperature * 100 / 110;
-    let currentTime = this.props.valueTime * 100 / this.props.setPointTime;
-    let currentWater = this.props.valueWater * 100 / this.props.setPointWater;
+    let currentTime = this.props.valueTime * 100 / 130;
+    let currentWater = this.props.valueWater * 100 / 16;
 
     const multiplier = (this.props.focus) ? 1 : 0.4 ;
     const maxDiameter = 80 * multiplier;

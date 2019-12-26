@@ -15,19 +15,19 @@ class Home extends Component {
       socket: new Socket(),
 
       MashTunFocus: true,
-      MashTunTemperatureSetPoint: 110,
+      MashTunTemperatureSetPoint: 0,
       MashTunTemperatureProbe: 0,
-      MashTunWaterLevelSetPoint: 16,
+      MashTunWaterLevelSetPoint: 0,
       MashTunWaterLevelProbe: 0,
-      MashTunTimeSetPoint: 120,
+      MashTunTimeSetPoint: 0,
       MashTunTimeProbe: 0,
       
       BoilKettleFocus: false,
-      BoilKettleTemperatureSetPoint: 110,
+      BoilKettleTemperatureSetPoint: 0,
       BoilKettleTemperatureProbe: 0,
-      BoilKettleWaterLevelSetPoint: 16,
+      BoilKettleWaterLevelSetPoint: 0,
       BoilKettleWaterLevelProbe: 0,
-      BoilKettleTimeSetPoint: 120.0,
+      BoilKettleTimeSetPoint: 0,
       BoilKettleTimeProbe: 0,
     };
     this.handleAdvancedClick = this.handleAdvancedClick.bind(this);
