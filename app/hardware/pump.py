@@ -12,3 +12,16 @@ class pump:
             self.value = True
         else:
             self.value = False
+
+    def moveWater(self, moveFrom, moveTo, quantity):
+        """
+        Sources:
+        -------
+        INLET_FILTERED
+        INLET
+        MASHTUN
+        BOILKETTLE
+        CHILLER_WORT
+        CHILLER_WATER (to dump)
+        OUTLET
+        """

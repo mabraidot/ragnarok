@@ -23,11 +23,11 @@ class kettle:
         else:
             self.setHeater('false')
 
-
         return self.temperatureProbe.get()
     
     def setTemperature(self, newValue = 0):
         self.temperatureSetPoint = float(newValue)
+        # TODO: this is responsability of some other class than kettle
         if self.getTemperature() < self.temperatureSetPoint:
             self.setHeater("true")
         
@@ -48,6 +48,7 @@ class kettle:
     
     def setWaterLevel(self, newValue = 0):
         self.waterSetPoint = min(float(newValue), self.config.getfloat('MAX_WATER_LEVEL'))
+        # TODO: this is responsability of some other class than kettle
         if self.getWaterLevel() < self.waterSetPoint:
             self.app.pump.set('true')
     
