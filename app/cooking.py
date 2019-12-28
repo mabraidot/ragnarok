@@ -186,12 +186,14 @@ class Cooking:
             if step['type'] == 'Infusion' or step['type'] == 'Temperature':
                 if step['infuse_amount'] > 0:
                     # TODO: handle transfer of pre-heated water from the boil kettle
+                    # TODO: do the water filling operation with the pump class
                     self.app.mashTun.setWaterLevel(step['infuse_amount'])
 
-                self.app.mashTun.setTemperature(step['step_temp'])
-                self.mashTunTimeSetPoint = self.mashTunTimeProbe = step['step_time']
-
+                self.app.mashTun.heatToTemperature(step['step_temp'])
                 self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating')
+
+                self.mashTunTimeSetPoint = step['step_time']
+                self.mashTunTimeProbe = step['step_time']
                 self.mash[self.currentStep['number']]['state'] = 'Running'
 
             elif step['type'] == 'Decoction':
