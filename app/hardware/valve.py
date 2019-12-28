@@ -8,4 +8,4 @@ class valve:
         return self.value
     
     def set(self, newValue = 0):
-        self.value = newValue
+        self.value = int(newValue)
