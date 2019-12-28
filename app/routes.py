@@ -140,7 +140,9 @@ class routes:
     ## HEATERS ###########################
     def setMashTunHeater(self, request):
         on = request.match_info.get('on', 'false')
-        self.app.mashTun.setHeater(on)
+        self.app.mashTun.setTemperature(0)
+        if on == 'false':
+            self.app.mashTun.setHeater(on)
         return web.json_response({'response': str(on)})
     
     def sartMashTunPIDAutoTune(self, request):
@@ -154,6 +156,8 @@ class routes:
     def setBoilKettleHeater(self, request):
         on = request.match_info.get('on', 'false')
         self.app.boilKettle.setHeater(on)
+        if on == 'false':
+            self.app.boilKettle.setTemperature(0)
         return web.json_response({'response': str(on)})
 
     async def sartBoilKettlePIDAutoTune(self, request):

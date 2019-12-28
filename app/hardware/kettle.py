@@ -11,10 +11,10 @@ class kettle:
         self.PIDAutoTune = PIDAutoTune(self.app, self, self.config)
 
         self.temperatureProbe = temperatureProbe(app, self.name + 'TemperatureProbe')
-        self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1)
+        self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id=name+'Heating')
         self.temperatureSetPoint = 0.0
         self.waterLevelProbe = waterLevelProbe(app, self.config, self.name + 'WaterLevelProbe')
-        self.app.jobs.add_job(self.timerWaterLevel, 'interval', seconds=1)
+        self.app.jobs.add_job(self.timerWaterLevel, 'interval', seconds=1, id=name+'Watering')
         self.waterSetPoint = 0.0
         self.heater = heater(app, self.config['HEATER'], self.name + 'Heater')
 
@@ -40,22 +40,24 @@ class kettle:
         return self.heater.get()
 
     def setHeater(self, newState = 'false'):
-        if newState == 'true' and self.getWaterLevel() >= self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
-            self.heater.set('true')
-        else:
-            self.heater.set('false')
+        self.heater.set(newState)
+
+
 
 
     # TODO: maybe move this timer to its respective PROBE classes
     def timerHeating(self):
-        if self.getTemperatureSetPoint() > 0 and self.getHeater():
-            # TODO: set timer to heat using PID. Heater on for testing
-            # send setpoint and probe reading to heater for calculations
-            self.setHeater('true')
+        if self.getTemperatureSetPoint() > 0 and self.getWaterLevel() >= self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
 
-        # Safety measure, if termperature raises 10 degrees over setpoint, shut down the heater
-        if self.temperatureProbe.get() >= self.getTemperatureSetPoint() + 10:
+            # TODO: set timer to heat using PID. Heater on for testing
+            self.heater.pid(self.getTemperatureSetPoint(), self.getTemperature())
+
+            # Safety measure, if termperature raises 10 degrees over setpoint, shut down the heater
+            if self.getTemperature() >= self.getTemperatureSetPoint() + 10:
                 self.setHeater('false')
+        else:
+            self.setHeater('false')
+
 
     # TODO: maybe move this timer to its respective PROBE classes
     def timerWaterLevel(self):
@@ -68,5 +70,3 @@ class kettle:
         self.temperatureSetPoint = float(temperature)
         if self.getTemperature() < self.temperatureSetPoint:
             self.setHeater("true")
-        else:
-            self.setHeater("false")

@@ -14,12 +14,29 @@ class pump:
             self.value = True
         else:
             self.value = False
+            self.close()
 
-    def moveWater(self, moveFrom, moveTo):
+    def close(self):
+        self.app.outletValveDump.set(0)
+        self.app.chillerValveWort.set(0)
+        self.app.chillerValveWater.set(0)
+        self.app.boilKettleValveOutlet.set(0)
+        self.app.boilKettleValveInlet.set(0)
+        self.app.boilKettleValveWater.set(0)
+        self.app.boilKettleValveReturn.set(0)
+        self.app.mashTunValveOutlet.set(0)
+        self.app.mashTunValveInlet.set(0)
+
+
+    def moveWater(self, moveFrom, moveTo = None, speed = 100):
+        if not isinstance(speed, int) or speed < 0 or speed > 100:
+            raise TypeError("%s attribute must be set to an instance of %s and in a range of (0-100)" % (speed, int))
         if not isinstance(moveFrom, sourcesEnum):
             raise TypeError("%s attribute must be set to an instance of %s" % (moveFrom, sourcesEnum))
-        if not isinstance(moveTo, sourcesEnum):
+        if moveTo != None and not isinstance(moveTo, sourcesEnum):
             raise TypeError("%s attribute must be set to an instance of %s" % (moveTo, sourcesEnum))
 
-        # if moveFrom == sourcesEnum.INLET_FILTERED:
-            # open 
+        if moveFrom == sourcesEnum.BOILKETTLE_INLET:
+            self.app.boilKettleValveInlet.set(speed)
+
+        self.set('true')

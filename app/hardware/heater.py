@@ -14,3 +14,10 @@ class heater:
             self.value = True
         else:
             self.value = False
+
+    def pid(self, tempSetPoint, currentTemp):
+        # TODO: implement actual PID logic. Just for testing
+        if(currentTemp >= tempSetPoint):
+            self.set('false')
+        else:
+            self.set('true')

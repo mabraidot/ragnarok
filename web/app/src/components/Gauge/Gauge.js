@@ -12,9 +12,13 @@ class Gauge extends Component {
   }
 
   intToMinutes(number) {
-    var minutes = parseInt(Number(number));
-    var seconds = Math.round((Number(number)-minutes) * 60);
-    return `${minutes.toString().padStart(2,"00")}:${seconds.toString().padStart(2,"00")}`;
+    let time = `00:00`;
+    if (Number(number) > 0.001) {
+      const minutes = parseInt(Number(number));
+      const seconds = Math.round((Number(number)-minutes) * 60);
+      time = `${minutes.toString().padStart(2,"00")}:${seconds.toString().padStart(2,"00")}`;
+    }
+    return time
   }
 
   render() {
