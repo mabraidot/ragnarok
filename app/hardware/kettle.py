@@ -46,16 +46,18 @@ class kettle:
             self.heater.set('false')
 
 
-
+    # TODO: maybe move this timer to its respective PROBE classes
     def timerHeating(self):
         if self.getTemperatureSetPoint() > 0 and self.getHeater():
             # TODO: set timer to heat using PID. Heater on for testing
+            # send setpoint and probe reading to heater for calculations
             self.setHeater('true')
 
         # Safety measure, if termperature raises 10 degrees over setpoint, shut down the heater
         if self.temperatureProbe.get() >= self.getTemperatureSetPoint() + 10:
                 self.setHeater('false')
 
+    # TODO: maybe move this timer to its respective PROBE classes
     def timerWaterLevel(self):
         # Safety measure, if water level is greater than setpoint, shut down the pump
         if self.getWaterLevelSetPoint() > 0 and self.getWaterLevel() >= self.getWaterLevelSetPoint():

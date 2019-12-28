@@ -1,3 +1,5 @@
+from app.hardware.sourcesEnum import sourcesEnum
+
 class pump:
     def __init__(self, app, name):
         self.app = app
@@ -13,15 +15,11 @@ class pump:
         else:
             self.value = False
 
-    def moveWater(self, moveFrom, moveTo, quantity):
-        """
-        Sources:
-        -------
-        INLET_FILTERED
-        INLET
-        MASHTUN
-        BOILKETTLE
-        CHILLER_WORT
-        CHILLER_WATER (to dump)
-        OUTLET
-        """
+    def moveWater(self, moveFrom, moveTo):
+        if not isinstance(moveFrom, sourcesEnum):
+            raise TypeError("%s attribute must be set to an instance of %s" % (moveFrom, sourcesEnum))
+        if not isinstance(moveTo, sourcesEnum):
+            raise TypeError("%s attribute must be set to an instance of %s" % (moveTo, sourcesEnum))
+
+        # if moveFrom == sourcesEnum.INLET_FILTERED:
+            # open 

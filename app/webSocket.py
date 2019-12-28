@@ -42,6 +42,7 @@ class webSocket:
         data[self.app.boilKettleValveOutlet.name] = str(self.app.boilKettleValveOutlet.get())
         data[self.app.boilKettleValveInlet.name] = str(self.app.boilKettleValveInlet.get())
         data[self.app.boilKettleValveWater.name] = str(self.app.boilKettleValveWater.get())
+        data[self.app.boilKettleValveReturn.name] = str(self.app.boilKettleValveReturn.get())
         data[self.app.mashTunValveOutlet.name] = str(self.app.mashTunValveOutlet.get())
         data[self.app.mashTunValveInlet.name] = str(self.app.mashTunValveInlet.get())
 

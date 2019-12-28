@@ -34,6 +34,7 @@ class routes:
 
             web.get('/boilkettle/set/heater/{on}', self.setBoilKettleHeater),
             web.get('/boilkettle/valve/set/water/{on}', self.setBoilKettleValveWater),
+            web.get('/boilkettle/valve/set/return/{on}', self.setBoilKettleValveReturn),
             web.get('/boilkettle/valve/set/inlet/{on}', self.setBoilKettleValveInlet),
             web.get('/boilkettle/valve/set/outlet/{on}', self.setBoilKettleValveOutlet),
 
@@ -180,6 +181,12 @@ class routes:
     def setBoilKettleValveWater(self, request):
         on = request.match_info.get('on', 0)
         self.app.boilKettleValveWater.set(on)
+        return web.json_response({'response': str(on)})
+
+
+    def setBoilKettleValveReturn(self, request):
+        on = request.match_info.get('on', 0)
+        self.app.boilKettleValveReturn.set(on)
         return web.json_response({'response': str(on)})
 
 

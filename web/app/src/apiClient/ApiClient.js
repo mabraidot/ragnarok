@@ -130,6 +130,9 @@ class ApiClient {
       case 'BoilKettleValveWater':
         url = `/boilkettle/valve/set/water/${(newValue) ? 100 : 0}`;
         break;
+      case 'BoilKettleValveReturn':
+        url = `/boilkettle/valve/set/return/${(newValue) ? 100 : 0}`;
+        break;
       case 'BoilKettleValveInlet':
         url = `/boilkettle/valve/set/inlet/${(newValue) ? 100 : 0}`;
         break;

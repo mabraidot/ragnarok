@@ -29,6 +29,7 @@ class Advanced extends Component {
       
       BoilKettleHeater: false,
       BoilKettleValveWater: false,
+      BoilKettleValveReturn: false,
       BoilKettleValveInlet: false,
       BoilKettleValveOutlet: false,
 
@@ -130,6 +131,9 @@ class Advanced extends Component {
       }
       if (typeof data.BoilKettleValveWater !== 'undefined') {
         this.setState({BoilKettleValveWater: (data.BoilKettleValveWater === '0') ? false : true});
+      }
+      if (typeof data.BoilKettleValveReturn !== 'undefined') {
+        this.setState({BoilKettleValveReturn: (data.BoilKettleValveReturn === '0') ? false : true});
       }
       if (typeof data.MashTunValveOutlet !== 'undefined') {
         this.setState({MashTunValveOutlet: (data.MashTunValveOutlet === '0') ? false : true});
@@ -342,6 +346,10 @@ class Advanced extends Component {
                 <FormControlLabel
                   control={<Switch checked={this.state.BoilKettleValveInlet} onChange={this.handleSwitchChange('BoilKettleValveInlet')}  value="BoilKettleValveInlet" />}
                   label="Inlet"
+                />
+                <FormControlLabel
+                  control={<Switch checked={this.state.BoilKettleValveReturn} onChange={this.handleSwitchChange('BoilKettleValveReturn')}  value="BoilKettleValveReturn" />}
+                  label="Return"
                 />
                 <FormControlLabel
                   control={<Switch checked={this.state.BoilKettleValveOutlet} onChange={this.handleSwitchChange('BoilKettleValveOutlet')}  value="BoilKettleValveOutlet" />}

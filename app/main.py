@@ -36,6 +36,7 @@ app.chillerValveWater = valve(app, 'ChillerValveWater')
 app.boilKettleValveOutlet = valve(app, 'BoilKettleValveOutlet')
 app.boilKettleValveInlet = valve(app, 'BoilKettleValveInlet')
 app.boilKettleValveWater = valve(app, 'BoilKettleValveWater')
+app.boilKettleValveReturn = valve(app, 'BoilKettleValveReturn')
 app.mashTunValveOutlet = valve(app, 'MashTunValveOutlet')
 app.mashTunValveInlet = valve(app, 'MashTunValveInlet')
 
