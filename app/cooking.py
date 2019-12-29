@@ -175,12 +175,12 @@ class Cooking:
                 if self.app.boilKettle.getTemperature() >= step['infuse_temp']:
                     self.app.jobs.remove_job('timerHeating')
                     # TODO: set pump to move water from boilkettle to mashtun
-                    # self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
+                    self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
             if step['type'] == 'Temperature':
                 if self.app.mashTun.getTemperature() >= step['step_temp']:
                     self.app.jobs.remove_job('timerHeating')
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
-        else:
+        elif self.currentStep['name'] == 'boil':
             if self.app.boilKettle.getTemperature() >= self.boil['step_temp']:
                 self.app.jobs.remove_job('timerHeating')
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
@@ -197,8 +197,8 @@ class Cooking:
                 self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
     
             elif step['type'] == 'Temperature':
-                # self.app.mashTun.heatToTemperature(step['step_temp'])
-                # self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
+                self.app.mashTun.heatToTemperature(step['step_temp'])
+                self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
                 print('TEMP STEP')
 
             elif step['type'] == 'Decoction':
@@ -212,9 +212,16 @@ class Cooking:
 
         else:
             # start boil process
-            # self.currentStep['number'] = -1
+            self.currentStep['number'] = -1
             self.currentStep['name'] = 'boil'
-            self.setNextStep()
+            # self.setNextStep()
+            step = self.boil
+            self.boilKettleTimeSetPoint = step['step_time']
+            self.boilKettleTimeProbe = step['step_time']
+            self.boil['state'] == 'Running'
+            self.app.boilKettle.heatToTemperature(step['step_temp'])
+            self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
+            print('[BOIL]', json.dumps(self.boil, indent=2))
 
 
     def start(self, recipeId):

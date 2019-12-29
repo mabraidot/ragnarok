@@ -174,7 +174,7 @@ class Advanced extends Component {
     let time = `00:00`;
     if (Number(number) > 0.001) {
       const minutes = parseInt(Number(number));
-      const seconds = Math.round((Number(number)-minutes) * 60);
+      const seconds = Math.floor((Number(number)-minutes) * 60);
       time = `${minutes.toString().padStart(2,"00")}:${seconds.toString().padStart(2,"00")}`;
     }
     return time
