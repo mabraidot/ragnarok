@@ -17,7 +17,10 @@ class waterLevelProbe:
                 if inletValveState > 0:
                     self.value += flow
                 if outletValveState > 0:
-                    self.value -= flow
+                    if self.value > flow:
+                        self.value -= flow
+                    else:
+                        self.value = 0
 
         else:
             inletValveState = self.app.boilKettleValveInlet.get()
@@ -30,6 +33,9 @@ class waterLevelProbe:
                 if returnValveState > 0:
                     self.value += flow
                 if outletValveState > 0:
-                    self.value -= flow * (outletValveState / 100)
+                    if self.value > flow:
+                        self.value -= flow
+                    else:
+                        self.value = 0
 
         return self.value

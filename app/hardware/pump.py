@@ -28,11 +28,25 @@ class pump:
 
     def pumpDaemon(self):
 
-        if self.getStatus() == waterActionsEnum.WATER_IN_FILTERED:
-            if self.app.boilKettle.getWaterLevelSetPoint() > 0 and self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint():
+        # Fill in the kettle with filtered or non-filtered tap water
+        if self.getStatus() == waterActionsEnum.WATER_IN_FILTERED or self.getStatus() == waterActionsEnum.WATER_IN:
+            if (self.app.boilKettle.getWaterLevelSetPoint() > 0 and 
+                self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint()):
+
                 self.app.boilKettleValveInlet.set(0)
                 self.app.boilKettle.setWaterLevel(0)
                 self.setStatus(waterActionsEnum.FINISHED)
+
+        # Rack water from boilkettle to mashtun
+        if self.getStatus() == waterActionsEnum.KETTLE_TO_MASHTUN:
+            if (self.app.boilKettle.getWaterLevel() <= 0 or 
+                self.app.mashTun.getWaterLevel() == self.app.mashTun.getWaterLevelSetPoint()):
+
+                self.set('true')
+                self.app.boilKettleValveOutlet.set(0)
+                self.app.mashTunValveInlet.set(0)
+
+
 
 
 
@@ -42,9 +56,17 @@ class pump:
 
         self.setStatus(action)
 
-        if action == waterActionsEnum.WATER_IN_FILTERED:
+        # Fill in the kettle with filtered or non-filtered tap water
+        if action == waterActionsEnum.WATER_IN_FILTERED or action == waterActionsEnum.WATER_IN:
             if ammount > 0:
                 self.app.boilKettle.setWaterLevel(ammount)
                 self.app.boilKettleValveInlet.set(100)
-            
+
+        # Rack water from boilkettle to mashtun
+        if action == waterActionsEnum.KETTLE_TO_MASHTUN:
+            self.app.mashTun.setWaterLevel(self.app.boilKettle.getWaterLevel())
+            self.app.boilKettleValveOutlet.set(100)
+            self.app.mashTunValveInlet.set(100)
+            self.set('true')
+
 
