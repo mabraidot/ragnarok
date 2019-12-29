@@ -39,7 +39,13 @@ class kettle:
         return self.heater.get()
 
     def setHeater(self, newState = 'false'):
-        self.heater.set(newState)
+        if self.getWaterLevel() < self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
+            self.app.ws.setLog({
+                self.config['LOG_ERROR_LABEL']: 
+                self.config.get('SAFE_WATER_LEVEL_FOR_HEATERS') + ' liters of water are required to turn on heaters'
+            })
+        else:
+            self.heater.set(newState)
 
 
 
@@ -47,14 +53,13 @@ class kettle:
     # TODO: maybe move this timer to its respective PROBE classes
     def timerHeating(self):
         if self.getTemperatureSetPoint() > 0 and self.getWaterLevel() >= self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
-
             # TODO: set timer to heat using PID. Heater on for testing
             self.heater.pid(self.getTemperatureSetPoint(), self.getTemperature())
 
             # Safety measure, if termperature raises 10 degrees over setpoint, shut down the heater
-            if self.getTemperature() >= self.getTemperatureSetPoint() + 10:
+            if self.getTemperature() >= self.getTemperatureSetPoint() + self.config.getfloat('SAFE_OVERHEAT_TEMPERATURE'):
                 self.setHeater('false')
-        else:
+        elif self.getHeater():
             self.setHeater('false')
 
 

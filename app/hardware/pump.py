@@ -42,9 +42,10 @@ class pump:
             if (self.app.boilKettle.getWaterLevel() <= 0 or 
                 self.app.mashTun.getWaterLevel() == self.app.mashTun.getWaterLevelSetPoint()):
 
-                self.set('true')
+                self.set('false')
                 self.app.boilKettleValveOutlet.set(0)
                 self.app.mashTunValveInlet.set(0)
+                self.setStatus(waterActionsEnum.FINISHED)
 
 
 
@@ -53,20 +54,21 @@ class pump:
     def moveWater(self, action = waterActionsEnum.FINISHED, ammount = 0, time = 0):
         if not isinstance(action, waterActionsEnum):
             raise TypeError("%s attribute must be set to an instance of %s" % (action, waterActionsEnum))
+        
+        if self.getStatus() == waterActionsEnum.FINISHED:
+            self.setStatus(action)
 
-        self.setStatus(action)
+            # Fill in the kettle with filtered or non-filtered tap water
+            if action == waterActionsEnum.WATER_IN_FILTERED or action == waterActionsEnum.WATER_IN:
+                if ammount > 0:
+                    self.app.boilKettle.setWaterLevel(ammount)
+                    self.app.boilKettleValveInlet.set(100)
 
-        # Fill in the kettle with filtered or non-filtered tap water
-        if action == waterActionsEnum.WATER_IN_FILTERED or action == waterActionsEnum.WATER_IN:
-            if ammount > 0:
-                self.app.boilKettle.setWaterLevel(ammount)
-                self.app.boilKettleValveInlet.set(100)
-
-        # Rack water from boilkettle to mashtun
-        if action == waterActionsEnum.KETTLE_TO_MASHTUN:
-            self.app.mashTun.setWaterLevel(self.app.boilKettle.getWaterLevel())
-            self.app.boilKettleValveOutlet.set(100)
-            self.app.mashTunValveInlet.set(100)
-            self.set('true')
+            # Rack water from boilkettle to mashtun
+            if action == waterActionsEnum.KETTLE_TO_MASHTUN:
+                self.app.mashTun.setWaterLevel(self.app.boilKettle.getWaterLevel())
+                self.app.boilKettleValveOutlet.set(100)
+                self.app.mashTunValveInlet.set(100)
+                self.set('true')
 
 
