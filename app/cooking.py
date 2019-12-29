@@ -1,5 +1,5 @@
 import json
-from app.hardware.sourcesEnum import sourcesEnum
+from app.hardware.sourcesEnum import waterActionsEnum
 
 """
 BeerXML Format
@@ -174,7 +174,8 @@ class Cooking:
             if step['type'] == 'Infusion':
                 if self.app.boilKettle.getTemperature() >= step['infuse_temp']:
                     self.app.jobs.remove_job('timerHeating')
-                    self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
+                    # TODO: set pump to move water from boilkettle to mashtun
+                    # self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
             if step['type'] == 'Temperature':
                 if self.app.mashTun.getTemperature() >= step['step_temp']:
                     self.app.jobs.remove_job('timerHeating')
@@ -191,8 +192,7 @@ class Cooking:
             step = self.mash[self.currentStep['number']]
 
             if step['type'] == 'Infusion' and step['infuse_amount'] > 0:
-                self.app.boilKettle.setWaterLevel(step['infuse_amount'])
-                self.app.pump.moveWater(sourcesEnum.BOILKETTLE_INLET, None, 100)
+                self.app.pump.moveWater(action=waterActionsEnum.WATER_IN_FILTERED, ammount=step['infuse_amount'])
                 self.app.boilKettle.heatToTemperature(step['infuse_temp'])
                 self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
     

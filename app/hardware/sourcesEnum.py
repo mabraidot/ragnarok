@@ -13,3 +13,13 @@ class sourcesEnum(Enum):
     CHILLER_WORT        = auto()
 
     DUMP                = auto()
+
+class waterActionsEnum(Enum):
+    FINISHED            = auto()
+    WATER_IN            = auto()
+    WATER_IN_FILTERED   = auto()
+    KETTLE_TO_MASHTUN   = auto()
+    MASHTUN_TO_MASHTUN  = auto()
+    KETTLE_TO_KETTLE    = auto()
+    CHILL               = auto()
+    DUMP                = auto()

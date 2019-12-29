@@ -16,19 +16,20 @@ class waterLevelProbe:
                 outletValveState = self.app.mashTunValveOutlet.get()
                 if inletValveState > 0:
                     self.value += flow
-                elif outletValveState > 0:
+                if outletValveState > 0:
                     self.value -= flow
 
         else:
-            if self.app.pump.get():
-                inletValveState = self.app.boilKettleValveInlet.get()
-                waterValveState = self.app.boilKettleValveWater.get()
+            inletValveState = self.app.boilKettleValveInlet.get()
+            waterValveState = self.app.boilKettleValveWater.get()
+            if inletValveState > 0 or waterValveState > 0:
+                self.value += flow
+            elif self.app.pump.get():
                 returnValveState = self.app.boilKettleValveReturn.get()
                 outletValveState = self.app.boilKettleValveOutlet.get()
-
-                if inletValveState > 0 or waterValveState > 0 or returnValveState > 0:
+                if returnValveState > 0:
                     self.value += flow
-                elif outletValveState > 0:
+                if outletValveState > 0:
                     self.value -= flow * (outletValveState / 100)
 
         return self.value

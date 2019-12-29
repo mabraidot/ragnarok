@@ -1,10 +1,12 @@
-from app.hardware.sourcesEnum import sourcesEnum
+from app.hardware.sourcesEnum import sourcesEnum, waterActionsEnum
 
 class pump:
     def __init__(self, app, name):
         self.app = app
         self.name = name
         self.value = False
+        self.app.jobs.add_job(self.pumpDaemon, 'interval', seconds=1, id='pumpDaemon')
+        self.status = waterActionsEnum.FINISHED
     
     def get(self):
         return self.value
@@ -14,29 +16,35 @@ class pump:
             self.value = True
         else:
             self.value = False
-            self.close()
 
-    def close(self):
-        self.app.outletValveDump.set(0)
-        self.app.chillerValveWort.set(0)
-        self.app.chillerValveWater.set(0)
-        self.app.boilKettleValveOutlet.set(0)
-        self.app.boilKettleValveInlet.set(0)
-        self.app.boilKettleValveWater.set(0)
-        self.app.boilKettleValveReturn.set(0)
-        self.app.mashTunValveOutlet.set(0)
-        self.app.mashTunValveInlet.set(0)
+    def getStatus(self):
+        return self.status
+    
+    def setStatus(self, newStatus):
+        if not isinstance(newStatus, waterActionsEnum):
+            raise TypeError("%s attribute must be set to an instance of %s" % (newStatus, waterActionsEnum))
+        self.status = newStatus
 
 
-    def moveWater(self, moveFrom, moveTo = None, speed = 100):
-        if not isinstance(speed, int) or speed < 0 or speed > 100:
-            raise TypeError("%s attribute must be set to an instance of %s and in a range of (0-100)" % (speed, int))
-        if not isinstance(moveFrom, sourcesEnum):
-            raise TypeError("%s attribute must be set to an instance of %s" % (moveFrom, sourcesEnum))
-        if moveTo != None and not isinstance(moveTo, sourcesEnum):
-            raise TypeError("%s attribute must be set to an instance of %s" % (moveTo, sourcesEnum))
+    def pumpDaemon(self):
 
-        if moveFrom == sourcesEnum.BOILKETTLE_INLET:
-            self.app.boilKettleValveInlet.set(speed)
+        if self.getStatus() == waterActionsEnum.WATER_IN_FILTERED:
+            if self.app.boilKettle.getWaterLevelSetPoint() > 0 and self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint():
+                self.app.boilKettleValveInlet.set(0)
+                self.app.boilKettle.setWaterLevel(0)
+                self.setStatus(waterActionsEnum.FINISHED)
 
-        self.set('true')
+
+
+    def moveWater(self, action = waterActionsEnum.FINISHED, ammount = 0, time = 0):
+        if not isinstance(action, waterActionsEnum):
+            raise TypeError("%s attribute must be set to an instance of %s" % (action, waterActionsEnum))
+
+        self.setStatus(action)
+
+        if action == waterActionsEnum.WATER_IN_FILTERED:
+            if ammount > 0:
+                self.app.boilKettle.setWaterLevel(ammount)
+                self.app.boilKettleValveInlet.set(100)
+            
+

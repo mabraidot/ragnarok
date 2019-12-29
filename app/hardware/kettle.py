@@ -14,7 +14,6 @@ class kettle:
         self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id=name+'Heating')
         self.temperatureSetPoint = 0.0
         self.waterLevelProbe = waterLevelProbe(app, self.config, self.name + 'WaterLevelProbe')
-        self.app.jobs.add_job(self.timerWaterLevel, 'interval', seconds=1, id=name+'Watering')
         self.waterSetPoint = 0.0
         self.heater = heater(app, self.config['HEATER'], self.name + 'Heater')
 
@@ -58,12 +57,6 @@ class kettle:
         else:
             self.setHeater('false')
 
-
-    # TODO: maybe move this timer to its respective PROBE classes
-    def timerWaterLevel(self):
-        # Safety measure, if water level is greater than setpoint, shut down the pump
-        if self.getWaterLevelSetPoint() > 0 and self.getWaterLevel() >= self.getWaterLevelSetPoint():
-            self.app.pump.set('false')
 
 
     def heatToTemperature(self, temperature = 0):
