@@ -275,7 +275,7 @@ class Advanced extends Component {
                   valueLabelDisplay="auto"
                   onChangeCommitted={this.handleSliderSetPoint("MashTunTimeSetPoint")}
                 />
-                <div className="label"><span>{this.intToMinutes(this.state.MashTunTimeProbe)}'</span> / {this.intToMinutes(this.state.MashTunTimeSetPoint)}</div>
+                <div className="label"><span>{this.intToMinutes(this.state.MashTunTimeProbe)}</span> / {this.intToMinutes(this.state.MashTunTimeSetPoint)}</div>
                 <div className="foot">Process time</div>
 
                 <p> </p>

@@ -39,11 +39,11 @@ class Home extends Component {
       const data = JSON.parse(result.data)
       if (data.MashTunTemperatureProbe) {
         // TESTING GAUGE ORDER CHANGE
-        // if(data.MashTunTemperatureProbe > 50){
-        //   this.setState({MashTunFocus: true, BoilKettleFocus: false});
-        // }else{
-        //   this.setState({MashTunFocus: false, BoilKettleFocus: true});
-        // }
+        if(data.BoilKettleTemperatureProbe > 100){
+          this.setState({MashTunFocus: false, BoilKettleFocus: true});
+        }else{
+          this.setState({MashTunFocus: true, BoilKettleFocus: false});
+        }
         this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe.toFixed(1)});
       }
 

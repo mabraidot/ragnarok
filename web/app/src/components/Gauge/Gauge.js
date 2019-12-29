@@ -162,15 +162,15 @@ class Gauge extends Component {
           <CircularProgress style={currentTemperatureStyle} thickness={temperatureBorder} variant="static" value={currentTemp} />
           <div style={labelsStyle}>
             <div style={labelsSetPointStyle}><span style={{fontSize: '0.5em'}}>TEMPERATURE<br /></span> <strong>{this.props.setPointTemperature}°</strong></div>
-            <div style={labelsCurrentStyle}><span style={{color: temperatureColour}}>{this.props.valueTemperature}°</span></div>
+            <div style={labelsCurrentStyle}><span style={{color: temperatureColour}}>{this.props.valueTemperature}</span></div>
           </div>
           <div style={labelsStyle}>
             <div style={labelsSetPointStyle}><span style={{fontSize: '0.5em'}}>PROCESS TIME<br /></span> <strong>{this.intToMinutes(this.props.setPointTime)}</strong> </div>
             <div style={labelsCurrentStyle}><span style={{color: timeColour}}>{this.intToMinutes(this.props.valueTime)}</span></div>
           </div>
           <div style={labelsStyle}>
-            <div style={labelsSetPointStyle}><span style={{fontSize: '0.5em'}}>WATER VOLUME<br /></span> <strong>{this.props.setPointWater} l</strong> </div>
-            <div style={labelsCurrentStyle}><span style={{color: waterColour}}>{this.props.valueWater}l</span></div>
+            <div style={labelsSetPointStyle}><span style={{fontSize: '0.5em'}}>WATER VOLUME<br /></span> <strong>{this.props.setPointWater} L</strong> </div>
+            <div style={labelsCurrentStyle}><span style={{color: waterColour}}>{this.props.valueWater}</span></div>
           </div>
         </div>
       </div>

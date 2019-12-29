@@ -18,6 +18,7 @@ class waterActionsEnum(Enum):
     FINISHED            = auto()
     WATER_IN            = auto()
     WATER_IN_FILTERED   = auto()
+    MASHTUN_TO_KETTLE   = auto()
     KETTLE_TO_MASHTUN   = auto()
     MASHTUN_TO_MASHTUN  = auto()
     KETTLE_TO_KETTLE    = auto()

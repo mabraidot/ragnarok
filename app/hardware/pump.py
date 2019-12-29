@@ -1,8 +1,9 @@
 from app.hardware.sourcesEnum import sourcesEnum, waterActionsEnum
 
 class pump:
-    def __init__(self, app, name):
+    def __init__(self, app, config, name):
         self.app = app
+        self.config = config
         self.name = name
         self.value = False
         self.app.jobs.add_job(self.pumpDaemon, 'interval', seconds=1, id='pumpDaemon')
@@ -40,11 +41,21 @@ class pump:
         # Rack water from boilkettle to mashtun
         if self.getStatus() == waterActionsEnum.KETTLE_TO_MASHTUN:
             if (self.app.boilKettle.getWaterLevel() <= 0 or 
-                self.app.mashTun.getWaterLevel() == self.app.mashTun.getWaterLevelSetPoint()):
+                self.app.mashTun.getWaterLevel() >= self.app.mashTun.getWaterLevelSetPoint()):
 
                 self.set('false')
                 self.app.boilKettleValveOutlet.set(0)
                 self.app.mashTunValveInlet.set(0)
+                self.setStatus(waterActionsEnum.FINISHED)
+
+        # Rack water from mashtun to boilkettle
+        if self.getStatus() == waterActionsEnum.MASHTUN_TO_KETTLE:
+            if (self.app.mashTun.getWaterLevel() <= 0 or 
+                self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint()):
+
+                self.set('false')
+                self.app.mashTunValveOutlet.set(0)
+                self.app.boilKettleValveReturn.set(0)
                 self.setStatus(waterActionsEnum.FINISHED)
 
 
@@ -61,14 +72,21 @@ class pump:
             # Fill in the kettle with filtered or non-filtered tap water
             if action == waterActionsEnum.WATER_IN_FILTERED or action == waterActionsEnum.WATER_IN:
                 if ammount > 0:
-                    self.app.boilKettle.setWaterLevel(ammount)
+                    self.app.boilKettle.setWaterLevel(max(ammount, self.config.getfloat('DEFAULT', 'SAFE_WATER_LEVEL_FOR_HEATERS')))
                     self.app.boilKettleValveInlet.set(100)
 
             # Rack water from boilkettle to mashtun
             if action == waterActionsEnum.KETTLE_TO_MASHTUN:
-                self.app.mashTun.setWaterLevel(self.app.boilKettle.getWaterLevel())
+                self.app.mashTun.setWaterLevel(self.app.mashTun.getWaterLevel() + self.app.boilKettle.getWaterLevel())
                 self.app.boilKettleValveOutlet.set(100)
                 self.app.mashTunValveInlet.set(100)
+                self.set('true')
+
+            # Rack water from mashtun to boilkettle
+            if action == waterActionsEnum.MASHTUN_TO_KETTLE:
+                self.app.boilKettle.setWaterLevel(self.app.boilKettle.getWaterLevel() + self.app.mashTun.getWaterLevel())
+                self.app.mashTunValveOutlet.set(100)
+                self.app.boilKettleValveReturn.set(100)
                 self.set('true')
 
 

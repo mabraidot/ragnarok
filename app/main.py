@@ -28,7 +28,7 @@ app.cooking = Cooking(app, config)
 app.mashTun = kettle(app, config['MASH_TUN_PINS'], 'MashTun')
 app.boilKettle = kettle(app, config['BOIL_KETTLE_PINS'], 'BoilKettle')
 
-app.pump = pump(app, 'Pump')
+app.pump = pump(app, config, 'Pump')
 
 app.outletValveDump = valve(app, 'OutletValveDump')
 app.chillerValveWort = valve(app, 'ChillerValveWort')

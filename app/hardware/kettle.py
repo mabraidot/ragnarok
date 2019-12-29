@@ -68,3 +68,7 @@ class kettle:
         self.temperatureSetPoint = float(temperature)
         if self.getTemperature() < self.temperatureSetPoint:
             self.setHeater("true")
+
+    def stopHeating(self):
+        self.temperatureSetPoint = 0
+        self.setHeater("false")
