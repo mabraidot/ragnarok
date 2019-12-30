@@ -37,49 +37,63 @@ class Home extends Component {
     const { socket } = this.state.socket;
     socket.onmessage = (result) => {
       const data = JSON.parse(result.data)
-      if (data.MashTunTemperatureProbe) {
-        // TESTING GAUGE ORDER CHANGE
-        if(data.BoilKettleTemperatureProbe > 100){
-          this.setState({MashTunFocus: false, BoilKettleFocus: true});
-        }else{
-          this.setState({MashTunFocus: true, BoilKettleFocus: false});
-        }
+      if (typeof data.MashTunTemperatureProbe !== 'undefined') {
         this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe.toFixed(1)});
       }
 
-      if (data.MashTunTemperatureSetPoint) {
-        this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint.toFixed(1)});
+      if (typeof data.MashTunTemperatureSetPoint !== 'undefined') {
+        if (data.MashTunTemperatureSetPoint !== this.state.MashTunTemperatureSetPoint) {
+          this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint.toFixed(1)});
+        }
       }
-      if (data.MashTunWaterLevelProbe) {
+      if (typeof data.MashTunWaterLevelProbe !== 'undefined') {
         this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe.toFixed(1)});
       }
-      if (data.MashTunWaterLevelSetPoint) {
-        this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint.toFixed(1)});
+      if (typeof data.MashTunWaterLevelSetPoint !== 'undefined') {
+        if (data.MashTunWaterLevelSetPoint !== this.state.MashTunWaterLevelSetPoint) {
+          this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint.toFixed(1)});
+        }
       }
-      if (data.MashTunTimeProbe) {
+      if (typeof data.MashTunTimeProbe !== 'undefined') {
         this.setState({MashTunTimeProbe: data.MashTunTimeProbe});
       }
-      if (data.MashTunTimeSetPoint) {
-        this.setState({MashTunTimeSetPoint: data.MashTunTimeSetPoint});
+      if (typeof data.MashTunTimeSetPoint !== 'undefined') {
+        if (data.MashTunTimeSetPoint !== this.state.MashTunTimeSetPoint) {
+          this.setState({MashTunTimeSetPoint: data.MashTunTimeSetPoint});
+        }
       }
 
-      if (data.BoilKettleTemperatureProbe) {
+      if (typeof data.BoilKettleTemperatureProbe !== 'undefined') {
         this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe.toFixed(1)});
       }
-      if (data.BoilKettleTemperatureSetPoint) {
-        this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint.toFixed(1)});
+      if (typeof data.BoilKettleTemperatureSetPoint !== 'undefined') {
+        if (data.BoilKettleTemperatureSetPoint !== this.state.BoilKettleTemperatureSetPoint) {
+          // TESTING GAUGE ORDER CHANGE
+          if(data.BoilKettleTemperatureSetPoint.toFixed(1) > 100){
+            this.setState({MashTunFocus: false, BoilKettleFocus: true});
+          }else{
+            this.setState({MashTunFocus: true, BoilKettleFocus: false});
+          }
+          this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint.toFixed(1)});
+        }
       }
-      if (data.BoilKettleWaterLevelProbe) {
+      
+      if (typeof data.BoilKettleWaterLevelProbe !== 'undefined') {
         this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe.toFixed(1)});
       }
-      if (data.BoilKettleWaterLevelSetPoint) {
-        this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint.toFixed(1)});
+      if (typeof data.BoilKettleWaterLevelSetPoint !== 'undefined') {
+        if (data.BoilKettleWaterLevelSetPoint !== this.state.BoilKettleWaterLevelSetPoint) {
+          this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint.toFixed(1)});
+        }
       }
-      if (data.BoilKettleTimeProbe) {
+
+      if (typeof data.BoilKettleTimeProbe !== 'undefined') {
         this.setState({BoilKettleTimeProbe: data.BoilKettleTimeProbe});
       }
-      if (data.BoilKettleTimeSetPoint) {
-        this.setState({BoilKettleTimeSetPoint: data.BoilKettleTimeSetPoint});
+      if (typeof data.BoilKettleTimeSetPoint !== 'undefined') {
+        if (data.BoilKettleTimeSetPoint !== this.state.BoilKettleTimeSetPoint) {
+          this.setState({BoilKettleTimeSetPoint: data.BoilKettleTimeSetPoint});
+        }
       }
 
       if (data.notice) {

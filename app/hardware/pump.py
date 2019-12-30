@@ -89,4 +89,33 @@ class pump:
                 self.app.boilKettleValveReturn.set(100)
                 self.set('true')
 
+            # Recirculation through boil kettle
+            if action == waterActionsEnum.KETTLE_TO_KETTLE:
+                self.app.boilKettleValveOutlet.set(100)
+                self.app.boilKettleValveReturn.set(40)
+                self.set('true')
 
+            # Recirculation through mashtun
+            if action == waterActionsEnum.MASHTUN_TO_MASHTUN:
+                self.app.mashTunValveOutlet.set(100)
+                self.app.mashTunValveInlet.set(40)
+                self.set('true')
+
+            # Recirculation through chiller to cool the wort
+            if action == waterActionsEnum.CHILL:
+                self.app.chillerValveWater.set(100)
+                self.app.boilKettleValveOutlet.set(100)
+                self.app.chillerValveWort.set(40)
+                self.set('true')
+
+        if action == waterActionsEnum.FINISHED:
+            self.app.outletValveDump.set(0)
+            self.app.chillerValveWort.set(0)
+            self.app.chillerValveWater.set(0)
+            self.app.boilKettleValveOutlet.set(0)
+            self.app.boilKettleValveInlet.set(0)
+            self.app.boilKettleValveWater.set(0)
+            self.app.boilKettleValveReturn.set(0)
+            self.app.mashTunValveOutlet.set(0)
+            self.app.mashTunValveInlet.set(0)
+            self.set('false')
