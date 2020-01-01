@@ -81,6 +81,8 @@ class Cooking:
         self.mashTunTimeProbe = 0.0
         self.boilKettleTimeSetPoint = 0.0
         self.boilKettleTimeProbe = 0.0
+        self.app.boilKettle.setWaterLevel(0)
+        self.app.mashTun.setWaterLevel(0)
 
         self.mash = []
         self.mashAdjuncts = []
@@ -279,6 +281,7 @@ class Cooking:
                 self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 
                 'The cooking process has finished!. Please dump the wort manually.'
             })
+            print('[FINISH]', json.dumps(self.currentStep, indent=2))
 
 
 

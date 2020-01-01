@@ -32,7 +32,8 @@ class pump:
         # Fill in the kettle with filtered or non-filtered tap water
         if self.getStatus() == waterActionsEnum.WATER_IN_FILTERED or self.getStatus() == waterActionsEnum.WATER_IN:
             if (self.app.boilKettle.getWaterLevelSetPoint() > 0 and 
-                self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint()):
+                (self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint() or 
+                self.app.boilKettle.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL'))):
 
                 self.app.boilKettleValveInlet.set(0)
                 self.app.boilKettle.setWaterLevel(0)
@@ -41,7 +42,8 @@ class pump:
         # Rack water from boilkettle to mashtun
         if self.getStatus() == waterActionsEnum.KETTLE_TO_MASHTUN:
             if (self.app.boilKettle.getWaterLevel() <= 0 or 
-                self.app.mashTun.getWaterLevel() >= self.app.mashTun.getWaterLevelSetPoint()):
+                self.app.mashTun.getWaterLevel() >= self.app.mashTun.getWaterLevelSetPoint() or
+                self.app.mashTun.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
 
                 self.set('false')
                 self.app.boilKettleValveOutlet.set(0)
@@ -51,7 +53,8 @@ class pump:
         # Rack water from mashtun to boilkettle
         if self.getStatus() == waterActionsEnum.MASHTUN_TO_KETTLE:
             if (self.app.mashTun.getWaterLevel() <= 0 or 
-                self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint()):
+                self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint() or 
+                self.app.boilKettle.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
 
                 self.set('false')
                 self.app.mashTunValveOutlet.set(0)
@@ -109,6 +112,8 @@ class pump:
                 self.set('true')
 
         if action == waterActionsEnum.FINISHED:
+            self.setStatus(action)
+            self.set('false')
             self.app.outletValveDump.set(0)
             self.app.chillerValveWort.set(0)
             self.app.chillerValveWater.set(0)
@@ -118,4 +123,3 @@ class pump:
             self.app.boilKettleValveReturn.set(0)
             self.app.mashTunValveOutlet.set(0)
             self.app.mashTunValveInlet.set(0)
-            self.set('false')

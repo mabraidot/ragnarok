@@ -21,14 +21,14 @@ app.recipes = Recipes(app)
 app.jobs = AsyncIOScheduler()
 app.jobs.start()
 
-# Main cooking process
-app.cooking = Cooking(app, config)
-
 # Hardware
 app.mashTun = kettle(app, config['MASH_TUN_PINS'], 'MashTun')
 app.boilKettle = kettle(app, config['BOIL_KETTLE_PINS'], 'BoilKettle')
 
 app.pump = pump(app, config, 'Pump')
+
+# Main cooking process
+app.cooking = Cooking(app, config)
 
 app.outletValveDump = valve(app, 'OutletValveDump')
 app.chillerValveWort = valve(app, 'ChillerValveWort')
