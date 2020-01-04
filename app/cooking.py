@@ -177,6 +177,7 @@ class Cooking:
                 self.boil['state'] = 'Finished'
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'cool'
+                self.app.ws.setLog({ 'process': self.currentStep['name'] })
                 self.setNextStep()
         elif self.currentStep['name'] == 'cool':
             if self.boilKettleTimeProbe > 0:
@@ -187,6 +188,7 @@ class Cooking:
                 self.cool['state'] = 'Finished'
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'finish'
+                self.app.ws.setLog({ 'process': self.currentStep['name'] })
                 self.setNextStep()
 
 
@@ -227,6 +229,7 @@ class Cooking:
         self.currentStep['number'] += 1
         if self.currentStep['name'] == 'mash':
             if self.currentStep['number'] < len(self.mash):
+                self.app.ws.setLog({ 'process': self.currentStep['name'] })
                 step = self.mash[self.currentStep['number']]
 
                 if step['type'] == 'Infusion' and step['infuse_amount'] > 0:
@@ -251,6 +254,7 @@ class Cooking:
                 # start boil process
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'boil'
+                self.app.ws.setLog({ 'process': self.currentStep['name'] })
                 self.setNextStep()
 
         elif self.currentStep['name'] == 'boil':

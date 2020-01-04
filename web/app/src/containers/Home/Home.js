@@ -31,6 +31,7 @@ class Home extends Component {
       BoilKettleTimeProbe: 0,
     };
     this.handleAdvancedClick = this.handleAdvancedClick.bind(this);
+    this.toggleGauge = this.toggleGauge.bind(this);
   }
 
   componentDidMount() {
@@ -68,12 +69,6 @@ class Home extends Component {
       }
       if (typeof data.BoilKettleTemperatureSetPoint !== 'undefined') {
         if (data.BoilKettleTemperatureSetPoint !== this.state.BoilKettleTemperatureSetPoint) {
-          // TESTING GAUGE ORDER CHANGE
-          if(data.BoilKettleTemperatureSetPoint.toFixed(1) > 100){
-            this.setState({MashTunFocus: false, BoilKettleFocus: true});
-          }else{
-            this.setState({MashTunFocus: true, BoilKettleFocus: false});
-          }
           this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint.toFixed(1)});
         }
       }
@@ -111,6 +106,13 @@ class Home extends Component {
           });
         }
       }
+      if (data.process) {
+        if (data.process[0] !== 'mash' && data.process[0] !== 'finish') {
+          this.toggleGauge('boil');
+        } else {
+          this.toggleGauge('mash');
+        }
+      }
       // console.log('[WS]: message!:', data);
     };
   }
@@ -122,6 +124,15 @@ class Home extends Component {
 
   handleAdvancedClick() {
     this.props.history.push('/advanced')
+  }
+
+  toggleGauge(gauge = 'mash') {
+    console.log(gauge);
+    if (gauge === 'mash') {
+      this.setState({MashTunFocus: true, BoilKettleFocus: false});
+    }else{
+      this.setState({MashTunFocus: false, BoilKettleFocus: true});
+    }
   }
 
   render() {
@@ -146,7 +157,7 @@ class Home extends Component {
       <Grow in={true}>
         <div className="Home">
           <Grid container>
-            <Grid item xs>
+            <Grid item xs onClick={() => this.toggleGauge('mash')}>
               <Gauge
                 id='MashTunGauge'
                 title='Mash Tun'
@@ -167,7 +178,7 @@ class Home extends Component {
                 </Fab>
               </div>
             </Grid>
-            <Grid item xs>
+            <Grid item xs onClick={() => this.toggleGauge('boil')}>
               <Gauge
                 id='BoilKettleGauge'
                 title='Boil Kettle'

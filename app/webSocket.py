@@ -53,7 +53,6 @@ class webSocket:
             if key not in data:
                 data[key] = []
             data[key].append(log[key])
-
         if (len(data) > 0):
             await self.sendJson(data)
 
