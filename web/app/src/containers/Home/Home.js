@@ -39,6 +39,7 @@ class Home extends Component {
       BoilKettleTimeSetPoint: 0,
       BoilKettleTimeProbe: 0,
 
+      automaticGaugeOrder: true,
       dialogOpen: false,
       dialogTitle: '',
       dialogDescription: ''
@@ -52,7 +53,7 @@ class Home extends Component {
 
   componentDidMount() {
     const { socket } = this.state.socket;
-    const { dialogOpen } = this.state;
+    const { dialogOpen, automaticGaugeOrder } = this.state;
 
     socket.onmessage = (result) => {
       const data = JSON.parse(result.data)
@@ -110,16 +111,16 @@ class Home extends Component {
       }
 
       if (typeof data.cooking !== 'undefined') {
-        if (data.cooking === 'paused'){
+        if (data.cooking === 'paused' && !dialogOpen){
           this.handleOpen({
             'title': 'Process paused', 
             'description': 'Cooling process is about to start. Please connect the water hose to the chiller\'s inlet and outlet.'
           });
-        } 
+        }
         if (data.cooking !== 'mash' && data.cooking !== 'finish') {
-          this.toggleGauge('boil');
+          this.toggleGauge('boil', true);
         } else {
-          this.toggleGauge('mash');
+          this.toggleGauge('mash', true);
         }
       }
 
@@ -188,11 +189,16 @@ class Home extends Component {
     this.props.history.push('/advanced')
   }
 
-  toggleGauge(gauge = 'mash') {
-    if (gauge === 'mash') {
-      this.setState({MashTunFocus: true, BoilKettleFocus: false});
-    }else{
-      this.setState({MashTunFocus: false, BoilKettleFocus: true});
+  toggleGauge(gauge = 'mash', auto = true) {
+    const { MashTunFocus, BoilKettleFocus, automaticGaugeOrder } = this.state;
+
+    const newAutomaticGaugeOrder = (!auto) ? !automaticGaugeOrder : automaticGaugeOrder;
+    if (automaticGaugeOrder || !auto) {
+      if (gauge === 'mash' && !MashTunFocus) {
+        this.setState({MashTunFocus: true, BoilKettleFocus: false, automaticGaugeOrder: newAutomaticGaugeOrder});
+      }else if(gauge === 'boil' && !BoilKettleFocus) {
+        this.setState({MashTunFocus: false, BoilKettleFocus: true, automaticGaugeOrder: newAutomaticGaugeOrder});
+      }
     }
   }
 
@@ -235,7 +241,7 @@ class Home extends Component {
             </DialogActions>
           </Dialog>
           <Grid container>
-            <Grid item xs onClick={() => this.toggleGauge('mash')}>
+            <Grid item xs onClick={() => this.toggleGauge('mash', false)}>
               <Gauge
                 id='MashTunGauge'
                 title='Mash Tun'
@@ -256,7 +262,7 @@ class Home extends Component {
                 </Fab>
               </div>
             </Grid>
-            <Grid item xs onClick={() => this.toggleGauge('boil')}>
+            <Grid item xs onClick={() => this.toggleGauge('boil', false)}>
               <Gauge
                 id='BoilKettleGauge'
                 title='Boil Kettle'

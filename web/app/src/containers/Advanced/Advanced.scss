@@ -17,7 +17,7 @@
 
     /******* SLIDER *******/
     .MuiSlider-root {
-        margin: 2em 0 -0.2em 0.7em; // 2em 0 0.7em 0.7em
+        margin: 1em 0 -0.2em 0.7em; // 2em 0 0.7em 0.7em
         width: 40vw;// 85vw;
         height: 8px;
     }
@@ -97,7 +97,7 @@
 
     .foot {
         padding-left: 0.5em;
-        margin: -0.5em 1.5em 0.5em 0.9em;
+        margin: -1.0em 1.5em 0.5em 0.9em;
         font-size: 0.5em;
         text-align: right;
     }
@@ -106,7 +106,7 @@
         padding-left: 1em;
         font-size: 0.7em;
         text-transform: uppercase;
-        margin-top: -3.8em;
+        margin-top: -4.8em;
         margin-bottom: 2em;
         span {
             font-size: 1.6em;
