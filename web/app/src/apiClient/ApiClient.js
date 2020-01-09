@@ -32,6 +32,17 @@ class ApiClient {
   }
 
 
+  async cookResume() {
+
+    return client({
+      method: 'GET',
+      url: `/cook/resume`,
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
   async deleteRecipe(recipeId) {
 
     return client({

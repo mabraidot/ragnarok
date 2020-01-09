@@ -6,6 +6,15 @@ import Fab from '@material-ui/core/Fab';
 import AdvancedIcon from '@material-ui/icons/TouchAppRounded';
 import Gauge from '../../components/Gauge';
 import Socket from './../../components/Socket/Socket';
+
+import ApiClient from './../../apiClient/ApiClient';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 import { withSnackbar } from 'notistack';
 
 class Home extends Component {
@@ -29,13 +38,22 @@ class Home extends Component {
       BoilKettleWaterLevelProbe: 0,
       BoilKettleTimeSetPoint: 0,
       BoilKettleTimeProbe: 0,
+
+      dialogOpen: false,
+      dialogTitle: '',
+      dialogDescription: ''
     };
     this.handleAdvancedClick = this.handleAdvancedClick.bind(this);
     this.toggleGauge = this.toggleGauge.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.handleOpen = this.handleOpen.bind(this);
+    this.handleContinueAction = this.handleContinueAction.bind(this);
   }
 
   componentDidMount() {
     const { socket } = this.state.socket;
+    const { dialogOpen } = this.state;
+
     socket.onmessage = (result) => {
       const data = JSON.parse(result.data)
       if (typeof data.MashTunTemperatureProbe !== 'undefined') {
@@ -91,6 +109,22 @@ class Home extends Component {
         }
       }
 
+      if (typeof data.cooking !== 'undefined') {
+        if (data.cooking === 'paused'){
+          this.handleOpen({
+            'title': 'Process paused', 
+            'description': 'Cooling process is about to start. Please connect the water hose to the chiller\'s inlet and outlet.'
+          });
+        } 
+        if (data.cooking !== 'mash' && data.cooking !== 'finish') {
+          this.toggleGauge('boil');
+        } else {
+          this.toggleGauge('mash');
+        }
+      }
+
+
+
       if (data.notice) {
         for(const message in data.notice){
           this.props.enqueueSnackbar(data.notice[message], { 
@@ -106,15 +140,9 @@ class Home extends Component {
           });
         }
       }
-      if (data.process) {
-        if (data.process[0] !== 'mash' && data.process[0] !== 'finish') {
-          this.toggleGauge('boil');
-        } else {
-          this.toggleGauge('mash');
-        }
-      }
       // console.log('[WS]: message!:', data);
     };
+
   }
 
   componentWillUnmount() {
@@ -122,12 +150,45 @@ class Home extends Component {
     socket.close();
   }
 
+  handleOpen = (msg) => {
+    this.setState({ 
+      dialogOpen: true, 
+      dialogTitle: msg.title,
+      dialogDescription: msg.description 
+    });
+  };
+
+  handleClose = () => {
+    this.setState({ 
+      dialogOpen: false, 
+      dialogTitle: '',
+      dialogDescription: '' 
+    });
+  };
+
+  handleContinueAction = () => {
+    this.handleClose();
+    ApiClient.cookResume().then((resp) => {
+      console.log('[API]', resp);
+      if (resp.notice) {
+        this.props.enqueueSnackbar(resp.notice, { 
+          variant: 'info',
+          persist: true,
+        });
+      }
+      if (resp.error) {
+        this.props.enqueueSnackbar(resp.error, { 
+          variant: 'error',
+        });
+      }
+    });
+  }
+
   handleAdvancedClick() {
     this.props.history.push('/advanced')
   }
 
   toggleGauge(gauge = 'mash') {
-    console.log(gauge);
     if (gauge === 'mash') {
       this.setState({MashTunFocus: true, BoilKettleFocus: false});
     }else{
@@ -156,6 +217,23 @@ class Home extends Component {
     return(
       <Grow in={true}>
         <div className="Home">
+          <Dialog
+            open={this.state.dialogOpen}
+            onClose={this.handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{this.state.dialogTitle}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                {this.state.dialogDescription}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.handleClose} color="secondary" autoFocus>Cancel</Button>
+              <Button onClick={this.handleContinueAction} color="primary">Continue</Button>
+            </DialogActions>
+          </Dialog>
           <Grid container>
             <Grid item xs onClick={() => this.toggleGauge('mash')}>
               <Gauge

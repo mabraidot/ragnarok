@@ -9,9 +9,10 @@ class routes:
 
     def setup_routes(self):
         self.app.router.add_routes([
-            web.get('/', self.home),
             web.get('/index', self.home),
+            web.get('/', self.home),
 
+            web.get('/cook/resume', self.cookResume),
             web.get('/cook/{recipe}', self.cook),
 
             web.post('/recipes/import', self.importRecipe),
@@ -72,6 +73,12 @@ class routes:
         self.app.cooking.start(recipe)
 
         return web.json_response({'notice': 'The cooking process started'})
+
+
+    async def cookResume(self, request):
+        self.app.cooking.setNextStep()
+
+        return web.json_response({'notice': 'The cooking process was resumed'})
 
 
     ## RECIPES ############################

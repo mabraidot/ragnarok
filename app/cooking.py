@@ -90,9 +90,13 @@ class Cooking:
         self.boil = {}
 
         self.currentStep = {
+            'recipe_id': 0,
             'number': -1,
             'name': 'mash'
         }
+
+    def getCurrentStepName(self):
+        return self.currentStep['name']
 
     def getMashTunTimeSetPoint(self):
         return self.mashTunTimeSetPoint
@@ -113,6 +117,8 @@ class Cooking:
     def loadRecipe(self, recipeId):
         recipe = self.app.recipes.getRecipe(recipeId)
         
+        self.currentStep['recipe_id'] = int(recipeId)
+
         mashSteps = recipe["beer_json"]["RECIPES"]["RECIPE"]["MASH"]["MASH_STEPS"]["MASH_STEP"]
         for step in mashSteps:
             self.mash.append({
@@ -176,9 +182,11 @@ class Cooking:
                 self.app.jobs.remove_job('timerProcess')
                 self.boil['state'] = 'Finished'
                 self.currentStep['number'] = -1
-                self.currentStep['name'] = 'cool'
-                self.app.ws.setLog({ 'process': self.currentStep['name'] })
-                self.setNextStep()
+                # self.currentStep['name'] = 'cool'
+                self.currentStep['name'] = 'paused'
+                # self.app.ws.setLog({ 'process': self.currentStep['name'] })
+                # Stop process and notify the user to connect cooling water input and output
+                # self.setNextStep()
         elif self.currentStep['name'] == 'cool':
             if self.boilKettleTimeProbe > 0:
                 self.boilKettleTimeProbe -= 1/60
@@ -188,7 +196,7 @@ class Cooking:
                 self.cool['state'] = 'Finished'
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'finish'
-                self.app.ws.setLog({ 'process': self.currentStep['name'] })
+                # self.app.ws.setLog({ 'process': self.currentStep['name'] })
                 self.setNextStep()
 
 
@@ -226,67 +234,70 @@ class Cooking:
 
 
     def setNextStep(self):
-        self.currentStep['number'] += 1
-        if self.currentStep['name'] == 'mash':
-            if self.currentStep['number'] < len(self.mash):
-                self.app.ws.setLog({ 'process': self.currentStep['name'] })
-                step = self.mash[self.currentStep['number']]
+        if self.currentStep['recipe_id'] > 0:
+            self.currentStep['number'] += 1
+            if self.currentStep['name'] == 'mash':
+                if self.currentStep['number'] < len(self.mash):
+                    # self.app.ws.setLog({ 'process': self.currentStep['name'] })
+                    step = self.mash[self.currentStep['number']]
 
-                if step['type'] == 'Infusion' and step['infuse_amount'] > 0:
-                    self.app.pump.moveWater(action=waterActionsEnum.WATER_IN_FILTERED, ammount=step['infuse_amount'])
-                    self.app.boilKettle.heatToTemperature(step['infuse_temp'])
-                    self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
-        
-                elif step['type'] == 'Temperature':
-                    self.app.mashTun.heatToTemperature(step['step_temp'])
-                    self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
+                    if step['type'] == 'Infusion' and step['infuse_amount'] > 0:
+                        self.app.pump.moveWater(action=waterActionsEnum.WATER_IN_FILTERED, ammount=step['infuse_amount'])
+                        self.app.boilKettle.heatToTemperature(step['infuse_temp'])
+                        self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
+            
+                    elif step['type'] == 'Temperature':
+                        self.app.mashTun.heatToTemperature(step['step_temp'])
+                        self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
 
-                elif step['type'] == 'Decoction':
-                    # TODO: handle the decoction process
+                    elif step['type'] == 'Decoction':
+                        # TODO: handle the decoction process
+                        self.setNextStep()
+
+                    self.mashTunTimeSetPoint = step['step_time']
+                    self.mashTunTimeProbe = step['step_time']
+                    self.mash[self.currentStep['number']]['state'] = 'Running'
+                    print('[STEP-MASH: '+str(self.currentStep['number'])+']', json.dumps(self.mash[self.currentStep['number']], indent=2))
+
+                else:
+                    # start boil process
+                    self.currentStep['number'] = -1
+                    self.currentStep['name'] = 'boil'
+                    # self.app.ws.setLog({ 'process': self.currentStep['name'] })
                     self.setNextStep()
 
-                self.mashTunTimeSetPoint = step['step_time']
-                self.mashTunTimeProbe = step['step_time']
-                self.mash[self.currentStep['number']]['state'] = 'Running'
-                print('[STEP-MASH: '+str(self.currentStep['number'])+']', json.dumps(self.mash[self.currentStep['number']], indent=2))
+            elif self.currentStep['name'] == 'boil':
+                step = self.boil
+                self.boilKettleTimeSetPoint = step['step_time']
+                self.boilKettleTimeProbe = step['step_time']
+                self.boil['state'] = 'Running'
+                self.app.mashTun.stopHeating()
+                self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_KETTLE)
+                self.app.boilKettle.heatToTemperature(step['step_temp'])
+                self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
+                print('[BOIL]', json.dumps(self.boil, indent=2))
 
-            else:
-                # start boil process
-                self.currentStep['number'] = -1
-                self.currentStep['name'] = 'boil'
-                self.app.ws.setLog({ 'process': self.currentStep['name'] })
-                self.setNextStep()
+            elif self.currentStep['name'] == 'paused':
+                self.currentStep['name'] = 'cool'
+                step = self.cool
+                self.boilKettleTimeSetPoint = 0
+                self.cool['state'] = 'Running'
+                self.boilKettleTimeSetPoint = step['step_time']
+                self.boilKettleTimeProbe = step['step_time']
+                self.app.boilKettle.setTemperature(0)
+                self.app.pump.moveWater(action=waterActionsEnum.CHILL)
+                self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
+                print('[COOL]', json.dumps(self.cool, indent=2))
 
-        elif self.currentStep['name'] == 'boil':
-            step = self.boil
-            self.boilKettleTimeSetPoint = step['step_time']
-            self.boilKettleTimeProbe = step['step_time']
-            self.boil['state'] = 'Running'
-            self.app.mashTun.stopHeating()
-            self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_KETTLE)
-            self.app.boilKettle.heatToTemperature(step['step_temp'])
-            self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
-            print('[BOIL]', json.dumps(self.boil, indent=2))
-
-        elif self.currentStep['name'] == 'cool':
-            step = self.cool
-            self.boilKettleTimeSetPoint = 0
-            self.cool['state'] = 'Running'
-            self.boilKettleTimeSetPoint = step['step_time']
-            self.boilKettleTimeProbe = step['step_time']
-            self.app.boilKettle.setTemperature(0)
-            self.app.pump.moveWater(action=waterActionsEnum.CHILL)
-            self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
-            print('[COOL]', json.dumps(self.cool, indent=2))
-
-        elif self.currentStep['name'] == 'finish':
-            self.initialize()
-            self.app.ws.setLog({
-                self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 
-                'The cooking process has finished!. Please dump the wort manually.'
-            })
-            print('[FINISH]', json.dumps(self.currentStep, indent=2))
-
+            elif self.currentStep['name'] == 'finish':
+                self.initialize()
+                self.app.ws.setLog({
+                    self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 
+                    'The cooking process has finished!. Please dump the wort manually.'
+                })
+                print('[FINISH]', json.dumps(self.currentStep, indent=2))
+        else:
+            return
 
 
 
