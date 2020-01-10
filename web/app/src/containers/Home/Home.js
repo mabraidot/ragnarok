@@ -53,7 +53,7 @@ class Home extends Component {
 
   componentDidMount() {
     const { socket } = this.state.socket;
-    const { dialogOpen, automaticGaugeOrder } = this.state;
+    const { dialogOpen } = this.state;
 
     socket.onmessage = (result) => {
       const data = JSON.parse(result.data)
@@ -116,6 +116,8 @@ class Home extends Component {
             'title': 'Process paused', 
             'description': 'Cooling process is about to start. Please connect the water hose to the chiller\'s inlet and outlet.'
           });
+        }else if (dialogOpen) {
+          this.handleClose();
         }
         if (data.cooking !== 'mash' && data.cooking !== 'finish') {
           this.toggleGauge('boil', true);

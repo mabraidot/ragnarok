@@ -90,6 +90,7 @@ class Cooking:
         self.boil = {}
 
         self.currentStep = {
+            'mash_total_time': 0.0,
             'recipe_id': 0,
             'number': -1,
             'name': 'mash'
@@ -130,6 +131,7 @@ class Cooking:
                 'step_time': float("{0:.2f}".format(float(step['STEP_TIME']))),
                 'step_temp': float("{0:.2f}".format(float(step['STEP_TEMP'])))
             })
+            self.currentStep['mash_total_time'] += float("{0:.2f}".format(float(step['STEP_TIME'])))
 
         hopAdjuncts = recipe["beer_json"]["RECIPES"]["RECIPE"]["HOPS"]["HOP"]
         hopAdjuncts += recipe["beer_json"]["RECIPES"]["RECIPE"]["MISCS"]["MISC"]
@@ -169,6 +171,8 @@ class Cooking:
         if self.currentStep['name'] == 'mash':
             if self.mashTunTimeProbe > 0:
                 self.mashTunTimeProbe -= 1/60
+                self.currentStep['mash_total_time'] -= 1/60
+                # print('_______: ', self.currentStep['mash_total_time'])
             else:
                 self.mashTunTimeProbe = 0
                 self.app.jobs.remove_job('timerProcess')
@@ -182,11 +186,7 @@ class Cooking:
                 self.app.jobs.remove_job('timerProcess')
                 self.boil['state'] = 'Finished'
                 self.currentStep['number'] = -1
-                # self.currentStep['name'] = 'cool'
                 self.currentStep['name'] = 'paused'
-                # self.app.ws.setLog({ 'process': self.currentStep['name'] })
-                # Stop process and notify the user to connect cooling water input and output
-                # self.setNextStep()
         elif self.currentStep['name'] == 'cool':
             if self.boilKettleTimeProbe > 0:
                 self.boilKettleTimeProbe -= 1/60
@@ -196,13 +196,11 @@ class Cooking:
                 self.cool['state'] = 'Finished'
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'finish'
-                # self.app.ws.setLog({ 'process': self.currentStep['name'] })
                 self.setNextStep()
 
 
 
     def timerPump(self):
-        
         if self.currentStep['name'] == 'mash':
             step = self.mash[self.currentStep['number']]
             if step['type'] == 'Infusion':
@@ -238,7 +236,6 @@ class Cooking:
             self.currentStep['number'] += 1
             if self.currentStep['name'] == 'mash':
                 if self.currentStep['number'] < len(self.mash):
-                    # self.app.ws.setLog({ 'process': self.currentStep['name'] })
                     step = self.mash[self.currentStep['number']]
 
                     if step['type'] == 'Infusion' and step['infuse_amount'] > 0:
@@ -260,10 +257,8 @@ class Cooking:
                     print('[STEP-MASH: '+str(self.currentStep['number'])+']', json.dumps(self.mash[self.currentStep['number']], indent=2))
 
                 else:
-                    # start boil process
                     self.currentStep['number'] = -1
                     self.currentStep['name'] = 'boil'
-                    # self.app.ws.setLog({ 'process': self.currentStep['name'] })
                     self.setNextStep()
 
             elif self.currentStep['name'] == 'boil':
@@ -295,7 +290,8 @@ class Cooking:
                     self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 
                     'The cooking process has finished!. Please dump the wort manually.'
                 })
-                print('[FINISH]', json.dumps(self.currentStep, indent=2))
+                print('[FIN]', json.dumps(self.currentStep, indent=2))
+            print('[CURRENT_STEP]: ', json.dumps(self.currentStep, indent=2))
         else:
             return
 
