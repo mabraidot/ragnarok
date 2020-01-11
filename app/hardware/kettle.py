@@ -39,13 +39,7 @@ class kettle:
         return self.heater.get()
 
     def setHeater(self, newState = 'false'):
-        if self.getWaterLevel() < self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
-            self.app.ws.setLog({
-                self.config['LOG_ERROR_LABEL']: 
-                self.config.get('SAFE_WATER_LEVEL_FOR_HEATERS') + ' liters of water are required to turn on heaters'
-            })
-        else:
-            self.heater.set(newState)
+        self.heater.set(newState)
 
 
 
@@ -59,7 +53,7 @@ class kettle:
             # Safety measure, if termperature raises 10 degrees over setpoint, shut down the heater
             if self.getTemperature() >= self.getTemperatureSetPoint() + self.config.getfloat('SAFE_OVERHEAT_TEMPERATURE'):
                 self.setHeater('false')
-        elif self.getHeater():
+        elif self.getHeater() and not self.PIDAutoTune.running:
             self.setHeater('false')
 
 

@@ -147,7 +147,13 @@ class routes:
     ## HEATERS ###########################
     def setMashTunHeater(self, request):
         on = request.match_info.get('on', 'false')
-        self.app.mashTun.setHeater(on)
+        if self.app.mashTun.getWaterLevel() > self.config.getfloat('DEFAULT', 'SAFE_WATER_LEVEL_FOR_HEATERS'):
+            self.app.mashTun.setHeater(on)
+        else:
+            self.app.ws.setLog({
+                self.config.get('DEFAULT', 'LOG_ERROR_LABEL'): 
+                self.config.get('DEFAULT', 'SAFE_WATER_LEVEL_FOR_HEATERS') + ' liters of water are required to turn on heaters'
+            })
         if on == 'false':
             self.app.mashTun.setTemperature(0)
         return web.json_response({'response': str(on)})
@@ -162,7 +168,13 @@ class routes:
 
     def setBoilKettleHeater(self, request):
         on = request.match_info.get('on', 'false')
-        self.app.boilKettle.setHeater(on)
+        if self.app.boilKettle.getWaterLevel() > self.config.getfloat('DEFAULT', 'SAFE_WATER_LEVEL_FOR_HEATERS'):
+            self.app.boilKettle.setHeater(on)
+        else:
+            self.app.ws.setLog({
+                self.config.get('DEFAULT', 'LOG_ERROR_LABEL'): 
+                self.config.get('DEFAULT', 'SAFE_WATER_LEVEL_FOR_HEATERS') + ' liters of water are required to turn on heaters'
+            })
         if on == 'false':
             self.app.boilKettle.setTemperature(0)
         return web.json_response({'response': str(on)})
