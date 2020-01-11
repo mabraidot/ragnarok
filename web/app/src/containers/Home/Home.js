@@ -191,7 +191,6 @@ class Home extends Component {
       if (resp.notice) {
         this.props.enqueueSnackbar(resp.notice, { 
           variant: 'info',
-          persist: true,
         });
       }
       if (resp.error) {

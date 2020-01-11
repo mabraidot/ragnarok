@@ -72,22 +72,22 @@ class routes:
         recipe = request.match_info.get('recipe', 0)
         self.app.cooking.start(recipe)
 
-        return web.json_response({'notice': 'The cooking process started'})
+        return web.json_response({self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'The cooking process started'})
 
 
     async def cookResume(self, request):
         self.app.cooking.setNextStep()
 
-        return web.json_response({'notice': 'The cooking process was resumed'})
+        return web.json_response({self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'The cooking process was resumed'})
 
 
     ## RECIPES ############################
     async def importRecipe(self, request):
         data = await request.post()
-        response = {'error': 'XML data was empty'}
+        response = {self.config.get('DEFAULT', 'LOG_ERROR_LABEL'): 'XML data was empty'}
         if (data['file']):
             if self.app.recipes.importRecipe(data['file'].file):
-                response = {'notice': 'XML received successfully'}
+                response = {self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'XML received successfully'}
 
         return web.json_response(response)
 
@@ -99,10 +99,10 @@ class routes:
 
     async def deleteRecipe(self, request):
         recipe = request.match_info.get('recipe', 0)
-        response = {'notice': 'Recipe was successfully deleted'}
+        response = {self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'Recipe was successfully deleted'}
         result = self.app.recipes.deleteRecipe(recipe)
         if not result:
-            response = {'error': 'There was an error deleting the recipe'}
+            response = {self.config.get('DEFAULT', 'LOG_ERROR_LABEL'): 'There was an error deleting the recipe'}
         return web.json_response(response)
 
 
