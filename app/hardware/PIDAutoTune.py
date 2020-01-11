@@ -72,7 +72,7 @@ class PIDAutoTune:
 
         self.stop()
         if atune.state == atune.STATE_SUCCEEDED:
-            self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune was successful'})
+            self.app.ws.setLog({self.config['LOG_NOTICE_PERSISTENT_LABEL']: '[PID] AutoTune was successful'})
             for rule in atune.tuningRules:
                 params = atune.getPIDParameters(rule)
                 atune.log('rule: {0}'.format(rule))
@@ -81,11 +81,11 @@ class PIDAutoTune:
                 atune.log('D: {0}'.format(params.Kd))
                 atune.log('--------------------------------------------------------')
                 if rule == "brewing":
-                    self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune P Value: ' + str(params.Kp)})
-                    self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune I Value: ' + str(params.Ki)})
-                    self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] AutoTune D Value: ' + str(params.Kd)})
+                    self.app.ws.setLog({self.config['LOG_NOTICE_PERSISTENT_LABEL']: '[PID] AutoTune P Value: ' + str(params.Kp)})
+                    self.app.ws.setLog({self.config['LOG_NOTICE_PERSISTENT_LABEL']: '[PID] AutoTune I Value: ' + str(params.Ki)})
+                    self.app.ws.setLog({self.config['LOG_NOTICE_PERSISTENT_LABEL']: '[PID] AutoTune D Value: ' + str(params.Kd)})
         elif atune.state == atune.STATE_FAILED:
-            self.app.ws.setLog({self.config['LOG_ERROR_LABEL']: '[PIDAUTOTUNE] PID AutoTune was successful'})
+            self.app.ws.setLog({self.config['LOG_ERROR_PERSISTENT_LABEL']: '[PIDAUTOTUNE] PID AutoTune was unsuccessful'})
 
         self.running = False
 

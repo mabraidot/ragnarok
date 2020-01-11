@@ -1,4 +1,5 @@
 import json
+import math
 from app.hardware.sourcesEnum import waterActionsEnum
 
 """
@@ -166,6 +167,37 @@ class Cooking:
 
 
 
+    def decimalTotime(self, decimalTime):
+        minutes = int(decimalTime)
+        seconds = math.floor((decimalTime - minutes) * 60)
+        time = str("{:02d}".format(minutes)) + ':' + str("{:02d}".format(seconds))
+        return time
+
+
+    def notifyAdjuncts(self):
+        if self.currentStep['name'] == 'mash':
+            for adjunct in self.mashAdjuncts:
+                if adjunct['state'] == 'Pending' and abs(adjunct['time'] - self.currentStep['mash_total_time']) <= 1/60:
+                    # NOTIFY
+                    adjunct['state'] = 'Finished'
+                    self.app.ws.setLog({
+                        self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
+                        '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
+                    })
+                    print('[MASH_ADJUNCTS]', json.dumps(adjunct, indent=2))
+
+        elif self.currentStep['name'] == 'boil':
+            for adjunct in self.boilAdjuncts:
+                if adjunct['state'] == 'Pending' and abs(adjunct['time'] - self.boilKettleTimeProbe) <= 1/60:
+                    # NOTIFY
+                    adjunct['state'] = 'Finished'
+                    self.app.ws.setLog({
+                        self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
+                        '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
+                    })
+                    print('[BOIL_ADJUNCTS]', json.dumps(adjunct, indent=2))
+
+
 
     def mayNextStepStartPreHeating(self):
         if self.currentStep['name'] == 'mash' and self.currentStep['number'] + 1 < len(self.mash):
@@ -187,7 +219,8 @@ class Cooking:
                 if self.mayNextStepStartPreHeating():
                     step = self.mash[self.currentStep['number'] + 1]
                     self.startStep(step, True)
-
+                # TODO: checks time for mash adjuncts and fire alerts
+                self.notifyAdjuncts()
             else:
                 self.mashTunTimeProbe = 0
                 self.app.jobs.remove_job('timerProcess')
@@ -196,6 +229,8 @@ class Cooking:
         elif self.currentStep['name'] == 'boil':
             if self.boilKettleTimeProbe > 0:
                 self.boilKettleTimeProbe -= 1/60
+                # TODO: checks time for boil adjuncts and fire alerts
+                self.notifyAdjuncts()
             else:
                 self.boilKettleTimeProbe = 0
                 self.app.jobs.remove_job('timerProcess')
@@ -308,7 +343,7 @@ class Cooking:
             elif self.currentStep['name'] == 'finish':
                 self.initialize()
                 self.app.ws.setLog({
-                    self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 
+                    self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                     'The cooking process has finished!. Please dump the wort manually.'
                 })
                 print('[END]', json.dumps(self.currentStep, indent=2))

@@ -34,7 +34,7 @@ class Database:
             self.conn.commit()
 
         except Error:
-            self.app.ws.setLog({self.config['LOG_ERROR_LABEL']: '[DB]: ' + Error})
+            self.app.ws.setLog({self.config['LOG_ERROR_PERSISTENT_LABEL']: '[DB]: ' + Error})
 
 
     def insertRecipe(self, name, type_name, style_name, style_category, original_gravity, 

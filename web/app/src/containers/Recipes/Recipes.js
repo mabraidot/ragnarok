@@ -57,12 +57,23 @@ class Recipes extends Component {
       if (resp.notice) {
         this.props.enqueueSnackbar(resp.notice, { 
           variant: 'info',
-          persist: true,
         });
       }
       if (resp.error) {
         this.props.enqueueSnackbar(resp.error, { 
           variant: 'error',
+        });
+      }
+      if (resp.persistent_notice) {
+        this.props.enqueueSnackbar(resp.persistent_notice, { 
+          variant: 'info',
+          persist: true,
+        });
+      }
+      if (resp.persistent_error) {
+        this.props.enqueueSnackbar(resp.persistent_error, { 
+          variant: 'error',
+          persist: true,
         });
       }
       this.getRecipesHandler();
@@ -134,13 +145,25 @@ class Recipes extends Component {
         if (resp.notice) {
           this.props.enqueueSnackbar(resp.notice, { 
             variant: 'info',
-            persist: true,
           });
           this.props.history.push('/')
         }
         if (resp.error) {
           this.props.enqueueSnackbar(resp.error, { 
             variant: 'error',
+          });
+        }
+        if (resp.persistent_notice) {
+          this.props.enqueueSnackbar(resp.persistent_notice, { 
+            variant: 'info',
+            persist: true,
+          });
+          this.props.history.push('/')
+        }
+        if (resp.persistent_error) {
+          this.props.enqueueSnackbar(resp.persistent_error, { 
+            variant: 'error',
+            persist: true,
           });
         }
       });
@@ -172,12 +195,23 @@ class Recipes extends Component {
         if (resp.notice) {
           this.props.enqueueSnackbar(resp.notice, { 
             variant: 'info',
-            persist: true,
           });
         }
         if (resp.error) {
           this.props.enqueueSnackbar(resp.error, { 
             variant: 'error',
+          });
+        }
+        if (resp.persistent_notice) {
+          this.props.enqueueSnackbar(resp.persistent_notice, { 
+            variant: 'info',
+            persist: true,
+          });
+        }
+        if (resp.persistent_error) {
+          this.props.enqueueSnackbar(resp.persistent_error, { 
+            variant: 'error',
+            persist: true,
           });
         }
         this.getRecipesHandler();

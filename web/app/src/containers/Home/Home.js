@@ -132,7 +132,6 @@ class Home extends Component {
         for(const message in data.notice){
           this.props.enqueueSnackbar(data.notice[message], { 
             variant: 'info',
-            persist: true,
           });
         }
       }
@@ -140,6 +139,22 @@ class Home extends Component {
         for(const message in data.error){
           this.props.enqueueSnackbar(data.error[message], { 
             variant: 'error',
+          });
+        }
+      }
+      if (data.persistent_notice) {
+        for(const message in data.persistent_notice){
+          this.props.enqueueSnackbar(data.persistent_notice[message], { 
+            variant: 'info',
+            persist: true,
+          });
+        }
+      }
+      if (data.persistent_error) {
+        for(const message in data.persistent_error){
+          this.props.enqueueSnackbar(data.persistent_error[message], { 
+            variant: 'error',
+            persist: true,
           });
         }
       }
