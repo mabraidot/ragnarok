@@ -116,7 +116,7 @@ class Home extends Component {
             'title': 'Process paused', 
             'description': 'Cooling process is about to start. Please connect the water hose to the chiller\'s inlet and outlet.'
           });
-        }else if (dialogOpen) {
+        } else if (dialogOpen) {
           this.handleClose();
         }
         if (data.cooking !== 'mash' && data.cooking !== 'finish') {

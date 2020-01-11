@@ -167,12 +167,27 @@ class Cooking:
 
 
 
+    def mayNextStepStartPreHeating(self):
+        if self.currentStep['name'] == 'mash' and self.currentStep['number'] + 1 < len(self.mash):
+            step = self.mash[self.currentStep['number'] + 1]
+            if step['type'] == 'Infusion':
+                if (
+                    abs(self.mashTunTimeProbe - self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')) < 1/60 or
+                    self.mash[self.currentStep['number']]['step_time'] < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')
+                ):
+                    return True
+        return False
+
+
     def timerProcess(self):
         if self.currentStep['name'] == 'mash':
             if self.mashTunTimeProbe > 0:
                 self.mashTunTimeProbe -= 1/60
                 self.currentStep['mash_total_time'] -= 1/60
-                # print('_______: ', self.currentStep['mash_total_time'])
+                if self.mayNextStepStartPreHeating():
+                    step = self.mash[self.currentStep['number'] + 1]
+                    self.startStep(step, True)
+
             else:
                 self.mashTunTimeProbe = 0
                 self.app.jobs.remove_job('timerProcess')
@@ -231,26 +246,32 @@ class Cooking:
 
 
 
+    def startStep(self, step, preHeating = False):
+        if step['type'] == 'Infusion' and step['infuse_amount'] > 0:
+
+            if not preHeating or step['type'] != 'Infusion' or self.app.boilKettle.getTemperature() < step['infuse_temp']:
+                self.app.pump.moveWater(action=waterActionsEnum.WATER_IN_FILTERED, ammount=step['infuse_amount'])
+                self.app.boilKettle.heatToTemperature(step['infuse_temp'])
+            if not preHeating:
+                self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
+
+        elif step['type'] == 'Temperature' and not preHeating:
+            self.app.mashTun.heatToTemperature(step['step_temp'])
+            self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
+
+        elif step['type'] == 'Decoction' and not preHeating:
+            # TODO: handle the decoction process
+            self.setNextStep()
+
+
     def setNextStep(self):
         if self.currentStep['recipe_id'] > 0:
             self.currentStep['number'] += 1
             if self.currentStep['name'] == 'mash':
                 if self.currentStep['number'] < len(self.mash):
                     step = self.mash[self.currentStep['number']]
-
-                    if step['type'] == 'Infusion' and step['infuse_amount'] > 0:
-                        self.app.pump.moveWater(action=waterActionsEnum.WATER_IN_FILTERED, ammount=step['infuse_amount'])
-                        self.app.boilKettle.heatToTemperature(step['infuse_temp'])
-                        self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
-            
-                    elif step['type'] == 'Temperature':
-                        self.app.mashTun.heatToTemperature(step['step_temp'])
-                        self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
-
-                    elif step['type'] == 'Decoction':
-                        # TODO: handle the decoction process
-                        self.setNextStep()
-
+                    self.startStep(step, False)
+                    
                     self.mashTunTimeSetPoint = step['step_time']
                     self.mashTunTimeProbe = step['step_time']
                     self.mash[self.currentStep['number']]['state'] = 'Running'
@@ -290,7 +311,7 @@ class Cooking:
                     self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 
                     'The cooking process has finished!. Please dump the wort manually.'
                 })
-                print('[FIN]', json.dumps(self.currentStep, indent=2))
+                print('[END]', json.dumps(self.currentStep, indent=2))
             print('[CURRENT_STEP]: ', json.dumps(self.currentStep, indent=2))
         else:
             return

@@ -79,7 +79,8 @@ class pump:
             if action == waterActionsEnum.WATER_IN_FILTERED or action == waterActionsEnum.WATER_IN:
                 if ammount > 0:
                     self.app.boilKettle.setWaterLevel(max(ammount, self.config.getfloat('DEFAULT', 'SAFE_WATER_LEVEL_FOR_HEATERS')))
-                    self.app.boilKettleValveInlet.set(100)
+                    if self.app.boilKettle.getWaterLevel() < self.app.boilKettle.getWaterLevelSetPoint():
+                        self.app.boilKettleValveInlet.set(100)
 
             # Rack water from boilkettle to mashtun
             if action == waterActionsEnum.KETTLE_TO_MASHTUN:
