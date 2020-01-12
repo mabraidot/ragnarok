@@ -1,4 +1,5 @@
 import xmltodict
+import datetime
 
 class Recipes:
     def __init__(self, app):
@@ -40,6 +41,10 @@ class Recipes:
         recipe = self.app.DB.getRecipe(id)
 
         return recipe
+
+
+    def updateCookDate(self, recipeId):
+        self.app.DB.updateRecipe(id=recipeId, cooked=datetime.datetime.now(datetime.timezone.utc))
 
 
     def deleteRecipe(self, recipeId):

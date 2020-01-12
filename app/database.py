@@ -53,6 +53,28 @@ class Database:
         self.conn.commit()
 
 
+    def updateRecipe(self, id, name = None, type_name = None, style_name = None, style_category = None, 
+                    original_gravity = None, final_gravity = None, ibu = None, abv = None, color = None, 
+                    beer_json = None, cooked = None):
+        params = locals()
+        cursor = self.conn.cursor()
+
+        columns = []
+        entities = []
+        for label, value in params.items():
+            if label != 'id' and label != 'self' and value is not None:
+                columns.append(label + ' = ?')
+                entities.append(value)
+
+        entities.append(id)
+        query = "UPDATE recipes SET " + ", ".join(columns) + " WHERE id = ?"
+        try:
+            cursor.execute(query, entities)
+            self.conn.commit()
+        except Error:
+            print(query, entities, Error)
+
+
     def listRecipes(self):
         cursor = self.conn.cursor()
         query = "SELECT *, DATETIME(cooked, 'localtime'), DATETIME(created, 'localtime') FROM recipes WHERE 1 ORDER BY created DESC"
@@ -114,3 +136,4 @@ class Database:
         cursor = self.conn.cursor()
         query = "DELETE FROM recipes WHERE id = ?"
         cursor.execute(query, recipeId)
+        self.conn.commit()

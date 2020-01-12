@@ -99,7 +99,7 @@ class routes:
 
     async def deleteRecipe(self, request):
         recipe = request.match_info.get('recipe', 0)
-        response = {self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'Recipe was successfully deleted'}
+        response = {self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'Recipe '+str(recipe)+' was successfully deleted'}
         result = self.app.recipes.deleteRecipe(recipe)
         if not result:
             response = {self.config.get('DEFAULT', 'LOG_ERROR_LABEL'): 'There was an error deleting the recipe'}
