@@ -1,13 +1,16 @@
 RAGNARÖK
 ========
 Automated brewing machine.
+This is yet a Work In Progress!
 
-This project is based on the following hardware:
+This project is intended for a small 480 x 800 px display and based on the following hardware:
 * Raspberry Pi 3
+* Touch display 7" for RPi3
 * Temperature sensors
-* Water pumps
+* Water pump
 * Electrical water heaters
 * Servo-assisted valves
+* Scale sensors for water level sensing
 
 On the software side:
 * Python
