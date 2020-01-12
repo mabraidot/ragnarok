@@ -106,16 +106,40 @@ class Recipes extends Component {
       description += `${(parseInt(i)+1)}). ${item.NAME} ${item.DISPLAY_STEP_TEMP}: <strong>${item.DESCRIPTION}</strong><br />`;
     }
 
-    description += '<h3>HOPS</h3>';
-    for (let i in recipe.RECIPES.RECIPE.HOPS.HOP) {
-      item = recipe.RECIPES.RECIPE.HOPS.HOP[i];
-      description += `${(parseInt(i)+1)}). ${item.DISPLAY_TIME}: <strong>${item.NAME}</strong> ${item.USE} ${item.DISPLAY_AMOUNT}<br />`;
+    
+    let descriptionMash = '';
+    let orderMash = 0;
+    let descriptionBoil = '';
+    let orderBoil = 0;
+    let descriptionMisc = '';
+    let orderMisc = 0;
+    let adjuncts = [...recipe.RECIPES.RECIPE.HOPS.HOP, ...recipe.RECIPES.RECIPE.MISCS.MISC];
+    adjuncts.sort((a, b) => (parseFloat(a.TIME) < parseFloat(b.TIME)) ? 1 : -1);
+    description += '<h3>HOPS and ADJUNCTS</h3>';
+    for (let i in adjuncts) {
+      item = adjuncts[i];
+      if (item.USE === 'First Wort' || item.USE === 'Mash') {
+        orderMash += 1;
+        descriptionMash += `${orderMash}). ${item.DISPLAY_TIME}: <strong>${item.NAME}</strong> ${item.USE} ${item.DISPLAY_AMOUNT}<br />`;
+      } else if (item.USE === 'Boil' || item.USE === 'Aroma') {
+        orderBoil += 1;
+        descriptionBoil += `${orderBoil}). ${item.DISPLAY_TIME}: <strong>${item.NAME}</strong> ${item.USE} ${item.DISPLAY_AMOUNT}<br />`;
+      } else {
+        orderMisc += 1;
+        descriptionMisc += `${orderMisc}). ${item.DISPLAY_TIME}: <strong>${item.NAME}</strong> ${item.USE} ${item.DISPLAY_AMOUNT}<br />`;
+      }
     }
-
-    description += '<h3>MISC</h3>';
-    for (let i in recipe.RECIPES.RECIPE.MISCS.MISC) {
-      item = recipe.RECIPES.RECIPE.MISCS.MISC[i];
-      description += `${(parseInt(i)+1)}). ${item.DISPLAY_TIME}: <strong>${item.NAME}</strong> ${item.USE} ${item.DISPLAY_AMOUNT}<br />`;
+    if (descriptionMash !== '') {
+      description += 'Mash ----------------------------------------<br />';
+      description += descriptionMash;
+    }
+    if (descriptionBoil !== '') {
+      description += 'Boil ----------------------------------------<br />';
+      description += descriptionBoil;
+    }
+    if (descriptionMisc !== '') {
+      description += 'Misc ----------------------------------------<br />';
+      description += descriptionMisc;
     }
 
 
