@@ -13,6 +13,7 @@ class routes:
             web.get('/', self.home),
 
             web.get('/cook/resume', self.cookResume),
+            web.get('/cook/stop', self.cookStop),
             web.get('/cook/{recipe}', self.cook),
 
             web.post('/recipes/import', self.importRecipe),
@@ -79,6 +80,12 @@ class routes:
         self.app.cooking.setNextStep()
 
         return web.json_response({self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'The cooking process was resumed'})
+
+
+    async def cookStop(self, request):
+        self.app.cooking.stop()
+
+        return web.json_response({self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'The cooking process was stopped'})
 
 
     ## RECIPES ############################
@@ -160,7 +167,9 @@ class routes:
     
     def sartMashTunPIDAutoTune(self, request):
         message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A PID auto tunning process is already running'}
-        if not self.app.mashTun.PIDAutoTune.running and not self.app.boilKettle.PIDAutoTune.running:
+        if self.app.cooking.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        elif not self.app.mashTun.PIDAutoTune.running and not self.app.boilKettle.PIDAutoTune.running:
             message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'Starting a PID auto tunning process'}
             task = threading.Thread(target=self.app.mashTun.PIDAutoTune.run)
             task.start()

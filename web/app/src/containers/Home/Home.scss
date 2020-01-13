@@ -13,10 +13,12 @@
 }
 
 .Home .button-advanced {
-    padding-top: 5.5em;
-}
-.Home .button-advanced .MuiFab-root {
-    background-color: crimson;
-    color: white;
-    font-weight: bold;
+    // padding-top: 5.5em;
+
+    .MuiFab-root {
+        background-color: crimson;
+        color: white;
+        font-weight: bold;
+        margin-bottom: 1em;
+    }
 }

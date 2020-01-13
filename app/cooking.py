@@ -76,8 +76,11 @@ class Cooking:
         self.app = app
         self.config = config
         self.initialize()
+        self.running = False
 
     def initialize(self):
+        self.running = False
+
         self.mashTunTimeSetPoint = 0.0
         self.mashTunTimeProbe = 0.0
         self.boilKettleTimeSetPoint = 0.0
@@ -354,8 +357,24 @@ class Cooking:
             return
 
 
+    def isRunning(self):
+        return self.running
+
+
+    def stop(self):
+        if self.app.jobs.get_job('timerHeating') is not None:
+            self.app.jobs.remove_job('timerHeating')
+        if self.app.jobs.get_job('timerProcess') is not None:
+            self.app.jobs.remove_job('timerProcess')
+
+        self.app.mashTun.stopHeating()
+        self.app.boilKettle.stopHeating()
+        self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
+        self.initialize()
+
 
     def start(self, recipeId):
         self.initialize()
+        self.running = True
         self.loadRecipe(recipeId)
         self.setNextStep()

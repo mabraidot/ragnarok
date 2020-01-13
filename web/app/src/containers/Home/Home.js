@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Grow from '@material-ui/core/Grow';
 import Fab from '@material-ui/core/Fab';
 import AdvancedIcon from '@material-ui/icons/TouchAppRounded';
+import PanToolIcon from '@material-ui/icons/PanTool';
 import Gauge from '../../components/Gauge';
 import Socket from './../../components/Socket/Socket';
 
@@ -39,10 +40,12 @@ class Home extends Component {
       BoilKettleTimeSetPoint: 0,
       BoilKettleTimeProbe: 0,
 
+      cookingRunning: false,
       automaticGaugeOrder: true,
       dialogOpen: false,
       dialogTitle: '',
-      dialogDescription: ''
+      dialogDescription: '',
+      dialogProcess: ''
     };
     this.handleAdvancedClick = this.handleAdvancedClick.bind(this);
     this.toggleGauge = this.toggleGauge.bind(this);
@@ -53,7 +56,7 @@ class Home extends Component {
 
   componentDidMount() {
     const { socket } = this.state.socket;
-    const { dialogOpen } = this.state;
+    // const { dialogOpen } = this.state;
 
     socket.onmessage = (result) => {
       const data = JSON.parse(result.data)
@@ -110,20 +113,25 @@ class Home extends Component {
         }
       }
 
-      if (typeof data.cooking !== 'undefined') {
-        if (data.cooking === 'paused' && !dialogOpen){
+      if (typeof data.cookingStep !== 'undefined') {
+        if (data.cookingStep === 'paused' && !this.state.dialogOpen){
           this.handleOpen({
             'title': 'Process paused', 
-            'description': 'Cooling process is about to start. Please connect the water hose to the chiller\'s inlet and outlet.'
+            'description': 'Cooling process is about to start. Please connect the water hose to the chiller\'s inlet and outlet.',
+            'process': 'resumeCooking'
           });
-        } else if (dialogOpen) {
+        } else if (data.cookingStep !== 'paused' && this.state.dialogOpen && this.state.dialogProcess === 'resumeCooking') {
           this.handleClose();
         }
-        if (data.cooking !== 'mash' && data.cooking !== 'finish') {
+        if (data.cookingStep !== 'mash' && data.cookingStep !== 'finish') {
           this.toggleGauge('boil', true);
         } else {
           this.toggleGauge('mash', true);
         }
+      }
+
+      if (typeof data.cookingRunning !== 'undefined') {
+        this.setState({cookingRunning: (data.cookingRunning === 'False') ? false : true});
       }
 
 
@@ -172,7 +180,8 @@ class Home extends Component {
     this.setState({ 
       dialogOpen: true, 
       dialogTitle: msg.title,
-      dialogDescription: msg.description 
+      dialogDescription: msg.description, 
+      dialogProcess: msg.process || ''
     });
   };
 
@@ -180,7 +189,8 @@ class Home extends Component {
     this.setState({ 
       dialogOpen: false, 
       dialogTitle: '',
-      dialogDescription: '' 
+      dialogDescription: '',
+      dialogProcess: '' 
     });
   };
 
@@ -199,6 +209,23 @@ class Home extends Component {
         });
       }
     });
+  }
+
+  handleStopCookingClick = () => {
+    this.handleClose();
+    ApiClient.cookStop().then((resp) => {
+      console.log('[API]', resp);
+      if (resp.notice) {
+        this.props.enqueueSnackbar(resp.notice, { 
+          variant: 'info',
+        });
+      }
+      if (resp.error) {
+        this.props.enqueueSnackbar(resp.error, { 
+          variant: 'error',
+        });
+      }
+    });    
   }
 
   handleAdvancedClick() {
@@ -253,7 +280,11 @@ class Home extends Component {
             </DialogContent>
             <DialogActions>
               <Button onClick={this.handleClose} color="secondary" autoFocus>Cancel</Button>
-              <Button onClick={this.handleContinueAction} color="primary">Continue</Button>
+              {this.state.dialogProcess === 'stopCooking' ? 
+                <Button onClick={this.handleStopCookingClick} color="primary">Stop</Button>
+              :
+                <Button onClick={this.handleContinueAction} color="primary">Continue</Button>
+              }
             </DialogActions>
           </Dialog>
           <Grid container>
@@ -271,11 +302,21 @@ class Home extends Component {
               />
             </Grid>
             <Grid item xs>
-              <div className="button-advanced">
+              <div className="button-advanced" style={{paddingTop: (!this.state.cookingRunning) ? '5.5em' : '3.5em'}}>
                 <Fab variant="extended" onClick={this.handleAdvancedClick} size="large" aria-label="advanced">
                   <AdvancedIcon />
                   Advanced
                 </Fab>
+                {(this.state.cookingRunning) && (
+                <Fab variant="extended" onClick={() => {this.handleOpen({
+                      'title': 'Stop Cooking Process', 
+                      'description': 'Are you sure to stop the current cooking process?',
+                      'process': 'stopCooking'
+                    });}} size="large" aria-label="stop">
+                  <PanToolIcon />
+                  Stop Cooking
+                </Fab>
+                )}
               </div>
             </Grid>
             <Grid item xs onClick={() => this.toggleGauge('boil', false)}>

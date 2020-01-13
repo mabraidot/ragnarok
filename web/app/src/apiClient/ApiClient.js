@@ -43,6 +43,17 @@ class ApiClient {
   }
 
 
+  async cookStop() {
+
+    return client({
+      method: 'GET',
+      url: `/cook/stop`,
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
   async deleteRecipe(recipeId) {
 
     return client({
