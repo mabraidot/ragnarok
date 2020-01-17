@@ -1,6 +1,5 @@
 import json
 import math
-import datetime
 from app.hardware.sourcesEnum import soundsEnum, waterActionsEnum
 
 
@@ -191,9 +190,8 @@ class Cooking:
                         self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
                     })
-                    self.app.sound.play(soundsEnum.ALARM)
-                    self.app.jobs.add_job(self.app.sound.stop, 'date', run_date=datetime.datetime.now() + datetime.timedelta(seconds=10), id='timerSound')
-                    print('[MASH_ADJUNCTS]', json.dumps(adjunct, indent=2), datetime.datetime.now() + datetime.timedelta(seconds=10))
+                    self.app.sound.play(soundsEnum.ALARM, 10)
+                    print('[MASH_ADJUNCTS]', json.dumps(adjunct, indent=2))
 
         elif self.currentStep['name'] == 'boil':
             for adjunct in self.boilAdjuncts:
@@ -204,9 +202,8 @@ class Cooking:
                         self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
                     })
-                    self.app.sound.play(soundsEnum.ALARM)
-                    self.app.jobs.add_job(self.app.sound.stop, 'date', run_date=datetime.datetime.now() + datetime.timedelta(seconds=10), id='timerSound')
-                    print('[BOIL_ADJUNCTS]', json.dumps(adjunct, indent=2), datetime.datetime.now() + datetime.timedelta(seconds=10))
+                    self.app.sound.play(soundsEnum.ALARM, 10)
+                    print('[BOIL_ADJUNCTS]', json.dumps(adjunct, indent=2))
 
 
 

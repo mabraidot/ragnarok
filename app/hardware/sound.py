@@ -1,7 +1,8 @@
 from RPi.GPIO import GPIO
 from time import sleep
-from app.hardware.sourcesEnum import soundsEnum
+import datetime
 import threading
+from app.hardware.sourcesEnum import soundsEnum
 
 class Sound:
     def __init__(self, app, config):
@@ -11,47 +12,31 @@ class Sound:
         self.buzzerDelay = 2
         self.buzzerPin = self.config.getint('GENERAL_PINS', 'BUZZER')
         self.buzzerState = False
-        self.killSounds = False
+        self.stopSounds = True
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.buzzerPin, GPIO.OUT)
 
-    #     self.alarm = [
-    #         ('C#4', 0.2), ('D4', 0.2),  (None, 0.2),
-    #         ('Eb4', 0.2), ('E4', 0.2),  (None, 0.6),
-    #         ('F#4', 0.2), ('G4', 0.2),  (None, 0.6),
-    #         ('Eb4', 0.2), ('E4', 0.2),  (None, 0.2),
-    #         ('F#4', 0.2), ('G4', 0.2),  (None, 0.2),
-    #         ('C4', 0.2),  ('B4', 0.2),  (None, 0.2),
-    #         ('F#4', 0.2), ('G4', 0.2),  (None, 0.2),
-    #         ('B4', 0.2),  ('Bb4', 0.5), (None, 0.6),
-    #         ('A4', 0.2),  ('G4', 0.2),  ('E4', 0.2),
-    #         ('D4', 0.2),  ('E4', 0.2)
-    #     ]
-
-
-    # def play(self, tune):
-    #     for note, duration in tune:
-    #         self.buzzer.play(note)
-    #         sleep(float(duration))
-    #     self.buzzer.stop()
 
     def playAlarm(self):
-        while True:
-            if self.killSounds:
-                break
+        while not self.stopSounds:
             self.buzzerState = not self.buzzerState
             GPIO.output(self.buzzerPin, self.buzzerState)
             sleep(1)
 
 
-    def play(self, tune):
-        self.killSounds = False
-        if tune == soundsEnum.ALARM:
-            task = threading.Thread(target=self.playAlarm)
-            task.start()
+    def play(self, tune, duration=10):
+        if self.stopSounds:
+            if tune == soundsEnum.ALARM:
+                self.stopSounds = False
+                task = threading.Thread(target=self.playAlarm)
+                task.start()
+                self.app.jobs.add_job(
+                    self.stop, 
+                    'date', 
+                    run_date=datetime.datetime.now() + datetime.timedelta(seconds=duration), 
+                    id='timerSound', 
+                    replace_existing=True)
 
 
     def stop(self):
-        self.killSounds = True
-        # if self.app.jobs.get_job('timerSound') is not None:
-        #     self.app.jobs.remove_job('timerSound')
+        self.stopSounds = True
