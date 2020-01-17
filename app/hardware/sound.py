@@ -45,6 +45,7 @@ class Sound:
 
 
     def play(self, tune):
+        self.killSounds = False
         if tune == soundsEnum.ALARM:
             task = threading.Thread(target=self.playAlarm)
             task.start()

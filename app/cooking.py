@@ -192,8 +192,8 @@ class Cooking:
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
                     })
                     self.app.sound.play(soundsEnum.ALARM)
-                    self.app.jobs.add_job(self.app.sound.stop, 'date', run_date=datetime.datetime.now() + datetime.timedelta(seconds=10), id='timerSound', replace_existing=True, max_instances=1)
-                    print('[MASH_ADJUNCTS]', json.dumps(adjunct, indent=2))
+                    self.app.jobs.add_job(self.app.sound.stop, 'date', run_date=datetime.datetime.now() + datetime.timedelta(seconds=10), id='timerSound')
+                    print('[MASH_ADJUNCTS]', json.dumps(adjunct, indent=2), datetime.datetime.now() + datetime.timedelta(seconds=10))
 
         elif self.currentStep['name'] == 'boil':
             for adjunct in self.boilAdjuncts:
@@ -205,8 +205,8 @@ class Cooking:
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
                     })
                     self.app.sound.play(soundsEnum.ALARM)
-                    self.app.jobs.add_job(self.app.sound.stop, 'date', run_date=datetime.datetime.now() + datetime.timedelta(seconds=10), id='timerSound', replace_existing=True, max_instances=1)
-                    print('[BOIL_ADJUNCTS]', json.dumps(adjunct, indent=2))
+                    self.app.jobs.add_job(self.app.sound.stop, 'date', run_date=datetime.datetime.now() + datetime.timedelta(seconds=10), id='timerSound')
+                    print('[BOIL_ADJUNCTS]', json.dumps(adjunct, indent=2), datetime.datetime.now() + datetime.timedelta(seconds=10))
 
 
 
