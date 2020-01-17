@@ -1,4 +1,5 @@
 .vscode/*
 venv/*
+RPi/*
 *__pycache__*
 *.pyc

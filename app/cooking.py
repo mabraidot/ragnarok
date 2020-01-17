@@ -1,6 +1,8 @@
 import json
 import math
-from app.hardware.sourcesEnum import waterActionsEnum
+import datetime
+from app.hardware.sourcesEnum import soundsEnum, waterActionsEnum
+
 
 """
 BeerXML Format
@@ -189,6 +191,8 @@ class Cooking:
                         self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
                     })
+                    self.app.sound.play(soundsEnum.ALARM)
+                    self.app.jobs.add_job(self.app.sound.stop, 'date', run_date=datetime.datetime.now() + datetime.timedelta(seconds=10), id='timerSound', replace_existing=True, max_instances=1)
                     print('[MASH_ADJUNCTS]', json.dumps(adjunct, indent=2))
 
         elif self.currentStep['name'] == 'boil':
@@ -200,6 +204,8 @@ class Cooking:
                         self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
                     })
+                    self.app.sound.play(soundsEnum.ALARM)
+                    self.app.jobs.add_job(self.app.sound.stop, 'date', run_date=datetime.datetime.now() + datetime.timedelta(seconds=10), id='timerSound', replace_existing=True, max_instances=1)
                     print('[BOIL_ADJUNCTS]', json.dumps(adjunct, indent=2))
 
 

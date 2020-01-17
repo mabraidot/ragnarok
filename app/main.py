@@ -5,6 +5,7 @@ from app.cooking import Cooking
 from app.hardware.kettle import kettle
 from app.hardware.valve import valve
 from app.hardware.pump import pump
+from app.hardware.sound import Sound
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.database import Database
 from app.recipes import Recipes
@@ -16,6 +17,7 @@ config.read('app/config/config.cfg')
 app = web.Application()
 app.DB = Database(app, config)
 app.recipes = Recipes(app)
+app.sound = Sound(app, config)
 
 # Jobs scheduler
 app.jobs = AsyncIOScheduler()

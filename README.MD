@@ -44,8 +44,8 @@ Python environment
     sudo apt update && sudo apt install yarn
 
     ## Create venv and install python dependencies
-    virtualenv venv --python=python3
     cd ragnarok/
+    virtualenv venv --python=python3
     source ./venv/Scripts/activate
     pip install -r requirements.txt
     

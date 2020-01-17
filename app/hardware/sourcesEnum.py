@@ -24,3 +24,7 @@ class waterActionsEnum(Enum):
     KETTLE_TO_KETTLE    = auto()
     CHILL               = auto()
     DUMP                = auto()
+
+
+class soundsEnum(Enum):
+    ALARM               = auto()
