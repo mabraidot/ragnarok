@@ -6,29 +6,53 @@ class pump:
         self.config = config
         self.name = name
         self.value = False
+        self.time = 0
         self.app.jobs.add_job(self.pumpDaemon, 'interval', seconds=1, id='pumpDaemon')
         self.status = waterActionsEnum.FINISHED
-    
+
+
     def get(self):
         return self.value
-    
+
+
     def set(self, newState = 'false'):
         if newState == 'true':
             self.value = True
         else:
             self.value = False
 
+
     def getStatus(self):
         return self.status
-    
+
+
     def setStatus(self, newStatus):
         if not isinstance(newStatus, waterActionsEnum):
             raise TypeError("%s attribute must be set to an instance of %s" % (newStatus, waterActionsEnum))
         self.status = newStatus
 
+
+    def shutAllDown(self):
+        self.setStatus(waterActionsEnum.FINISHED)
+        self.set('false')
+        self.app.outletValveDump.set(0)
+        self.app.chillerValveWort.set(0)
+        self.app.chillerValveWater.set(0)
+        self.app.boilKettleValveOutlet.set(0)
+        self.app.boilKettleValveInlet.set(0)
+        self.app.boilKettleValveWater.set(0)
+        self.app.boilKettleValveReturn.set(0)
+        self.app.mashTunValveOutlet.set(0)
+        self.app.mashTunValveInlet.set(0)
+        self.time = 0
+        if self.app.jobs.get_job('timerDelayedPump') is not None:
+            self.app.jobs.remove_job('timerDelayedPump')
+
+
     def setDelayedPumpState(self):
         self.set('true')
         self.app.jobs.remove_job('timerDelayedPump')
+
 
     def pumpDaemon(self):
 
@@ -64,6 +88,26 @@ class pump:
                 self.app.boilKettleValveReturn.set(0)
                 self.setStatus(waterActionsEnum.FINISHED)
 
+        # Recirculation through mashtun
+        if self.getStatus() == waterActionsEnum.MASHTUN_TO_MASHTUN:
+            if self.time <= 0:
+                self.time = 0
+                self.set('false')
+                self.app.mashTunValveOutlet.set(0)
+                self.app.mashTunValveInlet.set(0)
+            else:
+                self.time -= 1
+
+        # Recirculation through boil kettle
+        if self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE:
+            if self.time <= 0:
+                self.time = 0
+                self.set('false')
+                self.app.mashTunValveOutlet.set(0)
+                self.app.mashTunValveInlet.set(0)
+            else:
+                self.time -= 1
+
 
 
 
@@ -72,6 +116,15 @@ class pump:
         if not isinstance(action, waterActionsEnum):
             raise TypeError("%s attribute must be set to an instance of %s" % (action, waterActionsEnum))
         
+        print(action)
+        if ((self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE or self.getStatus() == waterActionsEnum.MASHTUN_TO_MASHTUN) 
+            and action != waterActionsEnum.FINISHED):
+            # TODO: stop process because another with more priority is taken place
+            self.shutAllDown()
+
+        if time > 0:
+            self.time = int(time)
+
         if self.getStatus() == waterActionsEnum.FINISHED:
             self.setStatus(action)
 
@@ -87,43 +140,63 @@ class pump:
                 self.app.mashTun.setWaterLevel(self.app.mashTun.getWaterLevel() + self.app.boilKettle.getWaterLevel())
                 self.app.boilKettleValveOutlet.set(100)
                 self.app.mashTunValveInlet.set(100)
-                self.app.jobs.add_job(self.setDelayedPumpState, 'interval', seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), id='timerDelayedPump')
+                self.app.jobs.add_job(
+                    self.setDelayedPumpState, 
+                    'interval', 
+                    seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
+                    id='timerDelayedPump',
+                    replace_existing=True,
+                    max_instances=1)
 
             # Rack water from mashtun to boilkettle
             if action == waterActionsEnum.MASHTUN_TO_KETTLE:
                 self.app.boilKettle.setWaterLevel(self.app.boilKettle.getWaterLevel() + self.app.mashTun.getWaterLevel())
                 self.app.mashTunValveOutlet.set(100)
                 self.app.boilKettleValveReturn.set(100)
-                self.app.jobs.add_job(self.setDelayedPumpState, 'interval', seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), id='timerDelayedPump')
+                self.app.jobs.add_job(
+                    self.setDelayedPumpState, 
+                    'interval', 
+                    seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
+                    id='timerDelayedPump',
+                    replace_existing=True,
+                    max_instances=1)
 
             # Recirculation through boil kettle
             if action == waterActionsEnum.KETTLE_TO_KETTLE:
                 self.app.boilKettleValveOutlet.set(100)
                 self.app.boilKettleValveReturn.set(40)
-                self.app.jobs.add_job(self.setDelayedPumpState, 'interval', seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), id='timerDelayedPump')
+                self.app.jobs.add_job(
+                    self.setDelayedPumpState, 
+                    'interval', 
+                    seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
+                    id='timerDelayedPump',
+                    replace_existing=True,
+                    max_instances=1)
 
             # Recirculation through mashtun
             if action == waterActionsEnum.MASHTUN_TO_MASHTUN:
                 self.app.mashTunValveOutlet.set(100)
                 self.app.mashTunValveInlet.set(40)
-                self.app.jobs.add_job(self.setDelayedPumpState, 'interval', seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), id='timerDelayedPump')
+                self.app.jobs.add_job(
+                    self.setDelayedPumpState, 
+                    'interval', 
+                    seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
+                    id='timerDelayedPump',
+                    replace_existing=True,
+                    max_instances=1)
 
             # Recirculation through chiller to cool the wort
             if action == waterActionsEnum.CHILL:
                 self.app.chillerValveWater.set(100)
                 self.app.boilKettleValveOutlet.set(100)
                 self.app.chillerValveWort.set(40)
-                self.app.jobs.add_job(self.setDelayedPumpState, 'interval', seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), id='timerDelayedPump')
+                self.app.jobs.add_job(
+                    self.setDelayedPumpState, 
+                    'interval', 
+                    seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
+                    id='timerDelayedPump',
+                    replace_existing=True,
+                    max_instances=1)
 
         if action == waterActionsEnum.FINISHED:
-            self.setStatus(action)
-            self.set('false')
-            self.app.outletValveDump.set(0)
-            self.app.chillerValveWort.set(0)
-            self.app.chillerValveWater.set(0)
-            self.app.boilKettleValveOutlet.set(0)
-            self.app.boilKettleValveInlet.set(0)
-            self.app.boilKettleValveWater.set(0)
-            self.app.boilKettleValveReturn.set(0)
-            self.app.mashTunValveOutlet.set(0)
-            self.app.mashTunValveInlet.set(0)
+            self.shutAllDown()

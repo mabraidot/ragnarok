@@ -219,6 +219,7 @@ class Cooking:
         return False
 
 
+
     def timerProcess(self):
         if self.currentStep['name'] == 'mash':
             if self.mashTunTimeProbe > 0:
@@ -227,7 +228,6 @@ class Cooking:
                 if self.mayNextStepStartPreHeating():
                     step = self.mash[self.currentStep['number'] + 1]
                     self.startStep(step, True)
-                # TODO: checks time for mash adjuncts and fire alerts
                 self.notifyAdjuncts()
             else:
                 self.mashTunTimeProbe = 0
@@ -237,7 +237,6 @@ class Cooking:
         elif self.currentStep['name'] == 'boil':
             if self.boilKettleTimeProbe > 0:
                 self.boilKettleTimeProbe -= 1/60
-                # TODO: checks time for boil adjuncts and fire alerts
                 self.notifyAdjuncts()
             else:
                 self.boilKettleTimeProbe = 0
@@ -258,12 +257,33 @@ class Cooking:
 
 
 
+    def timerMashRecirculation(self):
+        self.app.pump.moveWater(
+            action=waterActionsEnum.MASHTUN_TO_MASHTUN, 
+            time=self.config.getint('DEFAULT', 'RECIRCULATION_TIME'))
+
+
+
+    def timerBoilRecirculation(self):
+        self.app.pump.moveWater(
+            action=waterActionsEnum.KETTLE_TO_KETTLE, 
+            time=self.config.getint('DEFAULT', 'RECIRCULATION_TIME'))
+
+
+
     def timerPump(self):
         if self.currentStep['name'] == 'mash':
             step = self.mash[self.currentStep['number']]
             if step['type'] == 'Infusion':
                 if self.app.pump.getStatus() == waterActionsEnum.FINISHED and self.app.mashTun.getTemperature() >= step['step_temp']:
                     self.app.jobs.remove_job('timerPump')
+                    self.app.jobs.add_job(
+                        self.timerMashRecirculation, 
+                        'interval', 
+                        seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
+                        id='timerRecirculation', 
+                        replace_existing=True,
+                        max_instances=1)
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
 
 
@@ -281,10 +301,24 @@ class Cooking:
             if step['type'] == 'Temperature':
                 if self.app.mashTun.getTemperature() >= step['step_temp']:
                     self.app.jobs.remove_job('timerHeating')
+                    self.app.jobs.add_job(
+                        self.timerMashRecirculation, 
+                        'interval', 
+                        seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
+                        id='timerRecirculation', 
+                        replace_existing=True,
+                        max_instances=1)
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
         elif self.currentStep['name'] == 'boil':
             if self.app.boilKettle.getTemperature() >= self.boil['step_temp'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
                 self.app.jobs.remove_job('timerHeating')
+                self.app.jobs.add_job(
+                    self.timerBoilRecirculation, 
+                    'interval', 
+                    seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
+                    id='timerRecirculation', 
+                    replace_existing=True,
+                    max_instances=1)
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
 
 
@@ -314,7 +348,7 @@ class Cooking:
                 if self.currentStep['number'] < len(self.mash):
                     step = self.mash[self.currentStep['number']]
                     self.startStep(step, False)
-                    
+
                     self.mashTunTimeSetPoint = step['step_time']
                     self.mashTunTimeProbe = step['step_time']
                     self.mash[self.currentStep['number']]['state'] = 'Running'
@@ -349,7 +383,7 @@ class Cooking:
                 print('[COOL]', json.dumps(self.cool, indent=2))
 
             elif self.currentStep['name'] == 'finish':
-                self.initialize()
+                self.stop()
                 self.app.ws.setLog({
                     self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                     'The cooking process has finished!. Please dump the wort manually.'
@@ -369,6 +403,8 @@ class Cooking:
             self.app.jobs.remove_job('timerHeating')
         if self.app.jobs.get_job('timerProcess') is not None:
             self.app.jobs.remove_job('timerProcess')
+        if self.app.jobs.get_job('timerRecirculation') is not None:
+            self.app.jobs.remove_job('timerRecirculation')
 
         self.app.mashTun.stopHeating()
         self.app.boilKettle.stopHeating()
