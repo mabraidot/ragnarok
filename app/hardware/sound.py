@@ -1,4 +1,4 @@
-from RPi.GPIO import GPIO
+from RPi import GPIO
 from time import sleep
 import datetime
 import threading
