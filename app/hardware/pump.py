@@ -116,10 +116,8 @@ class pump:
         if not isinstance(action, waterActionsEnum):
             raise TypeError("%s attribute must be set to an instance of %s" % (action, waterActionsEnum))
         
-        print(action)
         if ((self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE or self.getStatus() == waterActionsEnum.MASHTUN_TO_MASHTUN) 
             and action != waterActionsEnum.FINISHED):
-            # TODO: stop process because another with more priority is taken place
             self.shutAllDown()
 
         if time > 0:
