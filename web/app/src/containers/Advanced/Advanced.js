@@ -149,7 +149,7 @@ class Advanced extends Component {
       if (data.notice) {
         for(const message in data.notice){
           this.props.enqueueSnackbar(data.notice[message], { 
-            variant: 'info',
+            variant: 'success',
           });
         }
       }
@@ -163,7 +163,7 @@ class Advanced extends Component {
       if (data.persistent_notice) {
         for(const message in data.persistent_notice){
           this.props.enqueueSnackbar(data.persistent_notice[message], { 
-            variant: 'info',
+            variant: 'success',
             persist: true,
           });
         }

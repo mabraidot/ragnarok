@@ -139,7 +139,7 @@ class Home extends Component {
       if (data.notice) {
         for(const message in data.notice){
           this.props.enqueueSnackbar(data.notice[message], { 
-            variant: 'info',
+            variant: 'success',
           });
         }
       }
@@ -153,7 +153,7 @@ class Home extends Component {
       if (data.persistent_notice) {
         for(const message in data.persistent_notice){
           this.props.enqueueSnackbar(data.persistent_notice[message], { 
-            variant: 'info',
+            variant: 'success',
             persist: true,
           });
         }
@@ -200,7 +200,7 @@ class Home extends Component {
       console.log('[API]', resp);
       if (resp.notice) {
         this.props.enqueueSnackbar(resp.notice, { 
-          variant: 'info',
+          variant: 'success',
         });
       }
       if (resp.error) {
@@ -217,7 +217,7 @@ class Home extends Component {
       console.log('[API]', resp);
       if (resp.notice) {
         this.props.enqueueSnackbar(resp.notice, { 
-          variant: 'info',
+          variant: 'success',
         });
       }
       if (resp.error) {

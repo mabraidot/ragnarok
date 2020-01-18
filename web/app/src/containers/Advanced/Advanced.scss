@@ -34,12 +34,6 @@
         color: gold;
     }
 
-    .MuiSlider-root span[class^='PrivateValueLabel-label-'] {
-        background-color: black;
-        border-radius: 0.2em;
-        padding: 0 0.1em;
-    }
-
     .MuiSlider-thumb {
         margin: 2.4em 0 0.7em 1.4em;
         height: 12px;
@@ -56,6 +50,11 @@
 
     .MuiSlider-valueLabel {
         left: calc(-50% - 4px);
+        span span {
+            background-color: black;
+            border-radius: 0.2em;
+            padding: 0 0.1em;
+        }
     }
 
     .MuiSlider-markLabel {
@@ -106,7 +105,7 @@
         padding-left: 1em;
         font-size: 0.7em;
         text-transform: uppercase;
-        margin-top: -4.8em;
+        margin-top: -3.8em;
         margin-bottom: 2em;
         span {
             font-size: 1.6em;

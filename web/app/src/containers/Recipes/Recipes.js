@@ -56,7 +56,7 @@ class Recipes extends Component {
       console.log('[API]', resp);
       if (resp.notice) {
         this.props.enqueueSnackbar(resp.notice, { 
-          variant: 'info',
+          variant: 'success',
         });
       }
       if (resp.error) {
@@ -66,7 +66,7 @@ class Recipes extends Component {
       }
       if (resp.persistent_notice) {
         this.props.enqueueSnackbar(resp.persistent_notice, { 
-          variant: 'info',
+          variant: 'success',
           persist: true,
         });
       }
@@ -168,7 +168,7 @@ class Recipes extends Component {
         console.log('[API]', resp);
         if (resp.notice) {
           this.props.enqueueSnackbar(resp.notice, { 
-            variant: 'info',
+            variant: 'success',
           });
           this.props.history.push('/')
         }
@@ -179,7 +179,7 @@ class Recipes extends Component {
         }
         if (resp.persistent_notice) {
           this.props.enqueueSnackbar(resp.persistent_notice, { 
-            variant: 'info',
+            variant: 'success',
             persist: true,
           });
           this.props.history.push('/')
@@ -218,7 +218,7 @@ class Recipes extends Component {
         console.log('[API]', resp);
         if (resp.notice) {
           this.props.enqueueSnackbar(resp.notice, { 
-            variant: 'info',
+            variant: 'success',
           });
         }
         if (resp.error) {
@@ -228,7 +228,7 @@ class Recipes extends Component {
         }
         if (resp.persistent_notice) {
           this.props.enqueueSnackbar(resp.persistent_notice, { 
-            variant: 'info',
+            variant: 'success',
             persist: true,
           });
         }

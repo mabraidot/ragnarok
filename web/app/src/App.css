@@ -21,11 +21,14 @@
   color: white;
 }
 
-div[class*='variantInfo'] {
+/* div[class*='variantInfo'] {
   background-color: seagreen !important;
   max-width: 425px;
-}
-div[class*='variantError'] {
+} */
+/* div[class*='variantError'] {
   background-color: crimson !important;
   max-width: 425px;
+} */
+.MuiSnackbarContent-root {
+  max-width: 400px;
 }
