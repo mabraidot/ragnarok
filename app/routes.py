@@ -48,6 +48,8 @@ class routes:
             web.get('/outlet/set/{on}', self.setOutletValve),
             web.get('/pump/set/{on}', self.setPump),
 
+            web.get('/power/off', self.setPowerOff),
+
         ])
 
         # Configure default CORS settings.
@@ -65,6 +67,16 @@ class routes:
 
     def home(self, request):
         return web.json_response({'response': 'The Ragnarök is coming ...'})
+
+
+
+
+    ## MACHINE ############################
+
+    async def setPowerOff(self, request):
+        message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The machine is powering off'}
+        self.app.power.setOff()
+        return web.json_response(message)
 
 
     ## COOKING ############################

@@ -32,6 +32,17 @@ class ApiClient {
   }
 
 
+  async powerOff() {
+
+    return client({
+      method: 'GET',
+      url: `/power/off`,
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
   async cookResume() {
 
     return client({

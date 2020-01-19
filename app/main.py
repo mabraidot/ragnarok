@@ -6,6 +6,7 @@ from app.hardware.kettle import kettle
 from app.hardware.valve import valve
 from app.hardware.pump import pump
 from app.hardware.sound import Sound
+from app.hardware.power import Power
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.database import Database
 from app.recipes import Recipes
@@ -24,6 +25,7 @@ app.jobs = AsyncIOScheduler()
 app.jobs.start()
 
 # Hardware
+app.power = Power(app)
 app.mashTun = kettle(app, config['MASH_TUN_PINS'], 'MashTun')
 app.boilKettle = kettle(app, config['BOIL_KETTLE_PINS'], 'BoilKettle')
 
