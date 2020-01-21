@@ -40,8 +40,8 @@ class PIDAutoTune:
 
         self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Autotune process will now begin'})
         self.running = True
-
-        while not atune.run(self.kettle.getTemperature()):
+        self.kettle.setHeater('true')
+        while self.running and not atune.run(self.kettle.getTemperature()):
             heat_percent = atune.output
             heating_time = sampleTime * heat_percent / 100
             wait_time = sampleTime - heating_time
@@ -54,18 +54,22 @@ class PIDAutoTune:
             # self.app.ws.setLog({self.config['LOG_NOTICE_LABEL']: '[PID] Wait Time: ' + str(wait_time)})
 
             if heating_time == sampleTime:
-                self.kettle.setHeater('true')
+                # self.kettle.setHeater('true')
+                self.kettle.setPWM(100)
                 self.kettle.getTemperature() # testing. DELETE
                 time.sleep(heating_time)
             elif wait_time == sampleTime:
-                self.kettle.setHeater('false')
+                # self.kettle.setHeater('false')
+                self.kettle.setPWM(0)
                 self.kettle.getTemperature() # testing. DELETE
                 time.sleep(wait_time)
             else:
-                self.kettle.setHeater('true')
+                # self.kettle.setHeater('true')
+                self.kettle.setPWM(100)
                 self.kettle.getTemperature() # testing. DELETE
                 time.sleep(heating_time)
-                self.kettle.setHeater('false')
+                # self.kettle.setHeater('false')
+                self.kettle.setPWM(0)
                 self.kettle.getTemperature() # testing. DELETE
                 time.sleep(wait_time)
 

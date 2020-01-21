@@ -310,7 +310,7 @@ class Cooking:
                         max_instances=1)
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
         elif self.currentStep['name'] == 'boil':
-            if self.app.boilKettle.getTemperature() >= self.boil['step_temp'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
+            if self.app.boilKettle.getTemperature() >= self.boil['step_temp']:
                 self.app.jobs.remove_job('timerHeating')
                 self.app.jobs.add_job(
                     self.timerBoilRecirculation, 

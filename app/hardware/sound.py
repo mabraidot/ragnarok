@@ -23,6 +23,7 @@ class Sound:
             self.buzzerState = not self.buzzerState
             GPIO.output(self.buzzerPin, self.buzzerState)
             sleep(1)
+        GPIO.cleanup()
 
 
     def play(self, tune, duration=10):

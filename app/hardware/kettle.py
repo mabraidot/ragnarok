@@ -15,7 +15,7 @@ class kettle:
         self.temperatureSetPoint = 0.0
         self.waterLevelProbe = waterLevelProbe(app, self.config, self.name + 'WaterLevelProbe')
         self.waterSetPoint = 0.0
-        self.heater = heater(app, self.config['HEATER'], self.name + 'Heater')
+        self.heater = heater(app, self.config, self.name + 'Heater')
 
     def getTemperature(self):
         return self.temperatureProbe.get()
@@ -41,28 +41,39 @@ class kettle:
     def setHeater(self, newState = 'false'):
         self.heater.set(newState)
 
+    def getPWM(self):
+        return self.heater.getPWM()
+
+    def setPWM(self, newPWM = 0):
+        self.heater.setPWM(newPWM)
 
 
 
-    # TODO: maybe move this timer to its respective PROBE classes
+
     def timerHeating(self):
-        if self.getTemperatureSetPoint() > 0 and self.getWaterLevel() >= self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
-            # TODO: set timer to heat using PID. Heater on for testing
-            self.heater.pid(self.getTemperatureSetPoint(), self.getTemperature())
+        if self.getTemperatureSetPoint() > 0 and not self.PIDAutoTune.running:
+            if self.getWaterLevel() >= self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
+                self.heater.pid(self.getTemperatureSetPoint(), self.getTemperature())
+                if not self.getHeater():
+                    self.setHeater('true')
+            else:
+                self.setHeater('false')
 
             # Safety measure, if termperature raises 10 degrees over setpoint, shut down the heater
-            if self.getTemperature() >= self.getTemperatureSetPoint() + self.config.getfloat('SAFE_OVERHEAT_TEMPERATURE'):
-                self.setHeater('false')
-        elif self.getHeater() and not self.PIDAutoTune.running:
-            self.setHeater('false')
+            # if self.getTemperature() >= self.getTemperatureSetPoint() + self.config.getfloat('SAFE_OVERHEAT_TEMPERATURE'):
+            #     self.setHeater('false')
+        # elif self.getHeater() and not self.PIDAutoTune.running:
+            # self.setHeater('false')
+        # if self.getWaterLevel() < self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
+        #     self.setHeater('false')
 
 
 
     def heatToTemperature(self, temperature = 0):
         self.temperatureSetPoint = float(temperature)
         if self.getTemperature() < self.temperatureSetPoint:
-            self.setHeater("true")
+            self.setHeater('true')
 
     def stopHeating(self):
         self.temperatureSetPoint = 0
-        self.setHeater("false")
+        self.setHeater('false')
