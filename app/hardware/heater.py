@@ -53,19 +53,13 @@ class heater:
         self.setPoint = float(tempSetPoint)
         self.currentTemp = float(currentTemp)
         self.pidControl.setpoint = self.setPoint
-        # if(currentTemp >= tempSetPoint):
-        #     self.set('false')
-        # else:
-        #     self.set('true')
             
 
-    # TODO: pidautotune pwm set is overridden by this. Shut down auto_mode
     def run(self):
         self.heatDevice.start(0)
         while self.value:
             self.pwm = self.pidControl(self.currentTemp)
             self.heatDevice.ChangeDutyCycle(self.pwm)
             sleep(0.5)
-            # print('[HEATER ' + self.name + ']:', self.pwm)
         self.heatDevice.stop()
         GPIO.cleanup()
