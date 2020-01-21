@@ -59,15 +59,6 @@ class kettle:
             else:
                 self.setHeater('false')
 
-            # Safety measure, if termperature raises 10 degrees over setpoint, shut down the heater
-            # if self.getTemperature() >= self.getTemperatureSetPoint() + self.config.getfloat('SAFE_OVERHEAT_TEMPERATURE'):
-            #     self.setHeater('false')
-        # elif self.getHeater() and not self.PIDAutoTune.running:
-            # self.setHeater('false')
-        # if self.getWaterLevel() < self.config.getfloat('SAFE_WATER_LEVEL_FOR_HEATERS'):
-        #     self.setHeater('false')
-
-
 
     def heatToTemperature(self, temperature = 0):
         self.temperatureSetPoint = float(temperature)
