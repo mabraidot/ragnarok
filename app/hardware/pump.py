@@ -103,8 +103,8 @@ class pump:
             if self.time <= 0:
                 self.time = 0
                 self.set('false')
-                self.app.mashTunValveOutlet.set(0)
-                self.app.mashTunValveInlet.set(0)
+                self.app.boilKettleValveOutlet.set(0)
+                self.app.boilKettleValveReturn.set(0)
             else:
                 self.time -= 1
 
