@@ -53,7 +53,7 @@ class heater:
         self.setPoint = float(tempSetPoint)
         self.currentTemp = float(currentTemp)
         self.pidControl.setpoint = self.setPoint
-            
+
 
     def run(self):
         self.heatDevice.start(0)

@@ -1,5 +1,5 @@
 from RPi import GPIO
-from app.hardware.sourcesEnum import sourcesEnum, waterActionsEnum
+from app.lib.sourcesEnum import sourcesEnum, waterActionsEnum
 
 class pump:
     def __init__(self, app, config, name):

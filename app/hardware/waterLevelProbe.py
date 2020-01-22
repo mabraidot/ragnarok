@@ -1,4 +1,8 @@
+from RPi import GPIO
+from app.lib.hx711 import HX711
 import random
+import threading
+import time
 
 class waterLevelProbe:
     def __init__(self, app, config, name = 'MashTunWaterLevelProbe'):
@@ -6,7 +10,18 @@ class waterLevelProbe:
         self.name = name
         self.config = config
         self.value = 0
-    
+
+        # https://github.com/tatobari/hx711py/blob/master/example.py
+        self.hx = HX711(self.config.getint('WATER_LEVEL_SENSOR_DT'), self.config.getint('WATER_LEVEL_SENSOR_SCK'))
+        self.hx.set_reading_format("MSB", "MSB")
+        self.hx.set_reference_unit(self.config.getint('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
+        self.hx.reset()
+        self.hx.tare()
+        
+        task = threading.Thread(target=self.run)
+        task.start()
+
+
     def get(self):
         # TODO: this is a TEST. Return the actual value
         flow = 0.2
@@ -39,3 +54,14 @@ class waterLevelProbe:
                         self.value = 0
 
         return self.value
+
+
+    def run(self):
+        try:
+            while True:
+                self.value = self.hx.get_weight(5)
+                self.hx.power_down()
+                self.hx.power_up()
+                time.sleep(0.2)
+        except:
+            GPIO.cleanup()

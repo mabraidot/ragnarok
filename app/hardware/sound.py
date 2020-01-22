@@ -2,7 +2,7 @@ from RPi import GPIO
 from time import sleep
 import datetime
 import threading
-from app.hardware.sourcesEnum import soundsEnum
+from app.lib.sourcesEnum import soundsEnum
 
 class Sound:
     def __init__(self, app, config):
