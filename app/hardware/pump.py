@@ -1,3 +1,4 @@
+from RPi import GPIO
 from app.hardware.sourcesEnum import sourcesEnum, waterActionsEnum
 
 class pump:
@@ -9,6 +10,10 @@ class pump:
         self.time = 0
         self.app.jobs.add_job(self.pumpDaemon, 'interval', seconds=1, id='pumpDaemon')
         self.status = waterActionsEnum.FINISHED
+        self.pin = self.config.getint('GENERAL_PINS', 'PUMP')
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.pin, GPIO.OUT)
+        GPIO.setwarnings(False)
 
 
     def get(self):
@@ -18,8 +23,10 @@ class pump:
     def set(self, newState = 'false'):
         if newState == 'true':
             self.value = True
+            GPIO.output(self.pin, GPIO.HIGH)
         else:
             self.value = False
+            GPIO.output(self.pin, GPIO.LOW)
 
 
     def getStatus(self):
