@@ -5,7 +5,11 @@ class temperatureProbe:
         self.app = app
         self.name = name
         self.value = 0
-    
+
+        # https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/
+        # https://learn.adafruit.com/adafruit-max31865-rtd-pt100-amplifier/python-circuitpython
+
+
     def get(self):
         # TODO: this is a TEST. Return the actual value
         heater = self.app.mashTun.getHeater()
