@@ -12,6 +12,7 @@ class waterLevelProbe:
         self.value = 0
 
         # https://github.com/tatobari/hx711py/blob/master/example.py
+        # https://tutorials-raspberrypi.com/digital-raspberry-pi-scale-weight-sensor-hx711/
         self.hx = HX711(self.config.getint('WATER_LEVEL_SENSOR_DT'), self.config.getint('WATER_LEVEL_SENSOR_SCK'))
         self.hx.set_reading_format("MSB", "MSB")
         self.hx.set_reference_unit(self.config.getint('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
