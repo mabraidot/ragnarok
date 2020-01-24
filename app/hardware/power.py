@@ -5,4 +5,4 @@ class Power:
         self.app = app
     
     def setOff(self):
-        call("sudo shutdown -h now", shell=True)
+        call("sudo halt", shell=True)
