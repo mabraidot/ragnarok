@@ -10,7 +10,7 @@ class kettle:
         self.config = config
         self.PIDAutoTune = PIDAutoTune(self.app, self, self.config)
 
-        self.temperatureProbe = temperatureProbe(app, self.name + 'TemperatureProbe')
+        self.temperatureProbe = temperatureProbe(app, self.config, self.name + 'TemperatureProbe')
         self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id=name+'Heating')
         self.temperatureSetPoint = 0.0
         self.waterLevelProbe = waterLevelProbe(app, self.config, self.name + 'WaterLevelProbe')

@@ -1,3 +1,8 @@
+Adafruit-Blinka==3.7.1
+adafruit-circuitpython-busdevice==4.1.1
+adafruit-circuitpython-max31865==2.1.4
+Adafruit-PlatformDetect==2.1.0
+Adafruit-PureIO==1.0.4
 aiodns==2.0.0
 aiohttp==3.6.2
 aiohttp-cors==0.7.0
@@ -24,10 +29,13 @@ pip-autoremove==0.9.1
 pycares==3.0.0
 pycodestyle==2.5.0
 pycparser==2.19
+pyftdi==0.42.2
 Pygments==2.4.2
 pylint==2.4.3
+pyserial==3.4
 python-dotenv==0.10.3
 pytz==2019.3
+pyusb==1.0.2
 simple-pid==0.2.4
 six==1.12.0
 typed-ast==1.4.0
