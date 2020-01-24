@@ -1,6 +1,7 @@
 from RPi import GPIO
 import threading
 import time
+import board
 import busio
 import digitalio
 import adafruit_max31865
@@ -22,11 +23,16 @@ class temperatureProbe:
         # $ ls /dev/spi*
 
         # TODO: enable this on the actual raspberry because a platform error on windows
+        # spi = busio.SPI(
+        #     self.config.getint('TEMPERATURE_SENSOR_SCLK'), 
+        #     self.config.getint('TEMPERATURE_SENSOR_MOSI'), 
+        #     self.config.getint('TEMPERATURE_SENSOR_MISO'))
+        # cs = digitalio.DigitalInOut(self.config.getint('TEMPERATURE_SENSOR_CS'))  # Chip select of the MAX31865 board.
         spi = busio.SPI(
-            self.config.getint('TEMPERATURE_SENSOR_SCLK'), 
-            self.config.getint('TEMPERATURE_SENSOR_MOSI'), 
-            self.config.getint('TEMPERATURE_SENSOR_MISO'))
-        cs = digitalio.DigitalInOut(self.config.getint('TEMPERATURE_SENSOR_CS'))  # Chip select of the MAX31865 board.
+            board.SCK, 
+            board.MOSI, 
+            board.MISO)
+        cs = digitalio.DigitalInOut(board.D18)  # Chip select of the MAX31865 board.
         self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
 
         task = threading.Thread(target=self.run)
