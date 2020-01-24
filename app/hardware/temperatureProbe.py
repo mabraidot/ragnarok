@@ -22,29 +22,29 @@ class temperatureProbe:
         # $ ls /dev/spi*
 
         # TODO: enable this on the actual raspberry because a platform error on windows
-        # spi = busio.SPI(
-        #     self.config.getint('TEMPERATURE_SENSOR_SCLK'), 
-        #     self.config.getint('TEMPERATURE_SENSOR_MOSI'), 
-        #     self.config.getint('TEMPERATURE_SENSOR_MISO'))
-        # cs = digitalio.DigitalInOut(self.config.getint('TEMPERATURE_SENSOR_CS'))  # Chip select of the MAX31865 board.
-        # self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
+        spi = busio.SPI(
+            self.config.getint('TEMPERATURE_SENSOR_SCLK'), 
+            self.config.getint('TEMPERATURE_SENSOR_MOSI'), 
+            self.config.getint('TEMPERATURE_SENSOR_MISO'))
+        cs = digitalio.DigitalInOut(self.config.getint('TEMPERATURE_SENSOR_CS'))  # Chip select of the MAX31865 board.
+        self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
 
-        # task = threading.Thread(target=self.run)
-        # task.start()
+        task = threading.Thread(target=self.run)
+        task.start()
 
 
 
     def get(self):
         # TODO: this is a TEST. Return the actual value
-        heater = self.app.mashTun.getHeater()
-        pwm = self.app.mashTun.getPWM()
-        if self.name == 'BoilKettleTemperatureProbe':
-            heater = self.app.boilKettle.getHeater()
-            pwm = self.app.boilKettle.getPWM()
-        if heater and pwm > 0 and self.value < 110:
-            self.value += 1 * (pwm / 100)
-        elif self.value > 0:
-            self.value -= 0.1
+        # heater = self.app.mashTun.getHeater()
+        # pwm = self.app.mashTun.getPWM()
+        # if self.name == 'BoilKettleTemperatureProbe':
+        #     heater = self.app.boilKettle.getHeater()
+        #     pwm = self.app.boilKettle.getPWM()
+        # if heater and pwm > 0 and self.value < 110:
+        #     self.value += 1 * (pwm / 100)
+        # elif self.value > 0:
+        #     self.value -= 0.1
 
         return self.value
 
