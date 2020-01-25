@@ -15,7 +15,7 @@ class temperatureProbe:
         # https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/
         # https://learn.adafruit.com/adafruit-max31865-rtd-pt100-amplifier/python-circuitpython
 
-        if self.app.ENV == 'production':
+        if self.config.get('DEFAULT', 'ENVIRONMENT') == 'production':
             import board
             # TODO: enable this on the actual raspberry because a platform error on windows
             if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
@@ -39,7 +39,7 @@ class temperatureProbe:
 
 
     def get(self):
-        if self.app.ENV == 'development':
+        if self.config.get('DEFAULT', 'ENVIRONMENT') == 'development':
             # TODO: this is a TEST. Return the actual value
             heater = self.app.mashTun.getHeater()
             pwm = self.app.mashTun.getPWM()

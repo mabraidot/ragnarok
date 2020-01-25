@@ -17,9 +17,6 @@ config = configparser.ConfigParser()
 config.read('app/config/config.cfg')
 
 app = web.Application()
-app.ENV = 'production'
-if platform.system() == 'Windows':
-    app.ENV = 'development'
 app.DB = Database(app, config)
 app.recipes = Recipes(app)
 app.sound = Sound(app, config)
