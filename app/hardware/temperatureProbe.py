@@ -1,6 +1,6 @@
 import threading
 import time
-import board
+# import board
 import busio
 import digitalio
 import adafruit_max31865
@@ -15,44 +15,41 @@ class temperatureProbe:
         # https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/
         # https://learn.adafruit.com/adafruit-max31865-rtd-pt100-amplifier/python-circuitpython
 
-        # Enabling Second SPI
-        # If you are using the main SPI port for a display or something and need another hardware SPI port, you can enable it by adding the line
-        # dtoverlay=spi1-3cs
-        # to the bottom of /boot/config.txt and rebooting. You'll then see the addition of some /dev/spidev1.x devices:
-        # $ ls /dev/spi*
+        if self.app.ENV == 'production':
+            import board
+            # TODO: enable this on the actual raspberry because a platform error on windows
+            if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
+                spi = busio.SPI(
+                    board.SCK, 
+                    board.MOSI, 
+                    board.MISO)
+                cs = digitalio.DigitalInOut(board.D8)
+            else:
+                spi = busio.SPI(
+                    board.SCK_1, 
+                    board.MOSI_1, 
+                    board.MISO_1)
+                cs = digitalio.DigitalInOut(board.D18)
 
-        # TODO: enable this on the actual raspberry because a platform error on windows
-        if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
-            spi = busio.SPI(
-                board.SCK, 
-                board.MOSI, 
-                board.MISO)
-            cs = digitalio.DigitalInOut(board.D8)
-        else:
-            spi = busio.SPI(
-                board.SCK_1, 
-                board.MOSI_1, 
-                board.MISO_1)
-            cs = digitalio.DigitalInOut(board.D18)
+            self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
 
-        self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
-
-        task = threading.Thread(target=self.run)
-        task.start()
+            task = threading.Thread(target=self.run)
+            task.start()
 
 
 
     def get(self):
-        # TODO: this is a TEST. Return the actual value
-        # heater = self.app.mashTun.getHeater()
-        # pwm = self.app.mashTun.getPWM()
-        # if self.name == 'BoilKettleTemperatureProbe':
-        #     heater = self.app.boilKettle.getHeater()
-        #     pwm = self.app.boilKettle.getPWM()
-        # if heater and pwm > 0 and self.value < 110:
-        #     self.value += 1 * (pwm / 100)
-        # elif self.value > 0:
-        #     self.value -= 0.1
+        if self.app.ENV == 'development':
+            # TODO: this is a TEST. Return the actual value
+            heater = self.app.mashTun.getHeater()
+            pwm = self.app.mashTun.getPWM()
+            if self.name == 'BoilKettleTemperatureProbe':
+                heater = self.app.boilKettle.getHeater()
+                pwm = self.app.boilKettle.getPWM()
+            if heater and pwm > 0 and self.value < 110:
+                self.value += 1 * (pwm / 100)
+            elif self.value > 0:
+                self.value -= 0.1
 
         return self.value
 

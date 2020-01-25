@@ -11,11 +11,15 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.database import Database
 from app.recipes import Recipes
 import configparser
+import platform
 
 config = configparser.ConfigParser()
 config.read('app/config/config.cfg')
 
 app = web.Application()
+app.ENV = 'production'
+if platform.system() == 'Windows':
+    app.ENV = 'development'
 app.DB = Database(app, config)
 app.recipes = Recipes(app)
 app.sound = Sound(app, config)
