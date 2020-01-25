@@ -1,4 +1,3 @@
-from RPi import GPIO
 import threading
 import time
 import board
@@ -23,16 +22,19 @@ class temperatureProbe:
         # $ ls /dev/spi*
 
         # TODO: enable this on the actual raspberry because a platform error on windows
-        # spi = busio.SPI(
-        #     self.config.getint('TEMPERATURE_SENSOR_SCLK'), 
-        #     self.config.getint('TEMPERATURE_SENSOR_MOSI'), 
-        #     self.config.getint('TEMPERATURE_SENSOR_MISO'))
-        # cs = digitalio.DigitalInOut(self.config.getint('TEMPERATURE_SENSOR_CS'))  # Chip select of the MAX31865 board.
-        spi = busio.SPI(
-            board.SCK, 
-            board.MOSI, 
-            board.MISO)
-        cs = digitalio.DigitalInOut(board.D18)  # Chip select of the MAX31865 board.
+        if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
+            spi = busio.SPI(
+                board.SCK, 
+                board.MOSI, 
+                board.MISO)
+            cs = digitalio.DigitalInOut(board.D8)
+        else:
+            spi = busio.SPI(
+                board.SCK_1, 
+                board.MOSI_1, 
+                board.MISO_1)
+            cs = digitalio.DigitalInOut(board.D18)
+
         self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
 
         task = threading.Thread(target=self.run)
@@ -56,9 +58,9 @@ class temperatureProbe:
 
 
     def run(self):
-        try:
-            while True:
-                self.value = self.sensor.temperature
-                time.sleep(1)
-        except:
-            GPIO.cleanup()
+        while True:
+            oldValue = self.value
+            newValue = self.sensor.temperature
+            if abs(oldValue - newValue) < 50:
+                self.value = newValue
+            time.sleep(1)
