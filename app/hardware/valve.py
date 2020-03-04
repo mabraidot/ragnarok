@@ -8,4 +8,5 @@ class valve:
         return self.value
     
     def set(self, newValue = 0):
+        # newValue: percentage, 100 % = 63 servo degrees
         self.value = int(newValue)
