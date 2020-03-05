@@ -1,12 +1,16 @@
 class valve:
-    def __init__(self, app, name):
+    def __init__(self, app, config, channel, name):
         self.app = app
+        self.config = config
         self.name = name
         self.value = 0
+        self.channel = channel
     
     def get(self):
         return self.value
     
     def set(self, newValue = 0):
-        # newValue: percentage, 100 % = 63 servo degrees
         self.value = int(newValue)
+        if self.config.get('DEFAULT', 'ENVIRONMENT') == 'production':
+            # newValue: percentage, 100 % = 63 servo degrees
+            self.app.PCA9685.set_pwm(self.channel, 0, self.value * 0.63)

@@ -30,22 +30,24 @@ app.jobs.start()
 app.power = Power(app)
 app.mashTun = kettle(app, config['MASH_TUN_PINS'], 'MashTun')
 app.boilKettle = kettle(app, config['BOIL_KETTLE_PINS'], 'BoilKettle')
-app.PCA9685 = Adafruit_PCA9685.PCA9685()
+if config.get('DEFAULT', 'ENVIRONMENT') == 'production':
+    app.PCA9685 = Adafruit_PCA9685.PCA9685()
 
 app.pump = pump(app, config, 'Pump')
 
 # Main cooking process
 app.cooking = Cooking(app, config)
 
-app.outletValveDump = valve(app, 'OutletValveDump')
-app.chillerValveWort = valve(app, 'ChillerValveWort')
-app.chillerValveWater = valve(app, 'ChillerValveWater')
-app.boilKettleValveOutlet = valve(app, 'BoilKettleValveOutlet')
-app.boilKettleValveInlet = valve(app, 'BoilKettleValveInlet')
-app.boilKettleValveWater = valve(app, 'BoilKettleValveWater')
-app.boilKettleValveReturn = valve(app, 'BoilKettleValveReturn')
-app.mashTunValveOutlet = valve(app, 'MashTunValveOutlet')
-app.mashTunValveInlet = valve(app, 'MashTunValveInlet')
+app.outletValveDump = valve(app, config, 0, 'OutletValveDump')
+app.chillerValveWort = valve(app, config, 1, 'ChillerValveWort')
+app.chillerValveWater = valve(app, config, 2, 'ChillerValveWater')
+app.boilKettleValveOutlet = valve(app, config, 3, 'BoilKettleValveOutlet')
+app.boilKettleValveReturn = valve(app, config, 4, 'BoilKettleValveReturn')
+app.mashTunValveOutlet = valve(app, config, 5, 'MashTunValveOutlet')
+app.mashTunValveInlet = valve(app, config, 6, 'MashTunValveInlet')
+# Valve inlet and waterin channels are shared
+app.boilKettleValveInlet = valve(app, config, 7, 'BoilKettleValveInlet')
+app.boilKettleValveWater = valve(app, config, 7, 'BoilKettleValveWater')
 
 # Start websocket server
 app.ws = webSocket(app)
