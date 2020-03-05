@@ -11,7 +11,7 @@ class waterLevelProbe:
         self.config = config
         self.value = 0
 
-        if self.config.get('DEFAULT', 'ENVIRONMENT') == 'production':
+        if self.config.get('ENVIRONMENT') == 'production':
             # https://github.com/tatobari/hx711py/blob/master/example.py
             # https://tutorials-raspberrypi.com/digital-raspberry-pi-scale-weight-sensor-hx711/
             self.hx = HX711(self.config.getint('WATER_LEVEL_SENSOR_DT'), self.config.getint('WATER_LEVEL_SENSOR_SCK'))
@@ -25,7 +25,7 @@ class waterLevelProbe:
 
 
     def get(self):
-        if self.config.get('DEFAULT', 'ENVIRONMENT') == 'development':
+        if self.config.get('ENVIRONMENT') == 'development':
             # TODO: this is a TEST. Return the actual value
             flow = 0.2
             if self.name == 'MashTunWaterLevelProbe':
