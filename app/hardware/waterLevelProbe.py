@@ -16,7 +16,7 @@ class waterLevelProbe:
             # https://tutorials-raspberrypi.com/digital-raspberry-pi-scale-weight-sensor-hx711/
             self.hx = HX711(self.config.getint('WATER_LEVEL_SENSOR_DT'), self.config.getint('WATER_LEVEL_SENSOR_SCK'))
             self.hx.set_reading_format("MSB", "MSB")
-            self.hx.set_reference_unit(self.config.getint('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
+            self.hx.set_reference_unit(self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
             self.hx.reset()
             self.hx.tare()
             
@@ -56,7 +56,7 @@ class waterLevelProbe:
                         else:
                             self.value = 0
 
-        return self.value
+        return abs(self.value / 1000)
 
 
     def run(self):
