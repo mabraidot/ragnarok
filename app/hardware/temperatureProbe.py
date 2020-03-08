@@ -18,22 +18,14 @@ class temperatureProbe:
         if self.config.get('ENVIRONMENT') == 'production':
             import board
             # TODO: enable this on the actual raspberry because a platform error on windows
+            spi = busio.SPI(
+                board.SCK, 
+                board.MOSI, 
+                board.MISO)
             if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
-                spi = busio.SPI(
-                    board.SCK, 
-                    board.MOSI, 
-                    board.MISO)
-                cs = digitalio.DigitalInOut(board.D8)
+                cs = digitalio.DigitalInOut(board.D22)
             else:
-                spi = busio.SPI(
-                    board.SCK, 
-                    board.MOSI, 
-                    board.MISO)
-                # spi = busio.SPI(
-                #     board.SCK_1, 
-                #     board.MOSI_1, 
-                #     board.MISO_1)
-                cs = digitalio.DigitalInOut(board.D7)
+                cs = digitalio.DigitalInOut(board.D27)
 
             self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
 
