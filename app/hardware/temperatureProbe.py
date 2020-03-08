@@ -26,10 +26,14 @@ class temperatureProbe:
                 cs = digitalio.DigitalInOut(board.D8)
             else:
                 spi = busio.SPI(
-                    board.SCK_1, 
-                    board.MOSI_1, 
-                    board.MISO_1)
-                cs = digitalio.DigitalInOut(board.D18)
+                    board.SCK, 
+                    board.MOSI, 
+                    board.MISO)
+                # spi = busio.SPI(
+                #     board.SCK_1, 
+                #     board.MOSI_1, 
+                #     board.MISO_1)
+                cs = digitalio.DigitalInOut(board.D7)
 
             self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
 
