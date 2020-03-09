@@ -1,8 +1,8 @@
 import threading
 import time
-import busio
-import digitalio
-import adafruit_max31865
+# import busio
+# import digitalio
+# import adafruit_max31865
 
 class temperatureProbe:
     def __init__(self, app, config, name = 'MashTunTemperatureProbe'):
@@ -11,22 +11,30 @@ class temperatureProbe:
         self.name = name
         self.value = 0
 
-        # https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/
-        # https://learn.adafruit.com/adafruit-max31865-rtd-pt100-amplifier/python-circuitpython
 
         if self.config.get('ENVIRONMENT') == 'production':
-            import board
-            # TODO: enable this on the actual raspberry because a platform error on windows
-            spi = busio.SPI(
-                board.SCK, 
-                board.MOSI, 
-                board.MISO)
+            # https://github.com/thegreathoe/cbpi-pt100-sensor
+            from app.lib.max31865 import max31865
             if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
-                cs = digitalio.DigitalInOut(board.D22)
+                cs = 22
             else:
-                cs = digitalio.DigitalInOut(board.D27)
+                cs = 27
 
-            self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
+            self.sensor = max31865.max31865(int(cs), 9, 10, 11, 430, int(0xD2))
+
+            # https://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/
+            # https://learn.adafruit.com/adafruit-max31865-rtd-pt100-amplifier/python-circuitpython
+            # import board
+            # spi = busio.SPI(
+            #     board.SCK, 
+            #     board.MOSI, 
+            #     board.MISO)
+            # if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
+            #     cs = digitalio.DigitalInOut(board.D22)
+            # else:
+            #     cs = digitalio.DigitalInOut(board.D27)
+
+            # self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
 
             task = threading.Thread(target=self.run)
             task.start()
@@ -52,7 +60,8 @@ class temperatureProbe:
     def run(self):
         while True:
             oldValue = self.value
-            newValue = self.sensor.temperature
+            # newValue = self.sensor.temperature
+            newValue = self.sensor.readTemp()
             if abs(oldValue - newValue) < 50:
                 self.value = newValue
             time.sleep(1)
