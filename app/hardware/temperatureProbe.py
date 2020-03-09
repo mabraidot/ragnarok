@@ -1,6 +1,5 @@
 import threading
 import time
-# import board
 import busio
 import digitalio
 import adafruit_max31865

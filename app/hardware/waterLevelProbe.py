@@ -56,13 +56,19 @@ class waterLevelProbe:
                         else:
                             self.value = 0
 
-        return abs(self.value / 1000)
+        return self.value / 1000
 
 
     def run(self):
         try:
             while True:
+                # oldValue = self.value
+                # newValue = self.hx.get_weight(5)
+                # if abs(oldValue - newValue) < 1:
+                #     self.value = newValue
                 self.value = self.hx.get_weight(5)
+                if self.value < 0:
+                    self.value = 0
                 self.hx.power_down()
                 self.hx.power_up()
                 time.sleep(0.2)
