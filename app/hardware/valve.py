@@ -12,5 +12,5 @@ class valve:
     def set(self, newValue = 0):
         self.value = int(newValue)
         if self.config.get('DEFAULT', 'ENVIRONMENT') == 'production':
-            # newValue: percentage, 100 % = 63 servo degrees
-            self.app.servoKit.servo[self.channel].angle(int(self.value * 0.63))
+            # newValue: percentage, 100 % = 90 servo degrees
+            self.app.servoKit.servo[self.channel].angle = int(self.value * 0.63)
