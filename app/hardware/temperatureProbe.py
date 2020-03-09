@@ -14,7 +14,7 @@ class temperatureProbe:
 
         if self.config.get('ENVIRONMENT') == 'production':
             # https://github.com/thegreathoe/cbpi-pt100-sensor
-            from app.lib.max31865 import max31865
+            from app.lib import max31865
             if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
                 cs = 22
             else:
@@ -54,7 +54,7 @@ class temperatureProbe:
             elif self.value > 0:
                 self.value -= 0.1
 
-        return self.value
+        return self.value + self.config.getint('TEMPERATURE_SENSOR_OFFSET')
 
 
     def run(self):
