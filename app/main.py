@@ -1,3 +1,4 @@
+from RPi import GPIO
 from aiohttp import web
 from app.routes import routes
 from app.webSocket import webSocket
@@ -57,4 +58,8 @@ r = routes(app, config)
 r.setup_routes()
 
 if __name__ == '__main__':
-    web.run_app(app)
+    try:
+        web.run_app(app)
+    finally:  
+        print('Exiting Ragnarok ...')
+        GPIO.cleanup()

@@ -62,4 +62,3 @@ class heater:
             self.heatDevice.ChangeDutyCycle(self.pwm)
             sleep(0.5)
         self.heatDevice.stop()
-        GPIO.cleanup()

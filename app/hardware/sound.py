@@ -14,8 +14,8 @@ class Sound:
         self.buzzerState = False
         self.stopSounds = True
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.buzzerPin, GPIO.OUT)
         GPIO.setwarnings(False)
+        GPIO.setup(self.buzzerPin, GPIO.OUT)
 
 
     def playAlarm(self):
@@ -23,7 +23,6 @@ class Sound:
             self.buzzerState = not self.buzzerState
             GPIO.output(self.buzzerPin, self.buzzerState)
             sleep(1)
-        GPIO.cleanup()
 
 
     def play(self, tune, duration=10):
