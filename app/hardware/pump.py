@@ -14,6 +14,7 @@ class pump:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.OUT)
         GPIO.setwarnings(False)
+        GPIO.output(self.pin, GPIO.HIGH)
 
 
     def get(self):
@@ -23,10 +24,10 @@ class pump:
     def set(self, newState = 'false'):
         if newState == 'true':
             self.value = True
-            GPIO.output(self.pin, GPIO.HIGH)
+            GPIO.output(self.pin, GPIO.LOW)
         else:
             self.value = False
-            GPIO.output(self.pin, GPIO.LOW)
+            GPIO.output(self.pin, GPIO.HIGH)
 
 
     def getStatus(self):
