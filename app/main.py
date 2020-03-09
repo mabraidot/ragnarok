@@ -12,7 +12,6 @@ from app.database import Database
 from app.recipes import Recipes
 import configparser
 import platform
-import Adafruit_PCA9685
 
 config = configparser.ConfigParser()
 config.read('app/config/config.cfg')
@@ -31,7 +30,8 @@ app.power = Power(app)
 app.mashTun = kettle(app, config['MASH_TUN_PINS'], 'MashTun')
 app.boilKettle = kettle(app, config['BOIL_KETTLE_PINS'], 'BoilKettle')
 if config.get('DEFAULT', 'ENVIRONMENT') == 'production':
-    app.PCA9685 = Adafruit_PCA9685.PCA9685()
+    from adafruit_servokit import ServoKit
+    app.servoKit = ServoKit(channels=8)
 
 app.pump = pump(app, config, 'Pump')
 

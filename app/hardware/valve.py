@@ -13,4 +13,4 @@ class valve:
         self.value = int(newValue)
         if self.config.get('DEFAULT', 'ENVIRONMENT') == 'production':
             # newValue: percentage, 100 % = 63 servo degrees
-            self.app.PCA9685.set_pwm(self.channel, 0, self.value * 0.63)
+            self.app.servoKit.servo[self.channel].angle(int(self.value * 0.63))
