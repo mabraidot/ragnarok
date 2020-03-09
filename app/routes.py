@@ -202,7 +202,9 @@ class routes:
 
     async def sartBoilKettlePIDAutoTune(self, request):
         message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A PID auto tunning process is already running'}
-        if not self.app.mashTun.PIDAutoTune.running and not self.app.boilKettle.PIDAutoTune.running:
+        if self.app.cooking.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        elif not self.app.mashTun.PIDAutoTune.running and not self.app.boilKettle.PIDAutoTune.running:
             message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'Starting a PID auto tunning process'}
             task = threading.Thread(target=self.app.boilKettle.PIDAutoTune.run)
             task.start()

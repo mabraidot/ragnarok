@@ -27,7 +27,7 @@ class waterLevelProbe:
     def get(self):
         if self.config.get('ENVIRONMENT') == 'development':
             # TODO: this is a TEST. Return the actual value
-            flow = 0.2
+            flow = 200
             if self.name == 'MashTunWaterLevelProbe':
                 if self.app.pump.get():
                     inletValveState = self.app.mashTunValveInlet.get()
