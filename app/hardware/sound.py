@@ -22,17 +22,17 @@ class Sound:
         while not self.stopSounds:
             self.buzzerState = not self.buzzerState
             if self.buzzerState:
-                self.buzzerDevice.ChangeFrequency(900)
+                self.buzzerDevice.ChangeFrequency(1000)
             else:
                 self.buzzerDevice.ChangeFrequency(400)
-            sleep(0.5)
+            sleep(0.7)
 
 
     def play(self, tune, duration=10):
         if self.stopSounds:
             if tune == soundsEnum.ALARM:
                 self.stopSounds = False
-                self.buzzerDevice.start(0)
+                self.buzzerDevice.start(50)
                 self.task = threading.Thread(target=self.playAlarm)
                 self.task.start()
                 self.app.jobs.add_job(
