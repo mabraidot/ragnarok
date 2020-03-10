@@ -26,6 +26,7 @@ class heater:
         self.pidControl.sample_time = 1
         self.pidControl.output_limits = (0, 100)
         self.pidControl.auto_mode = True
+        self.task=0
 
 
     def get(self):
@@ -35,10 +36,11 @@ class heater:
     def set(self, newState = 'false'):
         if newState == 'true':
             self.value = True
-            task = threading.Thread(target=self.run)
-            task.start()
+            self.task = threading.Thread(target=self.run)
+            self.task.start()
         else:
             self.value = False
+            self.task.join()
 
 
     def setPWM(self, newPWM = 0):
