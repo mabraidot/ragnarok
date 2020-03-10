@@ -40,7 +40,6 @@ class heater:
             self.task.start()
         else:
             self.value = False
-            self.task.join()
 
 
     def setPWM(self, newPWM = 0):

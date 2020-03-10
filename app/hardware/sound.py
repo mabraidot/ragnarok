@@ -22,9 +22,9 @@ class Sound:
         while not self.stopSounds:
             self.buzzerState = not self.buzzerState
             if self.buzzerState:
-                self.buzzerDevice.ChangeFrequency(881)
+                self.buzzerDevice.ChangeFrequency(900)
             else:
-                self.buzzerDevice.ChangeFrequency(0)
+                self.buzzerDevice.ChangeFrequency(400)
             sleep(0.5)
 
 
@@ -46,4 +46,3 @@ class Sound:
     def stop(self):
         self.stopSounds = True
         self.buzzerDevice.stop()
-        self.task.join()
