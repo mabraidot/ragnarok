@@ -8,29 +8,34 @@ class Sound:
     def __init__(self, app, config):
         self.app = app
         self.config = config
-        self.buzzerTime = 1
-        self.buzzerDelay = 2
         self.buzzerPin = self.config.getint('GENERAL_PINS', 'BUZZER')
         self.buzzerState = False
         self.stopSounds = True
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
         GPIO.setup(self.buzzerPin, GPIO.OUT)
+        self.task=0
+        self.buzzerDevice = GPIO.PWM(self.buzzerPin, 440)
 
 
     def playAlarm(self):
         while not self.stopSounds:
             self.buzzerState = not self.buzzerState
-            GPIO.output(self.buzzerPin, self.buzzerState)
-            sleep(1)
+            # GPIO.output(self.buzzerPin, self.buzzerState)
+            if self.buzzerState:
+                self.buzzerDevice.ChangeDutyCycle(881)
+            else:
+                self.buzzerDevice.ChangeDutyCycle(0)
+            sleep(0.5)
 
 
     def play(self, tune, duration=10):
         if self.stopSounds:
             if tune == soundsEnum.ALARM:
                 self.stopSounds = False
-                task = threading.Thread(target=self.playAlarm)
-                task.start()
+                self.buzzerDevice.start(0)
+                self.task = threading.Thread(target=self.playAlarm)
+                self.task.start()
                 self.app.jobs.add_job(
                     self.stop, 
                     'date', 
@@ -41,3 +46,5 @@ class Sound:
 
     def stop(self):
         self.stopSounds = True
+        self.buzzerDevice.stop()
+        self.task.join()
