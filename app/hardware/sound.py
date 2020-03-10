@@ -21,11 +21,10 @@ class Sound:
     def playAlarm(self):
         while not self.stopSounds:
             self.buzzerState = not self.buzzerState
-            # GPIO.output(self.buzzerPin, self.buzzerState)
             if self.buzzerState:
-                self.buzzerDevice.ChangeDutyCycle(881)
+                self.buzzerDevice.ChangeFrequency(881)
             else:
-                self.buzzerDevice.ChangeDutyCycle(0)
+                self.buzzerDevice.ChangeFrequency(0)
             sleep(0.5)
 
 
