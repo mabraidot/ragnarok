@@ -13,6 +13,7 @@ from app.database import Database
 from app.recipes import Recipes
 import configparser
 import platform
+from playsound import playsound
 
 config = configparser.ConfigParser()
 config.read('app/config/config.cfg')
@@ -56,6 +57,7 @@ app.ws = webSocket(app)
 # API routes definition
 r = routes(app, config)
 r.setup_routes()
+playsound('app/sounds/welcome.mp3')
 
 if __name__ == '__main__':
     try:

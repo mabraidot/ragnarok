@@ -53,3 +53,15 @@ Python environment
     cd web/app/
     yarn install
 ~~~
+
+Text-To-Speech
+--------------
+Install gTTS:
+~~~
+    pip install gTTS
+~~~
+
+Generate every needed audible message into /app/sounds/ folder:
+~~~
+    gtts-cli 'The ragnarok is coming in 3, 2, 1' --output app/sounds/test.mp3
+~~~
