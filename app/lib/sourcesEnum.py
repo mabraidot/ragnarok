@@ -28,3 +28,4 @@ class waterActionsEnum(Enum):
 
 class soundsEnum(Enum):
     ALARM               = auto()
+    WELCOME             = auto()

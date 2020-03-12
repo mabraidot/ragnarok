@@ -3,6 +3,7 @@ from time import sleep
 import datetime
 import threading
 from app.lib.sourcesEnum import soundsEnum
+import pygame
 
 class Sound:
     def __init__(self, app, config):
@@ -16,6 +17,15 @@ class Sound:
         GPIO.setup(self.buzzerPin, GPIO.OUT)
         self.task=0
         self.buzzerDevice = GPIO.PWM(self.buzzerPin, 440)
+        pygame.mixer.init()
+
+
+    def playWelcome(self):
+        pygame.mixer.music.load("app/sounds/welcome.mp3")
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            pygame.time.wait(1000)
+        self.stopSounds = True
 
 
     def playAlarm(self):
@@ -28,13 +38,19 @@ class Sound:
             sleep(0.7)
 
 
-    def play(self, tune, duration=10):
-        if self.stopSounds:
-            if tune == soundsEnum.ALARM:
+    def play(self, tune, duration=0):
+        if self.stopSounds and not self.config.getboolean('DEFAULT', 'SILENT'):
+            if tune == soundsEnum.WELCOME:
                 self.stopSounds = False
-                self.buzzerDevice.start(50)
-                self.task = threading.Thread(target=self.playAlarm)
+                self.task = threading.Thread(target=self.playWelcome)
                 self.task.start()
+            elif tune == soundsEnum.ALARM:
+                self.stopSounds = False
+                # self.buzzerDevice.start(50)
+                # self.task = threading.Thread(target=self.playAlarm)
+                # self.task.start()
+
+            if duration > 0:
                 self.app.jobs.add_job(
                     self.stop, 
                     'date', 
@@ -45,4 +61,4 @@ class Sound:
 
     def stop(self):
         self.stopSounds = True
-        self.buzzerDevice.stop()
+        # self.buzzerDevice.stop()

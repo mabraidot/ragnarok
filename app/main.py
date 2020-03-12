@@ -13,7 +13,7 @@ from app.database import Database
 from app.recipes import Recipes
 import configparser
 import platform
-import pygame
+from app.lib.sourcesEnum import soundsEnum
 
 config = configparser.ConfigParser()
 config.read('app/config/config.cfg')
@@ -58,9 +58,7 @@ app.ws = webSocket(app)
 r = routes(app, config)
 r.setup_routes()
 
-pygame.mixer.init()
-pygame.mixer.music.load("app/sounds/welcome.mp3")
-pygame.mixer.music.play()
+app.sound.play(soundsEnum.WELCOME)
 
 if __name__ == '__main__':
     try:
