@@ -22,7 +22,12 @@ Running apps
 The Python API is executed as follows:
 ~~~
     source ./venv/Scripts/activate
-    adev runserver app --livereload
+    adev runserver . --livereload
+~~~
+or for production:
+~~~
+    source ./venv/Scripts/activate
+    python main.py
 ~~~
 The server will be listening on http://localhost:8000/
 
@@ -31,6 +36,13 @@ To run the React front-end, execute this:
     cd ./web/app
     yarn start
 ~~~
+or for production:
+~~~
+    cd ./web/app
+    yarn build
+    serve -s build/
+~~~
+
 
 Python environment
 ------------------

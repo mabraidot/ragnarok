@@ -62,7 +62,7 @@ app.sound.play(soundsEnum.WELCOME)
 
 if __name__ == '__main__':
     try:
-        web.run_app(app)
+        web.run_app(app, port=8000)
     finally:  
         print('Exiting Ragnarok ...')
         GPIO.cleanup()
