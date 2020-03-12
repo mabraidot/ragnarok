@@ -8,5 +8,5 @@ class Power:
     
     def setOff(self):
         self.app.sound.play(soundsEnum.GOODBYE)
-        time.sleep(3)
+        time.sleep(1.5)
         call("sudo halt", shell=True)
