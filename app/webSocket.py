@@ -1,6 +1,7 @@
 import weakref
 import aiohttp
 from aiohttp import web
+from app.lib.sourcesEnum import soundsEnum
 
 class webSocket:
     def __init__(self, app):
@@ -74,6 +75,9 @@ class webSocket:
 
         try:
             await self.send('connection/success')
+            if not self.app.started:
+                self.app.sound.play(soundsEnum.WELCOME)
+                self.app.started = True
             async for msg in ws:
                 if msg.type == aiohttp.WSMsgType.TEXT:
                     if msg.data == 'close':

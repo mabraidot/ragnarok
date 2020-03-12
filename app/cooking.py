@@ -190,7 +190,7 @@ class Cooking:
                         self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
                     })
-                    self.app.sound.play(soundsEnum.ALARM, 10)
+                    self.app.sound.play(soundsEnum.ALARM, 25)
                     print('[MASH_ADJUNCTS]', json.dumps(adjunct, indent=2))
 
         elif self.currentStep['name'] == 'boil':
@@ -202,7 +202,7 @@ class Cooking:
                         self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
                     })
-                    self.app.sound.play(soundsEnum.ALARM, 10)
+                    self.app.sound.play(soundsEnum.ALARM, 25)
                     print('[BOIL_ADJUNCTS]', json.dumps(adjunct, indent=2))
 
 

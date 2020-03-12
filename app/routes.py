@@ -74,7 +74,7 @@ class routes:
     ## MACHINE ############################
 
     async def setPowerOff(self, request):
-        message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The machine is powering off'}
+        message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The machine is turning off'}
         self.app.power.setOff()
         return web.json_response(message)
 

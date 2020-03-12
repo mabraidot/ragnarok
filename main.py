@@ -13,7 +13,7 @@ from app.database import Database
 from app.recipes import Recipes
 import configparser
 import platform
-from app.lib.sourcesEnum import soundsEnum
+# from app.lib.sourcesEnum import soundsEnum
 
 config = configparser.ConfigParser()
 config.read('app/config/config.cfg')
@@ -22,6 +22,7 @@ app = web.Application()
 app.DB = Database(app, config)
 app.recipes = Recipes(app)
 app.sound = Sound(app, config)
+app.started = False
 
 # Jobs scheduler
 app.jobs = AsyncIOScheduler()
@@ -58,7 +59,7 @@ app.ws = webSocket(app)
 r = routes(app, config)
 r.setup_routes()
 
-app.sound.play(soundsEnum.WELCOME)
+# app.sound.play(soundsEnum.ALARM, 25)
 
 if __name__ == '__main__':
     try:
