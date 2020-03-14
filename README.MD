@@ -66,6 +66,42 @@ Python environment
     yarn install
 ~~~
 
+Start Ragnarök in kiosk mode
+----------------------------
+Edit autostart file:
+~~~
+    sudo cp /etc/xdg/lxsession/LXDE-pi/autostart /etc/xdg/lxsession/LXDE-pi/autostart.bk
+    sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
+~~~
+With the following content:
+~~~sh
+    #@lxpanel --profile LXDE-pi
+    #@pcmanfm --desktop --profile LXDE-pi
+    #@xscreensaver -no-splash
+    @xset s off
+    @xset -dpms
+    @xset s noblank
+    @sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ~/.config/chromium-browser Default/Preferences
+    @bash /home/pi/start.sh
+    @chromium-browser --noerrdialogs --disable-infobars --kiosk http://localhost:5000 --incognito
+~~~
+Create the startup bash script:
+~~~
+    touch /home/pi/start.sh
+~~~
+With the following content:
+~~~sh
+    #!/bin/bash
+
+    source /home/pi/Documents/ragnarok/venv/bin/activate
+    serve -s /home/pi/Documents/ragnarok/web/app/build/ >/dev/null 2>&1 &
+    P1=$!
+    cd /home/pi/Documents/ragnarok/
+    python main.py >/dev/null 2>&1 &
+    P2=$!
+    wait $P1 $P2
+~~~
+
 Text-To-Speech
 --------------
 Install gTTS:
