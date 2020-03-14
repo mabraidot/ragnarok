@@ -1,4 +1,5 @@
 from RPi import GPIO
+from time import sleep
 
 class valve:
     def __init__(self, app, config, channel, name):
@@ -8,10 +9,6 @@ class valve:
         self.value = 0
         self.channel = channel
         self.enablePin = self.config.getint('GENERAL_PINS', 'SERVO_ENABLE')
-        GPIO.setmode(GPIO.BCM)
-        # GPIO.setup(self.enablePin, GPIO.OUT)
-        GPIO.setwarnings(False)
-        # GPIO.output(self.enablePin, GPIO.HIGH)
     
     def get(self):
         return self.value
@@ -21,5 +18,10 @@ class valve:
         if self.config.get('DEFAULT', 'ENVIRONMENT') == 'production':
             # newValue: percentage, 100 % = 90 servo degrees
             GPIO.output(self.enablePin, GPIO.LOW)
+            sleep(0.2)
             self.app.servoKit.servo[self.channel].angle = int(self.value * 0.90)
+            sleep(1)
+            self.app.servoKit.servo[self.channel].angle = None
+            self.app.servoKit.servo[self.channel].fraction = None
             GPIO.output(self.enablePin, GPIO.HIGH)
+            sleep(0.2)

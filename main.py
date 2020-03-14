@@ -37,9 +37,9 @@ if config.get('DEFAULT', 'ENVIRONMENT') == 'production':
     from RPi import GPIO
     app.servoKit = ServoKit(channels=8)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(config['GENERAL_PINS']['SERVO_ENABLE'], GPIO.OUT)
+    GPIO.setup(config.getint('GENERAL_PINS','SERVO_ENABLE'), GPIO.OUT)
     GPIO.setwarnings(False)
-    GPIO.output(config['GENERAL_PINS']['SERVO_ENABLE'], GPIO.HIGH)
+    GPIO.output(config.getint('GENERAL_PINS','SERVO_ENABLE'), GPIO.HIGH)
 
 app.pump = pump(app, config, 'Pump')
 
