@@ -127,10 +127,11 @@ class max31865(object):
 		return temp_C
 	
 	def writeRegister(self, regNum, dataByte):
+		self.setupGPIO()
 		GPIO.output(self.csPin, GPIO.LOW)
 		
 		# 0x8x to specify 'write register value'
-		addressByte = 0x80 | regNum;
+		addressByte = 0x80 | regNum
 		
 		# first byte is address byte
 		self.sendByte(addressByte)
