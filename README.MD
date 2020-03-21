@@ -109,7 +109,7 @@ With the following content:
     @xset s noblank
     @sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ~/.config/chromium-browser Default/Preferences
     @bash /home/pi/start.sh
-    @chromium-browser --noerrdialogs --disable-infobars --kiosk http://localhost:5000 --incognito
+    @chromium-browser --noerrdialogs --disable-infobars --kiosk http://localhost:5000/loading --incognito
 ~~~
 
 Create the startup bash script:
