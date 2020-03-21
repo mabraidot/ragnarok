@@ -68,6 +68,31 @@ Python environment
 
 Start Ragnarök in kiosk mode
 ----------------------------
+Set custom boot image and remove boot messages:
+Edit the file:
+~~~
+    sudo nano /boot/cmdline.txt
+~~~
+With the following content:
+~~~sh
+    dwc_otg.lpm_enable=0 console=serial0,115200 console=tty3 root=PARTUUID=4afadf26-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet splash plymouth.ignore-serial-consoles logo.nologo vt.global_cursor_default=0
+~~~
+
+Edit the file:
+~~~
+    sudo nano /usr/share/plymouth/themes/pix/pix.script
+~~~
+Comment out these lines and change splash image url
+~~~sh
+    #message_sprite = Sprite();
+    #message_sprite.SetPosition(screen_width * 0.1, screen_height * 0.9, 10000);
+~~~
+
+Then overwrite splash image with your own:
+~~~
+    sudo cp /home/pi/Documents/ragnarok/web/app/src/background.png /usr/share/plymouth/themes/pix/splash.png
+~~~
+
 Edit autostart file:
 ~~~
     sudo cp /etc/xdg/lxsession/LXDE-pi/autostart /etc/xdg/lxsession/LXDE-pi/autostart.bk
@@ -78,6 +103,7 @@ With the following content:
     #@lxpanel --profile LXDE-pi
     #@pcmanfm --desktop --profile LXDE-pi
     #@xscreensaver -no-splash
+    @unclutter -idle 0
     @xset s off
     @xset -dpms
     @xset s noblank
@@ -85,6 +111,7 @@ With the following content:
     @bash /home/pi/start.sh
     @chromium-browser --noerrdialogs --disable-infobars --kiosk http://localhost:5000 --incognito
 ~~~
+
 Create the startup bash script:
 ~~~
     touch /home/pi/start.sh
