@@ -11,6 +11,9 @@ class Socket {
 
     this.socket.onopen = () => {
       console.log('[WS]: Socket connected!');
+      if (window.location.pathname === '/loading') {
+        window.location.href = `http://${window.location.hostname}:${window.location.port}/`;
+      }
     };
     
     this.socket.onerror = (error) => {

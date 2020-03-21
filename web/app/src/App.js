@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import './App.css';
+import Loading from './containers/Loading';
 import Home from './containers/Home';
 import Recipes from './containers/Recipes';
 import Settings from './containers/Settings';
@@ -70,6 +71,7 @@ function App() {
                 </div>
                 <div className="App-main">
                   <Switch>
+                    <Route path="/loading" push component={Loading} />
                     <Route path="/advanced" push component={Advanced} />
                     <Route path="/recipes" push component={Recipes} />
                     <Route path="/settings" push component={Settings} />
