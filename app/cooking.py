@@ -76,7 +76,7 @@ class Cooking:
     def __init__(self, app, config):
         self.app = app
         self.config = config
-        # self.initialize()
+        self.initialize()
         self.running = False
 
     def initialize(self):
@@ -93,9 +93,6 @@ class Cooking:
         self.mashAdjuncts = []
         self.boilAdjuncts = []
         self.boil = {}
-
-        self.app.mashTun.tare()
-        self.app.boilKettle.tare()
 
         self.currentStep = {
             'mash_total_time': 0.0,
@@ -417,6 +414,8 @@ class Cooking:
 
     def start(self, recipeId):
         self.initialize()
+        self.app.mashTun.tare()
+        self.app.boilKettle.tare()
         self.running = True
         self.loadRecipe(recipeId)
         self.setNextStep()
