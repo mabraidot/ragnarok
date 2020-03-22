@@ -76,7 +76,7 @@ class Cooking:
     def __init__(self, app, config):
         self.app = app
         self.config = config
-        self.initialize()
+        # self.initialize()
         self.running = False
 
     def initialize(self):

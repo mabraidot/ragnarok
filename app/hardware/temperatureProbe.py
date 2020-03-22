@@ -62,6 +62,6 @@ class temperatureProbe:
             oldValue = self.value
             # newValue = self.sensor.temperature
             newValue = self.sensor.readTemp()
-            if abs(oldValue - newValue) < 50:
-                self.value = newValue
+            # if abs(oldValue - newValue) < 50:
+            self.value = newValue
             time.sleep(1)

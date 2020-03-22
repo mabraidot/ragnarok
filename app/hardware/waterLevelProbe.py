@@ -18,7 +18,7 @@ class waterLevelProbe:
             self.hx.set_reading_format("MSB", "MSB")
             self.hx.set_reference_unit(self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
             self.hx.reset()
-            # self.tare()
+            self.hx.tare()
             
             task = threading.Thread(target=self.run)
             task.start()
