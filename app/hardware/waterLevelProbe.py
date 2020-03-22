@@ -3,7 +3,6 @@ from app.lib.hx711 import HX711
 import random
 import threading
 import time
-import statistics
 
 class waterLevelProbe:
     def __init__(self, app, config, name = 'MashTunWaterLevelProbe'):
@@ -66,24 +65,16 @@ class waterLevelProbe:
 
     def run(self):
         try:
-            valueList = []
             while True:
-                valueList.append(self.hx.get_weight(5))
-                if len(valueList) > 5:
-                    self.value = statistics.median(valueList)
+                oldValue = self.value
+                newValue = self.hx.get_weight(5)
+                if oldValue - newValue > -2000:
+                    self.value = newValue
                     if self.value < 0:
                         self.value = 0
-                    valueList = []
-                time.sleep(0.1)
-                # oldValue = self.value
-                # newValue = self.hx.get_weight(5)
-                # if oldValue - newValue > -1000:
-                #     self.value = newValue
-                #     if self.value < 0:
-                #         self.value = 0
 
-                # self.hx.power_down()
-                # self.hx.power_up()
-                # time.sleep(0.2)
+                self.hx.power_down()
+                self.hx.power_up()
+                time.sleep(0.2)
         except:
             GPIO.cleanup()
