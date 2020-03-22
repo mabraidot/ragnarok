@@ -142,6 +142,7 @@ class max31865(object):
 		
 	def readRegisters(self, regNumStart, numRegisters):
 		out = []
+		self.setupGPIO()
 		GPIO.output(self.csPin, GPIO.LOW)
 		
 		# 0x to specify 'read register value'
@@ -155,6 +156,7 @@ class max31865(object):
 		return out
 
 	def sendByte(self,byte):
+		self.setupGPIO()
 		for bit in range(8):
 			GPIO.output(self.clkPin, GPIO.HIGH)
 			if (byte & 0x80):
@@ -165,6 +167,7 @@ class max31865(object):
 			GPIO.output(self.clkPin, GPIO.LOW)
 
 	def recvByte(self):
+		self.setupGPIO()
 		byte = 0x00
 		for bit in range(8):
 			GPIO.output(self.clkPin, GPIO.HIGH)
