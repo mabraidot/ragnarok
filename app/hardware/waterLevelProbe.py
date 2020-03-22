@@ -63,7 +63,7 @@ class waterLevelProbe:
                         else:
                             self.value = 0
 
-        return self.value / 1000
+        return ( self.value / 1000 ) / self.config.getfloat('ONE_LITER_WEIGHT')
 
 
     def run(self):
