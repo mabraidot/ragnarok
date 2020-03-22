@@ -121,10 +121,10 @@ With the following content:
     #!/bin/bash
 
     source /home/pi/Documents/ragnarok/venv/bin/activate
-    serve -s /home/pi/Documents/ragnarok/web/app/build/ >/dev/null 2>&1 &
-    P1=$!
     cd /home/pi/Documents/ragnarok/
     python main.py >/dev/null 2>&1 &
+    P1=$!
+    serve -s web/app/build/ >/dev/null 2>&1 &
     P2=$!
     wait $P1 $P2
 ~~~
