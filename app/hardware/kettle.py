@@ -17,6 +17,9 @@ class kettle:
         self.waterSetPoint = 0.0
         self.heater = heater(app, self.config, self.name + 'Heater')
 
+    def tare(self):
+        self.waterLevelProbe.tare()
+
     def getTemperature(self):
         return self.temperatureProbe.get()
 

@@ -24,8 +24,9 @@ class waterLevelProbe:
 
 
     def tare(self):
-        self.hx.reset()
-        self.hx.tare()
+        if self.config.get('ENVIRONMENT') == 'production':
+            self.hx.reset()
+            self.hx.tare()
 
 
     def get(self):

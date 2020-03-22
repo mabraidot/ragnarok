@@ -94,6 +94,9 @@ class Cooking:
         self.boilAdjuncts = []
         self.boil = {}
 
+        self.app.mashTun.tare()
+        self.app.boilKettle.tare()
+
         self.currentStep = {
             'mash_total_time': 0.0,
             'recipe_id': 0,
