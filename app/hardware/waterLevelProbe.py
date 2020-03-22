@@ -24,7 +24,7 @@ class waterLevelProbe:
             task.start()
 
 
-    def tare():
+    def tare(self):
         self.hx.reset()
         self.hx.tare()
 
