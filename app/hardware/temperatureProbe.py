@@ -3,6 +3,7 @@ import time
 # import busio
 # import digitalio
 # import adafruit_max31865
+import statistics
 
 class temperatureProbe:
     def __init__(self, app, config, name = 'MashTunTemperatureProbe'):
@@ -58,10 +59,17 @@ class temperatureProbe:
 
 
     def run(self):
+        valueList = []
         while True:
-            oldValue = self.value
-            # newValue = self.sensor.temperature
-            newValue = self.sensor.readTemp()
-            if abs(oldValue - newValue) < 50:
-                self.value = newValue
-            time.sleep(1)
+            valueList.append(self.sensor.readTemp())
+            if len(valueList) > 5:
+                self.value = statistics.median(valueList)
+                valueList = []
+            time.sleep(0.2)
+            # print('---->', valueList, self.value)
+            # oldValue = self.value
+            # # newValue = self.sensor.temperature
+            # newValue = self.sensor.readTemp()
+            # if abs(oldValue - newValue) < 50:
+            #     self.value = newValue
+            # time.sleep(1)
