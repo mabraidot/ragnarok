@@ -65,7 +65,7 @@ class temperatureProbe:
             if len(valueList) > 5:
                 self.value = statistics.median(valueList)
                 valueList = []
-            time.sleep(0.2)
+            time.sleep(0.1)
             # print('---->', valueList, self.value)
             # oldValue = self.value
             # # newValue = self.sensor.temperature

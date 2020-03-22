@@ -71,8 +71,10 @@ class waterLevelProbe:
                 valueList.append(self.hx.get_weight(5))
                 if len(valueList) > 5:
                     self.value = statistics.median(valueList)
+                    if self.value < 0:
+                        self.value = 0
                     valueList = []
-                time.sleep(0.2)
+                time.sleep(0.1)
                 # oldValue = self.value
                 # newValue = self.hx.get_weight(5)
                 # if oldValue - newValue > -1000:
