@@ -12,6 +12,7 @@ class temperatureProbe:
         if self.config.get('ENVIRONMENT') == 'production':
             from w1thermsensor import W1ThermSensor
             self.sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, self.config.get('TEMPERATURE_SENSOR_ADDRESS'))
+            self.sensor.set_resolution(12)
             
             task = threading.Thread(target=self.run)
             task.start()
