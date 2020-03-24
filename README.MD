@@ -129,6 +129,20 @@ With the following content:
     wait $P1 $P2
 ~~~
 
+
+Using DS18B20 temperature sensor
+--------------------------------
+Edit boot file:
+~~~
+    sudo nano /boot/config.txt
+~~~
+Uncomment or add the following line:
+Reference (https://github.com/timofurrer/w1thermsensor)
+~~~sh
+    dtoverlay=w1–gpio
+~~~
+
+
 Text-To-Speech
 --------------
 Install gTTS:

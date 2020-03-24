@@ -7,18 +7,12 @@ class temperatureProbe:
         self.config = config
         self.name = name
         self.value = 0
-
+        self.sensor = None
 
         if self.config.get('ENVIRONMENT') == 'production':
-            # https://github.com/thegreathoe/cbpi-pt100-sensor
-            from app.lib import max31865
-            if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
-                cs = 22
-            else:
-                cs = 27
-
-            self.sensor = max31865.max31865(int(cs), 9, 10, 11, 430, int(0xD2))
-
+            from w1thermsensor import W1ThermSensor
+            self.sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, self.config.get('TEMPERATURE_SENSOR_ADDRESS'))
+            
             task = threading.Thread(target=self.run)
             task.start()
 
@@ -43,7 +37,7 @@ class temperatureProbe:
     def run(self):
         while True:
             # oldValue = self.value
-            newValue = self.sensor.readTemp()
+            newValue = self.sensor.get_temperature()
             # if abs(oldValue - newValue) < 50:
             self.value = newValue
             time.sleep(0.5)
