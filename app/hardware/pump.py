@@ -145,7 +145,7 @@ class pump:
             if action == waterActionsEnum.KETTLE_TO_MASHTUN:
                 self.app.mashTun.setWaterLevel(self.app.mashTun.getWaterLevel() + self.app.boilKettle.getWaterLevel())
                 self.app.boilKettleValveOutlet.set(100)
-                self.app.mashTunValveInlet.set(100)
+                self.app.mashTunValveInlet.set(60)
                 self.app.jobs.add_job(
                     self.setDelayedPumpState, 
                     'interval', 
@@ -158,7 +158,7 @@ class pump:
             if action == waterActionsEnum.MASHTUN_TO_KETTLE:
                 self.app.boilKettle.setWaterLevel(self.app.boilKettle.getWaterLevel() + self.app.mashTun.getWaterLevel())
                 self.app.mashTunValveOutlet.set(100)
-                self.app.boilKettleValveReturn.set(100)
+                self.app.boilKettleValveReturn.set(60)
                 self.app.jobs.add_job(
                     self.setDelayedPumpState, 
                     'interval', 
