@@ -139,7 +139,6 @@ class routes:
     
     
     def setMashTunTime(self, request):
-        # TODO: handle cretion of timers and alert system
         minutes = request.match_info.get('minutes', 0)
         return web.json_response({'response': str(minutes)})
     
@@ -158,7 +157,6 @@ class routes:
     
     
     def setBoilKettleTime(self, request):
-        # TODO: handle cretion of timers and alert system
         minutes = request.match_info.get('minutes', 0)
         return web.json_response({'response': str(minutes)})
 

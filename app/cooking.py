@@ -285,6 +285,8 @@ class Cooking:
                         replace_existing=True,
                         max_instances=1)
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
+                else:
+                    self.app.mashTun.heatToTemperature(step['step_temp'])
 
 
 
@@ -298,6 +300,8 @@ class Cooking:
                     self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN)
                     self.app.mashTun.heatToTemperature(step['step_temp'])
                     self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
+                else:
+                    self.app.boilKettle.heatToTemperature(step['infuse_temp'])
             if step['type'] == 'Temperature':
                 if self.app.mashTun.getTemperature() >= step['step_temp']:
                     self.app.jobs.remove_job('timerHeating')
@@ -309,6 +313,8 @@ class Cooking:
                         replace_existing=True,
                         max_instances=1)
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
+                else:
+                    self.app.mashTun.heatToTemperature(step['step_temp'])
         elif self.currentStep['name'] == 'boil':
             if self.app.boilKettle.getTemperature() >= self.boil['step_temp']:
                 self.app.jobs.remove_job('timerHeating')
@@ -320,13 +326,15 @@ class Cooking:
                     replace_existing=True,
                     max_instances=1)
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
+            else:
+                self.app.boilKettle.heatToTemperature(self.boil['step_temp'])
 
 
 
     def startStep(self, step, preHeating = False):
         if step['type'] == 'Infusion' and step['infuse_amount'] > 0:
 
-            if not preHeating or step['type'] != 'Infusion' or self.app.boilKettle.getTemperature() < step['infuse_temp']:
+            if not preHeating or self.app.boilKettle.getTemperature() < step['infuse_temp']:
                 self.app.pump.moveWater(action=waterActionsEnum.WATER_IN_FILTERED, ammount=step['infuse_amount'])
                 self.app.boilKettle.heatToTemperature(step['infuse_temp'])
             if not preHeating:

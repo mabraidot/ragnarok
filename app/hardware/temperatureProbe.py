@@ -21,7 +21,6 @@ class temperatureProbe:
 
     def get(self):
         if self.config.get('ENVIRONMENT') == 'development':
-            # TODO: this is a TEST. Return the actual value
             heater = self.app.mashTun.getHeater()
             pwm = self.app.mashTun.getPWM()
             if self.name == 'BoilKettleTemperatureProbe':
