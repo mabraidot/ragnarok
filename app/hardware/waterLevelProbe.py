@@ -78,6 +78,6 @@ class waterLevelProbe:
 
                 self.hx.power_down()
                 self.hx.power_up()
-                time.sleep(0.2)
+                time.sleep(0.5)
         except:
             GPIO.cleanup()
