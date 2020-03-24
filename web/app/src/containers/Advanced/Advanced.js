@@ -58,7 +58,9 @@ class Advanced extends Component {
       const data = JSON.parse(result.data);
 
       if (typeof data.MashTunTemperatureProbe !== 'undefined') {
-        this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe.toFixed(1)});
+        if (data.MashTunTemperatureProbe !== this.state.MashTunTemperatureProbe) {
+          this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe.toFixed(1)});
+        }
       }
       if (typeof data.MashTunTemperatureSetPoint !== 'undefined') {
         if (data.MashTunTemperatureSetPoint !== this.state.MashTunTemperatureSetPoint) {
@@ -66,7 +68,9 @@ class Advanced extends Component {
         }
       }
       if (typeof data.MashTunWaterLevelProbe !== 'undefined') {
-        this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe.toFixed(1)});
+        if (data.MashTunWaterLevelProbe !== this.state.MashTunWaterLevelProbe) {
+          this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe.toFixed(1)});
+        }
       }
       if (typeof data.MashTunWaterLevelSetPoint !== 'undefined') {
         if (data.MashTunWaterLevelSetPoint !== this.state.MashTunWaterLevelSetPoint) {
@@ -74,7 +78,9 @@ class Advanced extends Component {
         }
       }
       if (typeof data.MashTunTimeProbe !== 'undefined') {
-        this.setState({MashTunTimeProbe: data.MashTunTimeProbe});
+        if (data.MashTunTimeProbe !== this.state.MashTunTimeProbe) {
+          this.setState({MashTunTimeProbe: data.MashTunTimeProbe});
+        }
       }
       if (typeof data.MashTunTimeSetPoint !== 'undefined') {
         if (data.MashTunTimeSetPoint !== this.state.MashTunTimeSetPoint) {
@@ -83,7 +89,9 @@ class Advanced extends Component {
       }
 
       if (typeof data.BoilKettleTemperatureProbe !== 'undefined') {
-        this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe.toFixed(1)});
+        if (data.BoilKettleTemperatureProbe !== this.state.BoilKettleTemperatureProbe) {
+          this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe.toFixed(1)});
+        }
       }
       if (typeof data.BoilKettleTemperatureSetPoint !== 'undefined') {
         if (data.BoilKettleTemperatureSetPoint !== this.state.BoilKettleTemperatureSetPoint) {
@@ -91,7 +99,9 @@ class Advanced extends Component {
         }
       }
       if (typeof data.BoilKettleWaterLevelProbe !== 'undefined') {
-        this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe.toFixed(1)});
+        if (data.BoilKettleWaterLevelProbe !== this.state.BoilKettleWaterLevelProbe) {
+          this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe.toFixed(1)});
+        }
       }
       if (typeof data.BoilKettleWaterLevelSetPoint !== 'undefined') {
         if (data.BoilKettleWaterLevelSetPoint !== this.state.BoilKettleWaterLevelSetPoint) {
@@ -99,7 +109,9 @@ class Advanced extends Component {
         }
       }
       if (typeof data.BoilKettleTimeProbe !== 'undefined') {
-        this.setState({BoilKettleTimeProbe: data.BoilKettleTimeProbe});
+        if (data.BoilKettleTimeProbe !== this.state.BoilKettleTimeProbe) {
+          this.setState({BoilKettleTimeProbe: data.BoilKettleTimeProbe});
+        }
       }
       if (typeof data.BoilKettleTimeSetPoint !== 'undefined') {
         if (data.BoilKettleTimeSetPoint !== this.state.BoilKettleTimeSetPoint) {
@@ -108,42 +120,67 @@ class Advanced extends Component {
       }
 
       if (typeof data.MashTunHeater !== 'undefined') {
-        this.setState({MashTunHeater: (data.MashTunHeater === 'False') ? false : true});
+        if (data.MashTunHeater !== this.state.MashTunHeater) {
+          this.setState({MashTunHeater: (data.MashTunHeater === 'False') ? false : true});
+        }
       }
       if (typeof data.BoilKettleHeater !== 'undefined') {
-        this.setState({BoilKettleHeater: (data.BoilKettleHeater === 'False') ? false : true});
+        if (data.BoilKettleHeater !== this.state.BoilKettleHeater) {
+          this.setState({BoilKettleHeater: (data.BoilKettleHeater === 'False') ? false : true});
+        }
       }
 
       if (typeof data.OutletValveDump !== 'undefined') {
-        this.setState({OutletValveDump: (data.OutletValveDump === '0') ? false : true});
+        if (data.OutletValveDump !== this.state.OutletValveDump) {
+          this.setState({OutletValveDump: (data.OutletValveDump === '0') ? false : true});
+        }
       }
       if (typeof data.ChillerValveWort !== 'undefined') {
-        this.setState({ChillerValveWort: (data.ChillerValveWort === '0') ? false : true});
+        if (data.ChillerValveWort !== this.state.ChillerValveWort) {
+          this.setState({ChillerValveWort: (data.ChillerValveWort === '0') ? false : true});
+        }
       }
       if (typeof data.ChillerValveWater !== 'undefined') {
-        this.setState({ChillerValveWater: (data.ChillerValveWater === '0') ? false : true});
+        if (data.ChillerValveWater !== this.state.ChillerValveWater) {
+          this.setState({ChillerValveWater: (data.ChillerValveWater === '0') ? false : true});
+        }
       }
       if (typeof data.BoilKettleValveOutlet !== 'undefined') {
-        this.setState({BoilKettleValveOutlet: (data.BoilKettleValveOutlet === '0') ? false : true});
+        if (data.BoilKettleValveOutlet !== this.state.BoilKettleValveOutlet) {
+          this.setState({BoilKettleValveOutlet: (data.BoilKettleValveOutlet === '0') ? false : true});
+        }
       }
       if (typeof data.BoilKettleValveInlet !== 'undefined') {
-        this.setState({BoilKettleValveInlet: (data.BoilKettleValveInlet === '0') ? false : true});
+        if (data.BoilKettleValveInlet !== this.state.BoilKettleValveInlet) {
+          this.setState({BoilKettleValveInlet: (data.BoilKettleValveInlet === '0') ? false : true});
+        }
       }
       if (typeof data.BoilKettleValveWater !== 'undefined') {
-        this.setState({BoilKettleValveWater: (data.BoilKettleValveWater === '0') ? false : true});
+        if (data.BoilKettleValveWater !== this.state.BoilKettleValveWater) {
+          this.setState({BoilKettleValveWater: (data.BoilKettleValveWater === '0') ? false : true});
+        }
       }
       if (typeof data.BoilKettleValveReturn !== 'undefined') {
-        this.setState({BoilKettleValveReturn: (data.BoilKettleValveReturn === '0') ? false : true});
+        if (data.BoilKettleValveReturn !== this.state.BoilKettleValveReturn) {
+          this.setState({BoilKettleValveReturn: (data.BoilKettleValveReturn === '0') ? false : true});
+        }
       }
       if (typeof data.MashTunValveOutlet !== 'undefined') {
-        this.setState({MashTunValveOutlet: (data.MashTunValveOutlet === '0') ? false : true});
+        if (data.MashTunValveOutlet !== this.state.MashTunValveOutlet) {
+          this.setState({MashTunValveOutlet: (data.MashTunValveOutlet === '0') ? false : true});
+        }
       }
       if (typeof data.MashTunValveInlet !== 'undefined') {
-        this.setState({MashTunValveInlet: (data.MashTunValveInlet === '0') ? false : true});
+        if (data.MashTunValveInlet !== this.state.MashTunValveInlet) {
+          this.setState({MashTunValveInlet: (data.MashTunValveInlet === '0') ? false : true});
+        }
       }
       
       if (typeof data.Pump !== 'undefined') {
-        this.setState({Pump: (data.Pump === 'False') ? false : true});
+        const pumpNewValue = (data.Pump === 'False') ? false : true;
+        if (pumpNewValue !== this.state.Pump) {
+          this.setState({Pump: pumpNewValue});
+        }
       }
       
       if (data.notice) {

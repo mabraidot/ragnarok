@@ -9,7 +9,7 @@ class webSocket:
         self._clients = weakref.WeakSet()
         self.app.add_routes([web.get('/ws', self.websocket_handler)])
         self.logs = []
-        self.app.jobs.add_job(self.sendToWebSocket, 'interval', seconds=0.5)
+        self.app.jobs.add_job(self.sendToWebSocket, 'interval', seconds=1)
 
     def setLog(self, message):
         self.logs.append(message)
