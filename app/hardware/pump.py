@@ -15,6 +15,8 @@ class pump:
         GPIO.setup(self.pin, GPIO.OUT)
         GPIO.setwarnings(False)
         GPIO.output(self.pin, GPIO.HIGH)
+        self.oldWaterLevelValue = 0
+        self.waterLevelReadingCount = 0
 
 
     def get(self):
@@ -76,7 +78,12 @@ class pump:
 
         # Rack water from boilkettle to mashtun
         if self.getStatus() == waterActionsEnum.KETTLE_TO_MASHTUN:
-            if (self.app.boilKettle.getWaterLevel() <= 0 or 
+            self.oldWaterLevelValue = self.app.boilKettle.getWaterLevel()
+            if self.oldWaterLevelValue <= 0.1:
+                self.waterLevelReadingCount += 1
+
+            if (self.waterLevelReadingCount >= 3 or 
+                self.app.boilKettle.getWaterLevel() <= 0 or 
                 self.app.mashTun.getWaterLevel() >= self.app.mashTun.getWaterLevelSetPoint() or
                 self.app.mashTun.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
 
@@ -84,10 +91,17 @@ class pump:
                 self.app.boilKettleValveOutlet.set(0)
                 self.app.mashTunValveInlet.set(0)
                 self.setStatus(waterActionsEnum.FINISHED)
+                self.oldWaterLevelValue = 0
+                self.waterLevelReadingCount = 0
 
         # Rack water from mashtun to boilkettle
         if self.getStatus() == waterActionsEnum.MASHTUN_TO_KETTLE:
-            if (self.app.mashTun.getWaterLevel() <= 0 or 
+            self.oldWaterLevelValue = self.app.mashTun.getWaterLevel()
+            if self.oldWaterLevelValue <= 0.1:
+                self.waterLevelReadingCount += 1
+
+            if (self.waterLevelReadingCount >= 3 or 
+                self.app.mashTun.getWaterLevel() <= 0 or 
                 self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint() or 
                 self.app.boilKettle.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
 
@@ -95,6 +109,8 @@ class pump:
                 self.app.mashTunValveOutlet.set(0)
                 self.app.boilKettleValveReturn.set(0)
                 self.setStatus(waterActionsEnum.FINISHED)
+                self.oldWaterLevelValue = 0
+                self.waterLevelReadingCount = 0
 
         # Recirculation through mashtun
         if self.getStatus() == waterActionsEnum.MASHTUN_TO_MASHTUN:
