@@ -32,6 +32,17 @@ class ApiClient {
   }
 
 
+  async cookUnfinished(recipeId) {
+
+    return client({
+      method: 'GET',
+      url: `/cook/${recipeId}/resume`,
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
   async powerOff() {
 
     return client({
@@ -74,6 +85,18 @@ class ApiClient {
       return resp.data;
     })
   }
+
+
+  async deleteUnfinishedRecipe(recipeId) {
+
+    return client({
+      method: 'GET',
+      url: `/cook/delete`,
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
 
   async getRecipes() {
 

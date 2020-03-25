@@ -98,6 +98,7 @@ class Database:
         rows = cursor.fetchall()
 
         recipes = {
+            'unfinished': False,
             'totalRows': len(rows),
             'recipes': []
         }
@@ -118,6 +119,8 @@ class Database:
                 'created':          row[14],
             })
 
+        recipes['unfinished'] = self.getUnfinishedRecipe()
+
         return json.dumps(recipes)
 
     def getRecipe(self, id):
@@ -126,7 +129,7 @@ class Database:
         cursor.execute(query, id)
         row = cursor.fetchone()
 
-        if len(row) > 0:
+        if row is not None:
             recipe = {
                     'id':               row[0],
                     'name':             row[1],
@@ -161,7 +164,7 @@ class Database:
         cursor.execute(query)
         row = cursor.fetchone()
 
-        if len(row) > 0:
+        if row is not None:
             recipe = {
                     'id':                       row[0],
                     'recipe_id':                row[1],
@@ -199,6 +202,6 @@ class Database:
 
     def deleteUnfinishedRecipe(self):
         cursor = self.conn.cursor()
-        query = "DELETE FROM recipes WHERE id = 1"
+        query = "DELETE FROM unfinished WHERE 1"
         cursor.execute(query)
         self.conn.commit()

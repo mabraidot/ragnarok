@@ -55,3 +55,13 @@ class Recipes:
             result = False
 
         return result
+
+
+    def deleteUnfinishedRecipe(self):
+        try:
+            self.app.DB.deleteUnfinishedRecipe()
+            result = True
+        except:
+            result = False
+
+        return result

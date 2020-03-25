@@ -14,6 +14,8 @@ class routes:
 
             web.get('/cook/resume', self.cookResume),
             web.get('/cook/stop', self.cookStop),
+            web.get('/cook/delete', self.cookUnfinishedDelete),
+            web.get('/cook/{recipe}/resume', self.cookUnfinishedResume),
             web.get('/cook/{recipe}', self.cook),
 
             web.post('/recipes/import', self.importRecipe),
@@ -98,6 +100,21 @@ class routes:
         self.app.cooking.stop()
 
         return web.json_response({self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'The cooking process was stopped'})
+
+
+    async def cookUnfinishedDelete(self, request):
+        response = {self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'Unfinished process was successfully deleted'}
+        result = self.app.recipes.deleteUnfinishedRecipe()
+        if not result:
+            response = {self.config.get('DEFAULT', 'LOG_ERROR_LABEL'): 'There was an error deleting the process'}
+        return web.json_response(response)
+
+
+    async def cookUnfinishedResume(self, request):
+        recipe = request.match_info.get('recipe', 0)
+        self.app.cooking.resume(recipe)
+
+        return web.json_response({self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'The unfinished cooking process was resumed'})
 
 
     ## RECIPES ############################

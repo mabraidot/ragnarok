@@ -22,6 +22,7 @@ class Recipes extends Component {
     this.state = {
       totalRows: 0,
       recipes: [],
+      unfinishedCooking: false,
       dialogOpen: false,
       dialogRecipeId: 0,
       dialogAction: '',
@@ -41,7 +42,19 @@ class Recipes extends Component {
     ApiClient.getRecipes().then((resp) => {
       const response = JSON.parse(resp);
       console.log('[API]', response);
+
+      if (response.unfinished) {
+        this.setState({ dialogOpen: true, 
+          dialogRecipeId: response.unfinished.recipe_id, 
+          dialogAction: 'unfinished',
+          dialogTitle: 'There is an unfinished cooking process',
+          dialogDescription: `You can resume the cooking process or delete it to stop seing this message.` 
+        });
+      }
+
+
       this.setState({ 
+        unfinishedCooking: response.unfinished, 
         totalRows: response.totalRows, 
         recipes: response.recipes 
       });
@@ -243,6 +256,89 @@ class Recipes extends Component {
     }
   };
 
+
+  handleSeeUnfinishedAction = (recipeId) => {
+    this.setState({ 
+      dialogOpen: false, 
+      dialogRecipeId: 0, 
+      dialogAction: '',
+      dialogTitle: '',
+      dialogDescription: '' 
+    });
+    console.log('resume cooking ', this.state.unfinishedCooking.recipe_id);
+
+    if (typeof this.state.unfinishedCooking.recipe_id !== 'undefined') {
+      ApiClient.cookUnfinished(this.state.unfinishedCooking.recipe_id).then((resp) => {
+        console.log('[API]', resp);
+        if (resp.notice) {
+          this.props.enqueueSnackbar(resp.notice, { 
+            variant: 'success',
+          });
+          this.props.history.push('/')
+        }
+        if (resp.error) {
+          this.props.enqueueSnackbar(resp.error, { 
+            variant: 'error',
+          });
+        }
+        if (resp.persistent_notice) {
+          this.props.enqueueSnackbar(resp.persistent_notice, { 
+            variant: 'success',
+            persist: true,
+          });
+          this.props.history.push('/')
+        }
+        if (resp.persistent_error) {
+          this.props.enqueueSnackbar(resp.persistent_error, { 
+            variant: 'error',
+            persist: true,
+          });
+        }
+      });
+    }
+
+  }
+
+
+  handleDeleteUnfinishedAction = (recipeId) => {
+    this.setState({ 
+      dialogOpen: false, 
+      dialogRecipeId: 0, 
+      dialogAction: '',
+      dialogTitle: '',
+      dialogDescription: '' 
+    });
+
+    if (recipeId > 0) {
+      ApiClient.deleteUnfinishedRecipe(recipeId).then((resp) => {
+        console.log('[API]', resp);
+        if (resp.notice) {
+          this.props.enqueueSnackbar(resp.notice, { 
+            variant: 'success',
+          });
+        }
+        if (resp.error) {
+          this.props.enqueueSnackbar(resp.error, { 
+            variant: 'error',
+          });
+        }
+        if (resp.persistent_notice) {
+          this.props.enqueueSnackbar(resp.persistent_notice, { 
+            variant: 'success',
+            persist: true,
+          });
+        }
+        if (resp.persistent_error) {
+          this.props.enqueueSnackbar(resp.persistent_error, { 
+            variant: 'error',
+            persist: true,
+          });
+        }
+        this.getRecipesHandler();
+      });
+    }
+  };
+
   render() {
     return(
       <Grow in={true}>
@@ -261,11 +357,18 @@ class Recipes extends Component {
             </DialogContent>
             <DialogActions>
               <Button onClick={this.handleClose} color="secondary" autoFocus>Cancel</Button>
-              {(this.state.dialogAction === 'delete') ? (
+              {(this.state.dialogAction === 'delete') && (
                 <Button onClick={() => this.handleDeleteAction(this.state.dialogRecipeId)} color="primary">Delete</Button>
-              ) : (
+              )}
+              {(this.state.dialogAction === 'cook') && (
                 <Button onClick={() => this.handleSeeAction(this.state.dialogRecipeId)} color="primary">Cook</Button>
               )}
+              {(this.state.unfinishedCooking && this.state.dialogAction === 'unfinished') ? (
+                <div>
+                  <Button onClick={() => this.handleDeleteUnfinishedAction(this.state.dialogRecipeId)} color="primary">Delete</Button>
+                  <Button onClick={() => this.handleSeeUnfinishedAction(this.state.dialogRecipeId)} color="primary">Cook</Button>
+                </div>
+              ) : ('')}
             </DialogActions>
           </Dialog>
           <h1>Recipes</h1>

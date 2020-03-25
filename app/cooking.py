@@ -427,3 +427,8 @@ class Cooking:
         self.running = True
         self.loadRecipe(recipeId)
         self.setNextStep()
+
+
+    def resume(self, recipeId):
+        print('resuming...', recipeId)
+        pass
