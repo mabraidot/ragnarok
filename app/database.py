@@ -33,6 +33,22 @@ class Database:
             cursor.execute(query)
             self.conn.commit()
 
+            query = """
+                CREATE TABLE IF NOT EXISTS unfinished(
+                    id INTEGER PRIMARY KEY NOT NULL,
+                    recipe_id INTEGER NOT NULL,
+                    process_name TEXT NOT NULL,
+                    process_number INTEGER NOT NULL,
+                    mash_total_time REAL NOT NULL,
+                    mashtun_water_level REAL NOT NULL,
+                    mashtun_time_probe REAL NOT NULL,
+                    boilkettle_water_level REAL NOT NULL,
+                    boilkettle_time_probe REAL NOT NULL
+                )
+            """
+            cursor.execute(query)
+            self.conn.commit()
+
         except Error:
             self.app.ws.setLog({self.config['LOG_ERROR_PERSISTENT_LABEL']: '[DB]: ' + Error})
 
@@ -136,4 +152,53 @@ class Database:
         cursor = self.conn.cursor()
         query = "DELETE FROM recipes WHERE id = ?"
         cursor.execute(query, recipeId)
+        self.conn.commit()
+
+
+    def getUnfinishedRecipe(self):
+        cursor = self.conn.cursor()
+        query = "SELECT * FROM unfinished WHERE 1 LIMIT 1"
+        cursor.execute(query)
+        row = cursor.fetchone()
+
+        if len(row) > 0:
+            recipe = {
+                    'id':                       row[0],
+                    'recipe_id':                row[1],
+                    'process_name':             row[2],
+                    'process_number':           row[3],
+                    'mash_total_time':          row[4],
+                    'mashtun_water_level':      row[5],
+                    'mashtun_time_probe':       row[6],
+                    'boilkettle_water_level':   row[7],
+                    'boilkettle_time_probe':    row[8],
+                }
+        else:
+            recipe = False
+
+        return recipe
+
+
+    def insertUnfinishedRecipe(self, recipe_id, process_name, process_number, mash_total_time, 
+                              mashtun_water_level, mashtun_time_probe, boilkettle_water_level, 
+                              boilkettle_time_probe):
+        cursor = self.conn.cursor()
+        query = """
+            INSERT OR REPLACE INTO unfinished (
+                id, recipe_id, process_name, process_number, mash_total_time, 
+                mashtun_water_level, mashtun_time_probe, boilkettle_water_level, boilkettle_time_probe
+            ) 
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        entities = (1, recipe_id, process_name, process_number, mash_total_time, 
+                    mashtun_water_level, mashtun_time_probe, boilkettle_water_level, 
+                    boilkettle_time_probe)
+        cursor.execute(query, entities)
+        self.conn.commit()
+
+
+    def deleteUnfinishedRecipe(self):
+        cursor = self.conn.cursor()
+        query = "DELETE FROM recipes WHERE id = 1"
+        cursor.execute(query)
         self.conn.commit()
