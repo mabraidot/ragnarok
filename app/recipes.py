@@ -57,6 +57,18 @@ class Recipes:
         return result
 
 
+    def getUnfinishedRecipe(self):
+        recipe = self.app.DB.getUnfinishedRecipe()
+
+        return recipe
+
+
+    def updateUnfinishedRecipe(self, recipe_id, process_name, process_number, mash_total_time, 
+        mashtun_water_level, mashtun_time_probe, boilkettle_water_level, boilkettle_time_probe):
+        self.app.DB.insertUnfinishedRecipe(recipe_id, process_name, process_number, mash_total_time, 
+                    mashtun_water_level, mashtun_time_probe, boilkettle_water_level, boilkettle_time_probe)
+
+
     def deleteUnfinishedRecipe(self):
         try:
             self.app.DB.deleteUnfinishedRecipe()

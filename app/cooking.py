@@ -89,6 +89,10 @@ class Cooking:
         self.app.boilKettle.setWaterLevel(0)
         self.app.mashTun.setWaterLevel(0)
 
+        self.mashTunPriorWaterLevel = 0.0
+        self.boilKettlePriorWaterLevel = 0.0
+
+
         self.mash = []
         self.mashAdjuncts = []
         self.boilAdjuncts = []
@@ -430,5 +434,24 @@ class Cooking:
 
 
     def resume(self, recipeId):
-        print('resuming...', recipeId)
-        pass
+        self.initialize()
+        self.app.mashTun.tare()
+        self.app.boilKettle.tare()
+        self.loadRecipe(recipeId)
+
+        unfinishedRecipe = self.app.recipes.getUnfinishedRecipe()
+
+        self.currentStep = {
+            'mash_total_time': unfinishedRecipe['mash_total_time'],
+            'recipe_id': recipeId,
+            'number': unfinishedRecipe['process_number'],
+            'name': unfinishedRecipe['process_name']
+        }
+        self.mashTunPriorWaterLevel = unfinishedRecipe['mashtun_water_level']
+        self.mashTunTimeProbe = unfinishedRecipe['mashtun_time_probe']
+        self.boilKettlePriorWaterLevel = unfinishedRecipe['boilkettle_water_level']
+        self.boilKettleTimeProbe = unfinishedRecipe['boilkettle_time_probe']
+        
+        self.currentStep['number'] -= 1
+        self.running = True
+        self.setNextStep()
