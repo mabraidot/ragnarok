@@ -26,9 +26,17 @@ class waterLevelProbe:
 
     def tare(self):
         if self.config.get('ENVIRONMENT') == 'production':
-            self.hx.power_down()
-            self.hx.power_up()
+            self.hx.reset()
             self.hx.tare()
+
+
+    def setPriorValue(self, value):
+        if self.config.get('ENVIRONMENT') == 'production':
+            newValue = -1 * (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
+            self.hx.reset()
+            self.hx.set_offset(newValue)
+        else:
+            self.value = (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
 
 
     def get(self):
@@ -75,8 +83,7 @@ class waterLevelProbe:
                     if self.value < 0:
                         self.value = 0
 
-                self.hx.power_down()
-                self.hx.power_up()
+                self.hx.reset()
                 time.sleep(0.5)
         except:
             GPIO.cleanup()

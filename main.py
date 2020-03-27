@@ -9,7 +9,6 @@ from app.hardware.pump import pump
 from app.hardware.sound import Sound
 from app.hardware.power import Power
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from app.database import Database
 from app.recipes import Recipes
 import configparser
 import platform
@@ -19,8 +18,7 @@ config = configparser.ConfigParser()
 config.read('app/config/config.cfg')
 
 app = web.Application()
-app.DB = Database(app, config)
-app.recipes = Recipes(app)
+app.recipes = Recipes(app, config)
 app.sound = Sound(app, config)
 app.started = False
 

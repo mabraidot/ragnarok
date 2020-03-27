@@ -20,6 +20,9 @@ class kettle:
     def tare(self):
         self.waterLevelProbe.tare()
 
+    def setPriorWaterLevel(self, value):
+        self.waterLevelProbe.setPriorValue(value)
+
     def getTemperature(self):
         return self.temperatureProbe.get()
 

@@ -1,9 +1,11 @@
 import xmltodict
 import datetime
+from app.database import Database
 
 class Recipes:
-    def __init__(self, app):
+    def __init__(self, app, config):
         self.app = app
+        self.app.DB = Database(app, config)
 
 
     def importRecipe(self, xml):

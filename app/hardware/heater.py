@@ -69,8 +69,8 @@ class heater:
         self.heatDevice.start(0)
         while self.value:
             self.pwm = self.pidControl(self.currentTemp)
-            print('PWM:', self.name, self.pwm)
-            print('-------------------->PWM:', min((100 - self.siblingHeater.getPWM()), self.pwm))
+            # print('PWM:', self.name, self.pwm)
+            # print('-------------------->PWM:', min((100 - self.siblingHeater.getPWM()), self.pwm))
             # Not allowed both heaters turned on at full power
             self.pwm = min((100 - self.siblingHeater.getPWM()), self.pwm)
             self.heatDevice.ChangeDutyCycle(self.pwm)

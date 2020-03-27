@@ -89,10 +89,6 @@ class Cooking:
         self.app.boilKettle.setWaterLevel(0)
         self.app.mashTun.setWaterLevel(0)
 
-        self.mashTunPriorWaterLevel = 0.0
-        self.boilKettlePriorWaterLevel = 0.0
-
-
         self.mash = []
         self.mashAdjuncts = []
         self.boilAdjuncts = []
@@ -417,11 +413,21 @@ class Cooking:
             self.app.jobs.remove_job('timerProcess')
         if self.app.jobs.get_job('timerRecirculation') is not None:
             self.app.jobs.remove_job('timerRecirculation')
+        if self.app.jobs.get_job('timerSavePartialProcess') is not None:
+            self.app.jobs.remove_job('timerSavePartialProcess')
 
         self.app.mashTun.stopHeating()
         self.app.boilKettle.stopHeating()
         self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
         self.initialize()
+
+
+    def timerSavePartialProcess(self):
+        from app.recipes import Recipes
+        self.app.recipes = Recipes(self.app, self.config)
+        self.app.recipes.updateUnfinishedRecipe(self.currentStep['recipe_id'], self.currentStep['name'], 
+            self.currentStep['number'], self.currentStep['mash_total_time'], self.app.mashTun.getWaterLevel(), 
+            self.mashTunTimeProbe, self.app.boilKettle.getWaterLevel(), self.boilKettleTimeProbe)
 
 
     def start(self, recipeId):
@@ -430,6 +436,7 @@ class Cooking:
         self.app.boilKettle.tare()
         self.running = True
         self.loadRecipe(recipeId)
+        self.app.jobs.add_job(self.timerSavePartialProcess, 'interval', seconds=10, id='timerSavePartialProcess', replace_existing=True)
         self.setNextStep()
 
 
@@ -442,15 +449,16 @@ class Cooking:
         unfinishedRecipe = self.app.recipes.getUnfinishedRecipe()
 
         self.currentStep = {
-            'mash_total_time': unfinishedRecipe['mash_total_time'],
-            'recipe_id': recipeId,
-            'number': unfinishedRecipe['process_number'],
+            'mash_total_time': float(unfinishedRecipe['mash_total_time']),
+            'recipe_id': int(recipeId),
+            'number': int(unfinishedRecipe['process_number']),
             'name': unfinishedRecipe['process_name']
         }
-        self.mashTunPriorWaterLevel = unfinishedRecipe['mashtun_water_level']
-        self.mashTunTimeProbe = unfinishedRecipe['mashtun_time_probe']
-        self.boilKettlePriorWaterLevel = unfinishedRecipe['boilkettle_water_level']
-        self.boilKettleTimeProbe = unfinishedRecipe['boilkettle_time_probe']
+        
+        self.app.mashTun.setPriorWaterLevel(float(unfinishedRecipe['mashtun_water_level']))
+        self.mashTunTimeProbe = float(unfinishedRecipe['mashtun_time_probe'])
+        self.app.boilKettle.setPriorWaterLevel(float(unfinishedRecipe['boilkettle_water_level']))
+        self.boilKettleTimeProbe = float(unfinishedRecipe['boilkettle_time_probe'])
         
         self.currentStep['number'] -= 1
         self.running = True
