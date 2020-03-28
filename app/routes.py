@@ -122,6 +122,8 @@ class routes:
         data = await request.post()
         response = {self.config.get('DEFAULT', 'LOG_ERROR_LABEL'): 'XML data was empty'}
         if (data['file']):
+            from app.recipes import Recipes
+            self.app.recipes = Recipes(self.app, self.config)
             if self.app.recipes.importRecipe(data['file'].file):
                 response = {self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'XML received successfully'}
 
@@ -129,11 +131,15 @@ class routes:
 
 
     async def listRecipes(self, request):
+        from app.recipes import Recipes
+        self.app.recipes = Recipes(self.app, self.config)
         data = self.app.recipes.listRecipes()
         return web.json_response(data)
     
 
     async def deleteRecipe(self, request):
+        from app.recipes import Recipes
+        self.app.recipes = Recipes(self.app, self.config)
         recipe = request.match_info.get('recipe', 0)
         response = {self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'Recipe '+str(recipe)+' was successfully deleted'}
         result = self.app.recipes.deleteRecipe(recipe)

@@ -210,11 +210,12 @@ class Cooking:
     def mayNextStepStartPreHeating(self):
         if self.currentStep['name'] == 'mash' and self.currentStep['number'] + 1 < len(self.mash):
             step = self.mash[self.currentStep['number'] + 1]
-            if step['type'] == 'Infusion':
+            if step['type'] == 'Infusion' and step['state'] == 'Pending':
                 if (
-                    abs(self.mashTunTimeProbe - self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')) < 1/60 or
+                    self.mashTunTimeProbe < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME') or
                     self.mash[self.currentStep['number']]['step_time'] < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')
                 ):
+                    self.mash[self.currentStep['number'] + 1]['state'] == 'Running'
                     return True
         return False
 
@@ -290,13 +291,14 @@ class Cooking:
 
 
 
-    def timerHeating(self):
+    def timerHeating(self, preHeating = False):
         if self.currentStep['name'] == 'mash':
             step = self.mash[self.currentStep['number']]
             if step['type'] == 'Infusion':
-                if self.app.boilKettle.getTemperature() >= step['infuse_temp']:
+                if self.app.boilKettle.getTemperature() >= step['infuse_temp'] or (not preHeating and self.app.mashTun.getWaterLevel() > 0):
                     self.app.jobs.remove_job('timerHeating')
                     self.app.boilKettle.stopHeating()
+                    # if (preHeating or self.app.mashTun.getWaterLevel() <= 0):
                     self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN)
                     self.app.mashTun.heatToTemperature(step['step_temp'])
                     self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
@@ -334,11 +336,12 @@ class Cooking:
     def startStep(self, step, preHeating = False):
         if step['type'] == 'Infusion' and step['infuse_amount'] > 0:
 
-            if not preHeating or self.app.boilKettle.getTemperature() < step['infuse_temp']:
+            if preHeating or (( not preHeating or self.app.boilKettle.getTemperature() < step['infuse_temp'] ) and self.app.mashTun.getWaterLevel() <= 0 ):
                 self.app.pump.moveWater(action=waterActionsEnum.WATER_IN_FILTERED, ammount=step['infuse_amount'])
                 self.app.boilKettle.heatToTemperature(step['infuse_temp'])
+            
             if not preHeating:
-                self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
+                self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, args=[preHeating], id='timerHeating', replace_existing=True)
 
         elif step['type'] == 'Temperature' and not preHeating:
             self.app.mashTun.heatToTemperature(step['step_temp'])
@@ -358,7 +361,8 @@ class Cooking:
                     self.startStep(step, False)
 
                     self.mashTunTimeSetPoint = step['step_time']
-                    self.mashTunTimeProbe = step['step_time']
+                    if self.mashTunTimeProbe == 0:
+                        self.mashTunTimeProbe = step['step_time']
                     self.mash[self.currentStep['number']]['state'] = 'Running'
                     print('[STEP-MASH: '+str(self.currentStep['number'])+']', json.dumps(self.mash[self.currentStep['number']], indent=2))
 
@@ -370,7 +374,8 @@ class Cooking:
             elif self.currentStep['name'] == 'boil':
                 step = self.boil
                 self.boilKettleTimeSetPoint = step['step_time']
-                self.boilKettleTimeProbe = step['step_time']
+                if self.boilKettleTimeProbe == 0:
+                    self.boilKettleTimeProbe = step['step_time']
                 self.boil['state'] = 'Running'
                 self.app.mashTun.stopHeating()
                 self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_KETTLE)
@@ -386,6 +391,7 @@ class Cooking:
                 self.boilKettleTimeSetPoint = step['step_time']
                 self.boilKettleTimeProbe = step['step_time']
                 self.app.boilKettle.setTemperature(0)
+                self.app.boilKettle.stopHeating()
                 self.app.pump.moveWater(action=waterActionsEnum.CHILL)
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                 print('[COOL]', json.dumps(self.cool, indent=2))
@@ -416,6 +422,10 @@ class Cooking:
         if self.app.jobs.get_job('timerSavePartialProcess') is not None:
             self.app.jobs.remove_job('timerSavePartialProcess')
 
+        from app.recipes import Recipes
+        self.app.recipes = Recipes(self.app, self.config)
+        self.app.recipes.deleteUnfinishedRecipe()
+
         self.app.mashTun.stopHeating()
         self.app.boilKettle.stopHeating()
         self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
@@ -436,7 +446,10 @@ class Cooking:
         self.app.boilKettle.tare()
         self.running = True
         self.loadRecipe(recipeId)
-        self.app.jobs.add_job(self.timerSavePartialProcess, 'interval', seconds=10, id='timerSavePartialProcess', replace_existing=True)
+        self.app.jobs.add_job(
+            self.timerSavePartialProcess, 'interval', 
+            seconds=self.config.getint('DEFAULT', 'SAVING_PARTIAL_PROCESS_INTERVAL'), 
+            id='timerSavePartialProcess', replace_existing=True)
         self.setNextStep()
 
 
@@ -462,4 +475,8 @@ class Cooking:
         
         self.currentStep['number'] -= 1
         self.running = True
+        self.app.jobs.add_job(
+            self.timerSavePartialProcess, 'interval', 
+            seconds=self.config.getint('DEFAULT', 'SAVING_PARTIAL_PROCESS_INTERVAL'), 
+            id='timerSavePartialProcess', replace_existing=True)
         self.setNextStep()
