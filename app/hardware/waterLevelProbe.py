@@ -19,6 +19,7 @@ class waterLevelProbe:
             self.hx.set_reference_unit(self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
             self.hx.reset()
             self.hx.tare()
+            print('WL_Offset ', self.name, self.hx.get_offset())
             
             task = threading.Thread(target=self.run)
             task.start()
