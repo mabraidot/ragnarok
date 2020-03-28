@@ -273,7 +273,7 @@ class Cooking:
 
 
     def timerPump(self):
-        if self.currentStep['name'] == 'mash':
+        if self.currentStep['name'] == 'mash' and self.currentStep['number'] < len(self.mash):
             step = self.mash[self.currentStep['number']]
             if step['type'] == 'Infusion':
                 if self.app.pump.getStatus() == waterActionsEnum.FINISHED and self.app.mashTun.getTemperature() >= step['step_temp']:

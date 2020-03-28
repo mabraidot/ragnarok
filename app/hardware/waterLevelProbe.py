@@ -19,7 +19,6 @@ class waterLevelProbe:
             self.hx.set_reference_unit(self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
             self.hx.reset()
             self.hx.tare()
-            print('WL_Offset ', self.name, self.hx.get_offset())
             
             task = threading.Thread(target=self.run)
             task.start()
@@ -35,7 +34,8 @@ class waterLevelProbe:
         if self.config.get('ENVIRONMENT') == 'production':
             newValue = -1 * (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
             self.hx.reset()
-            self.hx.set_offset(newValue)
+            # self.hx.set_offset(newValue)
+            self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
         else:
             self.value = (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
 
