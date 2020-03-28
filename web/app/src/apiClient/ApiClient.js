@@ -87,7 +87,7 @@ class ApiClient {
   }
 
 
-  async deleteUnfinishedRecipe(recipeId) {
+  async deleteUnfinishedRecipe() {
 
     return client({
       method: 'GET',

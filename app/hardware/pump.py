@@ -78,9 +78,9 @@ class pump:
 
         # Rack water from boilkettle to mashtun
         if self.getStatus() == waterActionsEnum.KETTLE_TO_MASHTUN:
-            self.oldWaterLevelValue = self.app.boilKettle.getWaterLevel()
-            if self.oldWaterLevelValue <= 0.1:
+            if self.get() and abs(self.oldWaterLevelValue - self.app.boilKettle.getWaterLevel()) < 0.1:
                 self.waterLevelReadingCount += 1
+            self.oldWaterLevelValue = self.app.boilKettle.getWaterLevel()
 
             if (self.waterLevelReadingCount >= 3 or 
                 self.app.boilKettle.getWaterLevel() <= 0 or 
@@ -96,9 +96,9 @@ class pump:
 
         # Rack water from mashtun to boilkettle
         if self.getStatus() == waterActionsEnum.MASHTUN_TO_KETTLE:
-            self.oldWaterLevelValue = self.app.mashTun.getWaterLevel()
-            if self.oldWaterLevelValue <= 0.1:
+            if self.get() and abs(self.oldWaterLevelValue - self.app.mashTun.getWaterLevel()) < 0.1:
                 self.waterLevelReadingCount += 1
+            self.oldWaterLevelValue = self.app.mashTun.getWaterLevel()
 
             if (self.waterLevelReadingCount >= 3 or 
                 self.app.mashTun.getWaterLevel() <= 0 or 
@@ -119,6 +119,7 @@ class pump:
                 self.set('false')
                 self.app.mashTunValveOutlet.set(0)
                 self.app.mashTunValveInlet.set(0)
+                self.setStatus(waterActionsEnum.FINISHED)
             else:
                 self.time -= 1
 
@@ -129,6 +130,7 @@ class pump:
                 self.set('false')
                 self.app.boilKettleValveOutlet.set(0)
                 self.app.boilKettleValveReturn.set(0)
+                self.setStatus(waterActionsEnum.FINISHED)
             else:
                 self.time -= 1
 

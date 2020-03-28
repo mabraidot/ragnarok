@@ -309,34 +309,32 @@ class Recipes extends Component {
       dialogDescription: '' 
     });
 
-    if (recipeId > 0) {
-      ApiClient.deleteUnfinishedRecipe(recipeId).then((resp) => {
-        console.log('[API]', resp);
-        if (resp.notice) {
-          this.props.enqueueSnackbar(resp.notice, { 
-            variant: 'success',
-          });
-        }
-        if (resp.error) {
-          this.props.enqueueSnackbar(resp.error, { 
-            variant: 'error',
-          });
-        }
-        if (resp.persistent_notice) {
-          this.props.enqueueSnackbar(resp.persistent_notice, { 
-            variant: 'success',
-            persist: true,
-          });
-        }
-        if (resp.persistent_error) {
-          this.props.enqueueSnackbar(resp.persistent_error, { 
-            variant: 'error',
-            persist: true,
-          });
-        }
-        this.getRecipesHandler();
-      });
-    }
+    ApiClient.deleteUnfinishedRecipe().then((resp) => {
+      console.log('[API]', resp);
+      if (resp.notice) {
+        this.props.enqueueSnackbar(resp.notice, { 
+          variant: 'success',
+        });
+      }
+      if (resp.error) {
+        this.props.enqueueSnackbar(resp.error, { 
+          variant: 'error',
+        });
+      }
+      if (resp.persistent_notice) {
+        this.props.enqueueSnackbar(resp.persistent_notice, { 
+          variant: 'success',
+          persist: true,
+        });
+      }
+      if (resp.persistent_error) {
+        this.props.enqueueSnackbar(resp.persistent_error, { 
+          variant: 'error',
+          persist: true,
+        });
+      }
+      this.getRecipesHandler();
+    });
   };
 
   render() {

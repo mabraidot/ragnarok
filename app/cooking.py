@@ -290,6 +290,12 @@ class Cooking:
                     self.app.mashTun.heatToTemperature(step['step_temp'])
 
 
+    def getMashWaterLevelSoFar(self, stepNumber):
+        totalWater = 0
+        for i in range(stepNumber+1):
+            totalWater += self.mash[i]['infuse_amount']
+        return totalWater
+        
 
     def timerHeating(self, preHeating = False):
         if self.currentStep['name'] == 'mash':
@@ -298,8 +304,11 @@ class Cooking:
                 if self.app.boilKettle.getTemperature() >= step['infuse_temp'] or (not preHeating and self.app.mashTun.getWaterLevel() > 0):
                     self.app.jobs.remove_job('timerHeating')
                     self.app.boilKettle.stopHeating()
-                    # if (preHeating or self.app.mashTun.getWaterLevel() <= 0):
-                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN)
+
+                    targetWaterLevelSoFar = self.getMashWaterLevelSoFar(self.currentStep['number'])
+                    if self.app.mashTun.getWaterLevel() < targetWaterLevelSoFar:
+                        self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN)
+
                     self.app.mashTun.heatToTemperature(step['step_temp'])
                     self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
                 else:
