@@ -99,7 +99,7 @@ class pump:
             self.app.mashTunValveOutlet.set(100)
             self.app.boilKettleValveReturn.set(60)
         else:
-            self.set('true')
+            self.set('false')
             self.setStatus(waterActionsEnum.FINISHED)
             if self.app.jobs.get_job('timerDelayedPump') is not None:
                 self.app.jobs.remove_job('timerDelayedPump')
@@ -111,7 +111,7 @@ class pump:
             self.app.boilKettleValveOutlet.set(100)
             self.app.mashTunValveInlet.set(60)
         else:
-            self.set('true')
+            self.set('false')
             self.setStatus(waterActionsEnum.FINISHED)
             if self.app.jobs.get_job('timerDelayedPump') is not None:
                 self.app.jobs.remove_job('timerDelayedPump')
@@ -123,7 +123,7 @@ class pump:
             self.app.mashTunValveOutlet.set(100)
             self.app.mashTunValveInlet.set(40)
         else:
-            self.set('true')
+            self.set('false')
             self.setStatus(waterActionsEnum.FINISHED)
             if self.app.jobs.get_job('timerDelayedPump') is not None:
                 self.app.jobs.remove_job('timerDelayedPump')
@@ -135,7 +135,7 @@ class pump:
             self.app.boilKettleValveOutlet.set(100)
             self.app.boilKettleValveReturn.set(40)
         else:
-            self.set('true')
+            self.set('false')
             self.setStatus(waterActionsEnum.FINISHED)
             if self.app.jobs.get_job('timerDelayedPump') is not None:
                 self.app.jobs.remove_job('timerDelayedPump')
@@ -148,7 +148,7 @@ class pump:
             self.app.boilKettleValveOutlet.set(100)
             self.app.chillerValveWort.set(40)
         else:
-            self.set('true')
+            self.set('false')
             self.setStatus(waterActionsEnum.FINISHED)
             if self.app.jobs.get_job('timerDelayedPump') is not None:
                 self.app.jobs.remove_job('timerDelayedPump')
