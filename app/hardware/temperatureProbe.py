@@ -10,13 +10,17 @@ class temperatureProbe:
         self.sensor = None
 
         if self.config.get('ENVIRONMENT') == 'production':
+            # from w1thermsensor import W1ThermSensor
+            # self.sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, self.config.get('TEMPERATURE_SENSOR_ADDRESS'))
+            self.initSensor()
+
+
+    def initSensor(self):
+        if self.config.get('ENVIRONMENT') == 'production':
             from w1thermsensor import W1ThermSensor
             self.sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, self.config.get('TEMPERATURE_SENSOR_ADDRESS'))
-            self.sensor.set_resolution(12)
-            
             task = threading.Thread(target=self.run)
             task.start()
-
 
 
     def get(self):
@@ -35,9 +39,12 @@ class temperatureProbe:
 
 
     def run(self):
-        while True:
-            # oldValue = self.value
-            newValue = self.sensor.get_temperature()
-            # if abs(oldValue - newValue) < 50:
-            self.value = newValue
-            time.sleep(0.5)
+        try:
+            while True:
+                # oldValue = self.value
+                newValue = self.sensor.get_temperature()
+                # if abs(oldValue - newValue) < 50:
+                self.value = newValue
+                time.sleep(0.5)
+        except:
+            self.initSensor()
