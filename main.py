@@ -9,6 +9,7 @@ from app.hardware.pump import pump
 from app.hardware.sound import Sound
 from app.hardware.power import Power
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from app.recipes import Recipes
 import configparser
 import platform
@@ -23,7 +24,15 @@ app.sound = Sound(app, config)
 app.started = False
 
 # Jobs scheduler
-app.jobs = AsyncIOScheduler()
+executors = {
+    'default': ThreadPoolExecutor(20),
+    'processpool': ProcessPoolExecutor(5)
+}
+job_defaults = {
+    'coalesce': True,
+    'max_instances': 3
+}
+app.jobs = AsyncIOScheduler(executors=executors, job_defaults=job_defaults)
 app.jobs.start()
 
 # Hardware

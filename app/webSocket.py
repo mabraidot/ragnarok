@@ -2,6 +2,7 @@ import weakref
 import aiohttp
 from aiohttp import web
 from app.lib.sourcesEnum import soundsEnum
+import asyncio
 
 class webSocket:
     def __init__(self, app):
@@ -19,7 +20,7 @@ class webSocket:
         self.logs = []
         return messages
 
-    async def sendToWebSocket(self):
+    def sendToWebSocket(self):
         data = {}
         data[self.app.mashTun.name + 'TemperatureSetPoint'] = float(self.app.mashTun.getTemperatureSetPoint())
         data[self.app.mashTun.name + 'TemperatureProbe'] = float(self.app.mashTun.getTemperature())
@@ -57,7 +58,8 @@ class webSocket:
                 data[key] = []
             data[key].append(log[key])
         if (len(data) > 0):
-            await self.sendJson(data)
+            # await self.sendJson(data)
+            asyncio.run(self.sendJson(data))
 
 
     async def send(self, data, topic = 'data'):

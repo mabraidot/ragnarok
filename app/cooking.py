@@ -273,7 +273,7 @@ class Cooking:
 
 
     def timerPump(self):
-        if self.currentStep['name'] == 'mash' and self.currentStep['number'] < len(self.mash):
+        if self.currentStep['name'] == 'mash' and self.currentStep['number'] >= 0 and self.currentStep['number'] < len(self.mash):
             step = self.mash[self.currentStep['number']]
             if step['type'] == 'Infusion':
                 if self.app.pump.getStatus() == waterActionsEnum.FINISHED and self.app.mashTun.getTemperature() >= step['step_temp']:
@@ -283,8 +283,7 @@ class Cooking:
                         'interval', 
                         seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
                         id='timerRecirculation', 
-                        replace_existing=True,
-                        max_instances=1)
+                        replace_existing=True)
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                 else:
                     self.app.mashTun.heatToTemperature(step['step_temp'])
@@ -321,8 +320,7 @@ class Cooking:
                         'interval', 
                         seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
                         id='timerRecirculation', 
-                        replace_existing=True,
-                        max_instances=1)
+                        replace_existing=True)
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                 else:
                     self.app.mashTun.heatToTemperature(step['step_temp'])
@@ -334,8 +332,7 @@ class Cooking:
                     'interval', 
                     seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
                     id='timerRecirculation', 
-                    replace_existing=True,
-                    max_instances=1)
+                    replace_existing=True)
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
             else:
                 self.app.boilKettle.heatToTemperature(self.boil['step_temp'])
