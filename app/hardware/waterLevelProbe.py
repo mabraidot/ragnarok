@@ -17,8 +17,6 @@ class waterLevelProbe:
             self.hx = HX711(self.config.getint('WATER_LEVEL_SENSOR_DT'), self.config.getint('WATER_LEVEL_SENSOR_SCK'))
             self.hx.set_reading_format("MSB", "MSB")
             self.hx.set_reference_unit(self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
-            # self.hx.reset()
-            # self.hx.tare()
             
             tare = threading.Thread(target=self.runTare)
             tare.start()
@@ -28,9 +26,6 @@ class waterLevelProbe:
 
 
     def tare(self):
-        # if self.config.get('ENVIRONMENT') == 'production':
-        #     self.hx.reset()
-        #     self.hx.tare()
         tare = threading.Thread(target=self.runTare)
         tare.start()
 
@@ -44,7 +39,6 @@ class waterLevelProbe:
         if self.config.get('ENVIRONMENT') == 'production':
             newValue = -1 * (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
             self.hx.reset()
-            # self.hx.set_offset(newValue)
             self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
         else:
             self.value = (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000

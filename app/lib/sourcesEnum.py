@@ -30,3 +30,7 @@ class soundsEnum(Enum):
     ALARM               = auto()
     WELCOME             = auto()
     GOODBYE             = auto()
+
+class valveActions(Enum):
+    CLOSE               = auto()
+    OPEN                = auto()

@@ -1,5 +1,7 @@
 from RPi import GPIO
-from app.lib.sourcesEnum import sourcesEnum, waterActionsEnum
+from app.lib.sourcesEnum import sourcesEnum, waterActionsEnum, valveActions
+from app.hardware.valve import valve
+import threading
 
 class pump:
     def __init__(self, app, config, name):
@@ -17,7 +19,29 @@ class pump:
         GPIO.output(self.pin, GPIO.HIGH)
         self.oldWaterLevelValue = 0
         self.waterLevelReadingCount = 0
+        self.initValves()
+        
 
+    def initValves(self):
+        if self.config.get('DEFAULT', 'ENVIRONMENT') == 'production':
+            from adafruit_servokit import ServoKit
+            from RPi import GPIO
+            self.app.servoKit = ServoKit(channels=8)
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(self.config.getint('GENERAL_PINS','SERVO_ENABLE'), GPIO.OUT)
+            GPIO.setwarnings(False)
+            GPIO.output(self.config.getint('GENERAL_PINS','SERVO_ENABLE'), GPIO.HIGH)
+        
+        self.app.outletValveDump = valve(self.app, self.config, 0, 'OutletValveDump')
+        self.app.chillerValveWort = valve(self.app, self.config, 1, 'ChillerValveWort')
+        self.app.chillerValveWater = valve(self.app, self.config, 2, 'ChillerValveWater')
+        self.app.boilKettleValveOutlet = valve(self.app, self.config, 3, 'BoilKettleValveOutlet')
+        self.app.boilKettleValveReturn = valve(self.app, self.config, 4, 'BoilKettleValveReturn')
+        self.app.mashTunValveOutlet = valve(self.app, self.config, 5, 'MashTunValveOutlet')
+        self.app.mashTunValveInlet = valve(self.app, self.config, 6, 'MashTunValveInlet')
+        # Valve inlet and waterin channels are shared
+        self.app.boilKettleValveInlet = valve(self.app, self.config, 7, 'BoilKettleValveInlet')
+        self.app.boilKettleValveWater = valve(self.app, self.config, 7, 'BoilKettleValveWater')
 
     def get(self):
         return self.value
@@ -64,6 +88,54 @@ class pump:
         self.app.jobs.remove_job('timerDelayedPump')
 
 
+    def valvesRunWaterIn(self, state = valveActions.CLOSE):
+        if state == valveActions.OPEN:
+            self.app.boilKettleValveInlet.set(100)
+        else:
+            self.app.boilKettleValveInlet.set(0)
+
+    def valvesRunMashTunToKettle(self, state = valveActions.CLOSE):
+        if state == valveActions.OPEN:
+            self.app.mashTunValveOutlet.set(100)
+            self.app.boilKettleValveReturn.set(60)
+        else:
+            self.app.mashTunValveOutlet.set(0)
+            self.app.boilKettleValveReturn.set(0)
+
+    def valvesRunKettleToMashTun(self, state = valveActions.CLOSE):
+        if state == valveActions.OPEN:
+            self.app.boilKettleValveOutlet.set(100)
+            self.app.mashTunValveInlet.set(60)
+        else:
+            self.app.boilKettleValveOutlet.set(0)
+            self.app.mashTunValveInlet.set(0)
+
+    def valvesRunMashTunToMashTun(self, state = valveActions.CLOSE):
+        if state == valveActions.OPEN:
+            self.app.mashTunValveOutlet.set(100)
+            self.app.mashTunValveInlet.set(40)
+        else:
+            self.app.mashTunValveOutlet.set(0)
+            self.app.mashTunValveInlet.set(0)
+
+    def valvesRunKettleToKettle(self, state = valveActions.CLOSE):
+        if state == valveActions.OPEN:
+            self.app.boilKettleValveOutlet.set(100)
+            self.app.boilKettleValveReturn.set(40)
+        else:
+            self.app.boilKettleValveOutlet.set(0)
+            self.app.boilKettleValveReturn.set(0)
+
+    def valvesRunChill(self, state = valveActions.CLOSE):
+        if state == valveActions.OPEN:
+            self.app.chillerValveWater.set(100)
+            self.app.boilKettleValveOutlet.set(100)
+            self.app.chillerValveWort.set(40)
+        else:
+            self.app.chillerValveWater.set(0)
+            self.app.boilKettleValveOutlet.set(0)
+            self.app.chillerValveWort.set(0)
+
     def pumpDaemon(self):
 
         # Fill in the kettle with filtered or non-filtered tap water
@@ -72,7 +144,9 @@ class pump:
                 (self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint() or 
                 self.app.boilKettle.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL'))):
 
-                self.app.boilKettleValveInlet.set(0)
+                # self.app.boilKettleValveInlet.set(0)
+                task = threading.Thread(target=self.valvesRunWaterIn, kwargs=dict(state=valveActions.CLOSE))
+                task.start()
                 self.app.boilKettle.setWaterLevel(0)
                 self.setStatus(waterActionsEnum.FINISHED)
 
@@ -88,8 +162,10 @@ class pump:
                 self.app.mashTun.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
 
                 self.set('false')
-                self.app.boilKettleValveOutlet.set(0)
-                self.app.mashTunValveInlet.set(0)
+                # self.app.boilKettleValveOutlet.set(0)
+                # self.app.mashTunValveInlet.set(0)
+                task = threading.Thread(target=self.valvesRunKettleToMashTun, kwargs=dict(state=valveActions.CLOSE))
+                task.start()
                 self.setStatus(waterActionsEnum.FINISHED)
                 self.oldWaterLevelValue = 0
                 self.waterLevelReadingCount = 0
@@ -106,8 +182,10 @@ class pump:
                 self.app.boilKettle.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
 
                 self.set('false')
-                self.app.mashTunValveOutlet.set(0)
-                self.app.boilKettleValveReturn.set(0)
+                # self.app.mashTunValveOutlet.set(0)
+                # self.app.boilKettleValveReturn.set(0)
+                task = threading.Thread(target=self.valvesRunMashTunToKettle, kwargs=dict(state=valveActions.CLOSE))
+                task.start()
                 self.setStatus(waterActionsEnum.FINISHED)
                 self.oldWaterLevelValue = 0
                 self.waterLevelReadingCount = 0
@@ -117,8 +195,10 @@ class pump:
             if self.time <= 0:
                 self.time = 0
                 self.set('false')
-                self.app.mashTunValveOutlet.set(0)
-                self.app.mashTunValveInlet.set(0)
+                # self.app.mashTunValveOutlet.set(0)
+                # self.app.mashTunValveInlet.set(0)
+                task = threading.Thread(target=self.valvesRunMashTunToMashTun, kwargs=dict(state=valveActions.CLOSE))
+                task.start()
                 self.setStatus(waterActionsEnum.FINISHED)
             else:
                 self.time -= 1
@@ -128,8 +208,10 @@ class pump:
             if self.time <= 0:
                 self.time = 0
                 self.set('false')
-                self.app.boilKettleValveOutlet.set(0)
-                self.app.boilKettleValveReturn.set(0)
+                # self.app.boilKettleValveOutlet.set(0)
+                # self.app.boilKettleValveReturn.set(0)
+                task = threading.Thread(target=self.valvesRunKettleToKettle, kwargs=dict(state=valveActions.CLOSE))
+                task.start()
                 self.setStatus(waterActionsEnum.FINISHED)
             else:
                 self.time -= 1
@@ -144,7 +226,9 @@ class pump:
         
         if ((self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE or self.getStatus() == waterActionsEnum.MASHTUN_TO_MASHTUN) 
             and action != waterActionsEnum.FINISHED):
-            self.shutAllDown()
+            task = threading.Thread(target=self.shutAllDown)
+            task.start()
+            # self.shutAllDown()
 
         if time > 0:
             self.time = int(time)
@@ -157,13 +241,17 @@ class pump:
                 if ammount > 0:
                     self.app.boilKettle.setWaterLevel(max(ammount, self.config.getfloat('DEFAULT', 'SAFE_WATER_LEVEL_FOR_HEATERS')))
                     if self.app.boilKettle.getWaterLevel() < self.app.boilKettle.getWaterLevelSetPoint():
-                        self.app.boilKettleValveInlet.set(100)
+                        # self.app.boilKettleValveInlet.set(100)
+                        task = threading.Thread(target=self.valvesRunWaterIn, kwargs=dict(state=valveActions.OPEN))
+                        task.start()
 
             # Rack water from boilkettle to mashtun
             if action == waterActionsEnum.KETTLE_TO_MASHTUN:
                 self.app.mashTun.setWaterLevel(self.app.mashTun.getWaterLevel() + self.app.boilKettle.getWaterLevel())
-                self.app.boilKettleValveOutlet.set(100)
-                self.app.mashTunValveInlet.set(60)
+                # self.app.boilKettleValveOutlet.set(100)
+                # self.app.mashTunValveInlet.set(60)
+                task = threading.Thread(target=self.valvesRunKettleToMashTun, kwargs=dict(state=valveActions.OPEN))
+                task.start()
                 self.app.jobs.add_job(
                     self.setDelayedPumpState, 
                     'interval', 
@@ -174,8 +262,10 @@ class pump:
             # Rack water from mashtun to boilkettle
             if action == waterActionsEnum.MASHTUN_TO_KETTLE:
                 self.app.boilKettle.setWaterLevel(self.app.boilKettle.getWaterLevel() + self.app.mashTun.getWaterLevel())
-                self.app.mashTunValveOutlet.set(100)
-                self.app.boilKettleValveReturn.set(60)
+                # self.app.mashTunValveOutlet.set(100)
+                # self.app.boilKettleValveReturn.set(60)
+                task = threading.Thread(target=self.valvesRunMashTunToKettle, kwargs=dict(state=valveActions.OPEN))
+                task.start()
                 self.app.jobs.add_job(
                     self.setDelayedPumpState, 
                     'interval', 
@@ -185,8 +275,10 @@ class pump:
 
             # Recirculation through boil kettle
             if action == waterActionsEnum.KETTLE_TO_KETTLE:
-                self.app.boilKettleValveOutlet.set(100)
-                self.app.boilKettleValveReturn.set(40)
+                # self.app.boilKettleValveOutlet.set(100)
+                # self.app.boilKettleValveReturn.set(40)
+                task = threading.Thread(target=self.valvesRunKettleToKettle, kwargs=dict(state=valveActions.OPEN))
+                task.start()
                 self.app.jobs.add_job(
                     self.setDelayedPumpState, 
                     'interval', 
@@ -194,10 +286,12 @@ class pump:
                     id='timerDelayedPump',
                     replace_existing=True)
 
-            # Recirculation through mashtun
+            # Recirculation through CHILLmashtun
             if action == waterActionsEnum.MASHTUN_TO_MASHTUN:
-                self.app.mashTunValveOutlet.set(100)
-                self.app.mashTunValveInlet.set(40)
+                # self.app.mashTunValveOutlet.set(100)
+                # self.app.mashTunValveInlet.set(40)
+                task = threading.Thread(target=self.valvesRunMashTunToMashTun, kwargs=dict(state=valveActions.OPEN))
+                task.start()
                 self.app.jobs.add_job(
                     self.setDelayedPumpState, 
                     'interval', 
@@ -207,9 +301,11 @@ class pump:
 
             # Recirculation through chiller to cool the wort
             if action == waterActionsEnum.CHILL:
-                self.app.chillerValveWater.set(100)
-                self.app.boilKettleValveOutlet.set(100)
-                self.app.chillerValveWort.set(40)
+                # self.app.chillerValveWater.set(100)
+                # self.app.boilKettleValveOutlet.set(100)
+                # self.app.chillerValveWort.set(40)
+                task = threading.Thread(target=self.valvesRunChill, kwargs=dict(state=valveActions.OPEN))
+                task.start()
                 self.app.jobs.add_job(
                     self.setDelayedPumpState, 
                     'interval', 
@@ -218,4 +314,6 @@ class pump:
                     replace_existing=True)
 
         if action == waterActionsEnum.FINISHED:
-            self.shutAllDown()
+            task = threading.Thread(target=self.shutAllDown)
+            task.start()
+            # self.shutAllDown()
