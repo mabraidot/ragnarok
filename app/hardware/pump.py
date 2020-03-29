@@ -169,8 +169,7 @@ class pump:
                     'interval', 
                     seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                     id='timerDelayedPump',
-                    replace_existing=True,
-                    max_instances=1)
+                    replace_existing=True)
 
             # Rack water from mashtun to boilkettle
             if action == waterActionsEnum.MASHTUN_TO_KETTLE:
@@ -182,8 +181,7 @@ class pump:
                     'interval', 
                     seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                     id='timerDelayedPump',
-                    replace_existing=True,
-                    max_instances=1)
+                    replace_existing=True)
 
             # Recirculation through boil kettle
             if action == waterActionsEnum.KETTLE_TO_KETTLE:
@@ -194,8 +192,7 @@ class pump:
                     'interval', 
                     seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                     id='timerDelayedPump',
-                    replace_existing=True,
-                    max_instances=1)
+                    replace_existing=True)
 
             # Recirculation through mashtun
             if action == waterActionsEnum.MASHTUN_TO_MASHTUN:
@@ -206,8 +203,7 @@ class pump:
                     'interval', 
                     seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                     id='timerDelayedPump',
-                    replace_existing=True,
-                    max_instances=1)
+                    replace_existing=True)
 
             # Recirculation through chiller to cool the wort
             if action == waterActionsEnum.CHILL:
@@ -219,8 +215,7 @@ class pump:
                     'interval', 
                     seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                     id='timerDelayedPump',
-                    replace_existing=True,
-                    max_instances=1)
+                    replace_existing=True)
 
         if action == waterActionsEnum.FINISHED:
             self.shutAllDown()
