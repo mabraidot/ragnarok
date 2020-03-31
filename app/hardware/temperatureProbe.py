@@ -10,18 +10,26 @@ class temperatureProbe:
         self.sensor = None
 
         if self.config.get('ENVIRONMENT') == 'production':
-            # from w1thermsensor import W1ThermSensor
-            # self.sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, self.config.get('TEMPERATURE_SENSOR_ADDRESS'))
-            self.initSensor()
+            if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
+                self.initSensorMax31865()
+            else:
+                self.initSensorDS18B20()
 
 
-    def initSensor(self):
+    def initSensorDS18B20(self):
         if self.config.get('ENVIRONMENT') == 'production':
             from w1thermsensor import W1ThermSensor
             self.sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, self.config.get('TEMPERATURE_SENSOR_ADDRESS'))
-            task = threading.Thread(target=self.run)
+            task = threading.Thread(target=self.runDS18B20)
             task.start()
 
+    def initSensorMax31865(self):
+        if self.config.get('ENVIRONMENT') == 'production':
+            from app.lib import max31865
+            self.sensor = max31865.max31865(self.config.getint('TEMPERATURE_SENSOR_ADDRESS'), 9, 10, 11, 430, int(0xD2))
+
+            task = threading.Thread(target=self.runMax31865)
+            task.start()
 
     def get(self):
         if self.config.get('ENVIRONMENT') == 'development':
@@ -38,7 +46,7 @@ class temperatureProbe:
         return self.value + self.config.getint('TEMPERATURE_SENSOR_OFFSET')
 
 
-    def run(self):
+    def runDS18B20(self):
         try:
             while True:
                 # oldValue = self.value
@@ -47,4 +55,13 @@ class temperatureProbe:
                 self.value = newValue
                 time.sleep(0.5)
         except:
-            self.initSensor()
+            self.initSensorDS18B20()
+
+
+    def runMax31865(self):
+        while True:
+            # oldValue = self.value
+            newValue = self.sensor.readTemp()
+            # if abs(oldValue - newValue) < 50:
+            self.value = newValue
+            time.sleep(0.5)
