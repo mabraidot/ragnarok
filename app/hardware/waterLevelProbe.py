@@ -26,8 +26,11 @@ class waterLevelProbe:
 
 
     def tare(self):
-        tare = threading.Thread(target=self.runTare)
-        tare.start()
+        # tare = threading.Thread(target=self.runTare)
+        # tare.start()
+        if self.config.get('ENVIRONMENT') == 'production':
+            self.hx.reset()
+            self.hx.tare()
 
 
     def runTare(self):
@@ -37,11 +40,11 @@ class waterLevelProbe:
 
     def setPriorValue(self, value):
         if self.config.get('ENVIRONMENT') == 'production':
-            offsetTask = threading.Thread(target=self.runPriorValue, kwargs=dict(value=value))
-            offsetTask.start()
-            # newValue = -1 * (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
-            # self.hx.reset()
-            # self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
+            # offsetTask = threading.Thread(target=self.runPriorValue, kwargs=dict(value=value))
+            # offsetTask.start()
+            newValue = -1 * (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
+            self.hx.reset()
+            self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
         else:
             self.value = (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
 

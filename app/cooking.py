@@ -311,13 +311,11 @@ class Cooking:
         if self.currentStep['name'] == 'mash':
             step = self.mash[self.currentStep['number']]
             if step['type'] == 'Infusion':
-                if self.app.boilKettle.getTemperature() >= step['infuse_temp'] or (not preHeating and self.app.mashTun.getWaterLevel() > 0):
+                targetWaterLevelSoFar = self.getMashWaterLevelSoFar(self.currentStep['number'])
+                if self.app.boilKettle.getTemperature() >= step['infuse_temp'] or (not preHeating and self.app.mashTun.getWaterLevel() >= targetWaterLevelSoFar):
                     self.app.jobs.remove_job('timerHeating')
                     self.app.boilKettle.stopHeating()
-
-                    targetWaterLevelSoFar = self.getMashWaterLevelSoFar(self.currentStep['number'])
-                    if self.app.mashTun.getWaterLevel() < targetWaterLevelSoFar:
-                        self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN)
+                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN)
 
                     self.app.mashTun.heatToTemperature(step['step_temp'])
                     self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
@@ -353,7 +351,7 @@ class Cooking:
     def startStep(self, step, preHeating = False):
         if step['type'] == 'Infusion' and step['infuse_amount'] > 0:
 
-            if preHeating or (( not preHeating or self.app.boilKettle.getTemperature() < step['infuse_temp'] ) and self.app.mashTun.getWaterLevel() <= 0 ):
+            if preHeating or (( not preHeating or self.app.boilKettle.getTemperature() < step['infuse_temp'] ) and self.app.mashTun.getWaterLevel() <= 0.5 ):
                 self.app.pump.moveWater(action=waterActionsEnum.WATER_IN_FILTERED, ammount=step['infuse_amount'])
                 self.app.boilKettle.heatToTemperature(step['infuse_temp'])
             
