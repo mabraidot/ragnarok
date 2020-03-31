@@ -71,7 +71,7 @@ class pump:
         self.set('false')
         self.app.boilKettleValveInlet.set(0)
         self.app.chillerValveWater.set(0)
-        self.app.boilKettleValveWater.set(0)
+        # self.app.boilKettleValveWater.set(0)
         self.app.outletValveDump.set(0)
         self.app.chillerValveWort.set(0)
         self.app.boilKettleValveOutlet.set(0)

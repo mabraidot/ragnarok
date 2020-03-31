@@ -155,11 +155,11 @@ class Advanced extends Component {
           this.setState({BoilKettleValveInlet: (data.BoilKettleValveInlet === '0') ? false : true});
         }
       }
-      if (typeof data.BoilKettleValveWater !== 'undefined') {
-        if (data.BoilKettleValveWater !== this.state.BoilKettleValveWater) {
-          this.setState({BoilKettleValveWater: (data.BoilKettleValveWater === '0') ? false : true});
-        }
-      }
+      // if (typeof data.BoilKettleValveWater !== 'undefined') {
+      //   if (data.BoilKettleValveWater !== this.state.BoilKettleValveWater) {
+      //     this.setState({BoilKettleValveWater: (data.BoilKettleValveWater === '0') ? false : true});
+      //   }
+      // }
       if (typeof data.BoilKettleValveReturn !== 'undefined') {
         if (data.BoilKettleValveReturn !== this.state.BoilKettleValveReturn) {
           this.setState({BoilKettleValveReturn: (data.BoilKettleValveReturn === '0') ? false : true});
@@ -395,10 +395,10 @@ class Advanced extends Component {
                   control={<Switch checked={this.state.BoilKettleHeater} onChange={this.handleSwitchChange('BoilKettleHeater')}  value="BoilKettleHeater" className="heater" />}
                   label="Heater"
                 />
-                <FormControlLabel
+                {/* <FormControlLabel
                   control={<Switch checked={this.state.BoilKettleValveWater} onChange={this.handleSwitchChange('BoilKettleValveWater')}  value="BoilKettleValveWater" />}
                   label="Water"
-                />
+                /> */}
                 <FormControlLabel
                   control={<Switch checked={this.state.BoilKettleValveInlet} onChange={this.handleSwitchChange('BoilKettleValveInlet')}  value="BoilKettleValveInlet" />}
                   label="Inlet"
