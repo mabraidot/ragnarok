@@ -3,3 +3,4 @@ venv/*
 RPi/*
 *__pycache__*
 *.pyc
+yarn.lock
