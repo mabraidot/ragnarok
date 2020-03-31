@@ -448,6 +448,7 @@ class Cooking:
 
     def start(self, recipeId):
         self.initialize()
+        self.app.pump.shutAllDown()
         self.app.mashTun.tare()
         self.app.boilKettle.tare()
         self.running = True
