@@ -101,6 +101,17 @@ class Cooking:
             'name': 'mash'
         }
 
+        if self.app.jobs.get_job('timerPump') is not None:
+            self.app.jobs.remove_job('timerPump')
+        if self.app.jobs.get_job('timerHeating') is not None:
+            self.app.jobs.remove_job('timerHeating')
+        if self.app.jobs.get_job('timerProcess') is not None:
+            self.app.jobs.remove_job('timerProcess')
+        if self.app.jobs.get_job('timerRecirculation') is not None:
+            self.app.jobs.remove_job('timerRecirculation')
+        if self.app.jobs.get_job('timerSavePartialProcess') is not None:
+            self.app.jobs.remove_job('timerSavePartialProcess')
+
     def getCurrentStepName(self):
         return self.currentStep['name']
 
@@ -419,15 +430,6 @@ class Cooking:
 
 
     def stop(self):
-        if self.app.jobs.get_job('timerHeating') is not None:
-            self.app.jobs.remove_job('timerHeating')
-        if self.app.jobs.get_job('timerProcess') is not None:
-            self.app.jobs.remove_job('timerProcess')
-        if self.app.jobs.get_job('timerRecirculation') is not None:
-            self.app.jobs.remove_job('timerRecirculation')
-        if self.app.jobs.get_job('timerSavePartialProcess') is not None:
-            self.app.jobs.remove_job('timerSavePartialProcess')
-
         from app.recipes import Recipes
         self.app.recipes = Recipes(self.app, self.config)
         self.app.recipes.deleteUnfinishedRecipe()

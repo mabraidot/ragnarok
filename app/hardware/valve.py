@@ -33,7 +33,7 @@ class valve:
                 endPos = int(self.value * 0.90) + (1 * direction)
                 for i in range(startPos, endPos, 1 * direction):
                     self.app.servoKit.servo[self.channel].angle = int(i)
-                    sleep(0.02)
+                    sleep(0.001)
                 
                 self.app.servoKit.servo[self.channel].angle = None
                 self.app.servoKit.servo[self.channel].fraction = None
