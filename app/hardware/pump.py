@@ -177,7 +177,7 @@ class pump:
 
             if (self.waterLevelReadingCount >= 3 or 
                 self.app.boilKettle.getWaterLevel() <= 0 or 
-                self.app.mashTun.getWaterLevel() >= self.app.mashTun.getWaterLevelSetPoint() or
+                # self.app.mashTun.getWaterLevel() >= self.app.mashTun.getWaterLevelSetPoint() or
                 self.app.mashTun.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
 
                 task = threading.Thread(target=self.valvesRunKettleToMashTun, kwargs=dict(state=valveActions.CLOSE))
@@ -193,7 +193,7 @@ class pump:
 
             if (self.waterLevelReadingCount >= 3 or 
                 self.app.mashTun.getWaterLevel() <= 0 or 
-                self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint() or 
+                # self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint() or 
                 self.app.boilKettle.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
 
                 task = threading.Thread(target=self.valvesRunMashTunToKettle, kwargs=dict(state=valveActions.CLOSE))
@@ -248,7 +248,7 @@ class pump:
 
             # Rack water from boilkettle to mashtun
             if action == waterActionsEnum.KETTLE_TO_MASHTUN:
-                self.app.mashTun.setWaterLevel(self.app.mashTun.getWaterLevel() + self.app.boilKettle.getWaterLevel())
+                # self.app.mashTun.setWaterLevel(self.app.mashTun.getWaterLevel() + self.app.boilKettle.getWaterLevel())
                 task = threading.Thread(target=self.valvesRunKettleToMashTun, kwargs=dict(state=valveActions.OPEN))
                 task.start()
                 self.app.jobs.add_job(
@@ -260,7 +260,7 @@ class pump:
 
             # Rack water from mashtun to boilkettle
             if action == waterActionsEnum.MASHTUN_TO_KETTLE:
-                self.app.boilKettle.setWaterLevel(self.app.boilKettle.getWaterLevel() + self.app.mashTun.getWaterLevel())
+                # self.app.boilKettle.setWaterLevel(self.app.boilKettle.getWaterLevel() + self.app.mashTun.getWaterLevel())
                 task = threading.Thread(target=self.valvesRunMashTunToKettle, kwargs=dict(state=valveActions.OPEN))
                 task.start()
                 self.app.jobs.add_job(
