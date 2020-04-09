@@ -10,6 +10,7 @@ class waterLevelProbe:
         self.name = name
         self.config = config
         self.value = 0
+        self.runningTare = False
 
         if self.config.get('ENVIRONMENT') == 'production':
             # https://github.com/tatobari/hx711py/blob/master/example.py
@@ -29,14 +30,18 @@ class waterLevelProbe:
         # tare = threading.Thread(target=self.runTare)
         # tare.start()
         if self.config.get('ENVIRONMENT') == 'production':
+            self.runningTare = True
             self.hx.reset()
             self.hx.tare()
+            self.runningTare = False
 
 
     def runTare(self):
         if self.config.get('ENVIRONMENT') == 'production':
+            self.runningTare = True
             self.hx.reset()
             self.hx.tare()
+            self.runningTare = False
 
     def setPriorValue(self, value):
         if self.config.get('ENVIRONMENT') == 'production':
@@ -49,9 +54,11 @@ class waterLevelProbe:
             self.value = (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
 
     def runPriorValue(self, value):
+        self.runningTare = True
         newValue = -1 * (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
         self.hx.reset()
         self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
+        self.runningTare = False
 
 
     def get(self):
@@ -91,14 +98,15 @@ class waterLevelProbe:
     def run(self):
         try:
             while True:
-                oldValue = self.value
-                newValue = self.hx.get_weight(5)
-                if oldValue - newValue > -2000:
-                    self.value = newValue
-                    if self.value < 0:
-                        self.value = 0
+                if not self.runningTare:
+                    oldValue = self.value
+                    newValue = self.hx.get_weight(5)
+                    if oldValue - newValue > -2000:
+                        self.value = newValue
+                        if self.value < 0:
+                            self.value = 0
 
-                self.hx.reset()
-                time.sleep(0.5)
+                    self.hx.reset()
+                    time.sleep(0.5)
         except:
             GPIO.cleanup()
