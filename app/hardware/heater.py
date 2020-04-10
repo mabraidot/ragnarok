@@ -68,7 +68,8 @@ class heater:
     def run(self):
         self.heatDevice.start(0)
         while self.value:
-            self.pwm = self.pidControl(self.currentTemp)
+            if not self.app.mashTun.PIDAutoTune.running and not self.app.boilKettle.PIDAutoTune.running:
+                self.pwm = self.pidControl(self.currentTemp)
             # print('PWM:', self.name, self.pwm)
             # print('-------------------->PWM:', min((100 - self.siblingHeater.getPWM()), self.pwm))
             # Not allowed both heaters turned on at full power
