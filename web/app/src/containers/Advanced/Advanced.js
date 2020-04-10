@@ -20,10 +20,10 @@ class Advanced extends Component {
       MashTunValveInlet: false,
       MashTunValveOutlet: false,
       
-      MashTunTemperatureSetPoint: 0,
-      MashTunTemperatureProbe: 0,
-      MashTunWaterLevelSetPoint: 0,
-      MashTunWaterLevelProbe: 0,
+      MashTunTemperatureSetPoint: 0.0,
+      MashTunTemperatureProbe: 0.0,
+      MashTunWaterLevelSetPoint: 0.0,
+      MashTunWaterLevelProbe: 0.0,
       MashTunTimeSetPoint: 0,
       MashTunTimeProbe: 0,
       
@@ -33,10 +33,10 @@ class Advanced extends Component {
       BoilKettleValveInlet: false,
       BoilKettleValveOutlet: false,
 
-      BoilKettleTemperatureSetPoint: 0,
-      BoilKettleTemperatureProbe: 0,
-      BoilKettleWaterLevelSetPoint: 0,
-      BoilKettleWaterLevelProbe: 0,
+      BoilKettleTemperatureSetPoint: 0.0,
+      BoilKettleTemperatureProbe: 0.0,
+      BoilKettleWaterLevelSetPoint: 0.0,
+      BoilKettleWaterLevelProbe: 0.0,
       BoilKettleTimeSetPoint: 0,
       BoilKettleTimeProbe: 0,
 
@@ -58,22 +58,22 @@ class Advanced extends Component {
       const data = JSON.parse(result.data);
 
       if (typeof data.MashTunTemperatureProbe !== 'undefined') {
-        if (data.MashTunTemperatureProbe !== this.state.MashTunTemperatureProbe) {
+        if (data.MashTunTemperatureProbe.toFixed(1) !== this.state.MashTunTemperatureProbe) {
           this.setState({MashTunTemperatureProbe: data.MashTunTemperatureProbe.toFixed(1)});
         }
       }
       if (typeof data.MashTunTemperatureSetPoint !== 'undefined') {
-        if (data.MashTunTemperatureSetPoint !== this.state.MashTunTemperatureSetPoint) {
+        if (data.MashTunTemperatureSetPoint.toFixed(1) !== this.state.MashTunTemperatureSetPoint) {
           this.setState({MashTunTemperatureSetPoint: data.MashTunTemperatureSetPoint.toFixed(1)});
         }
       }
       if (typeof data.MashTunWaterLevelProbe !== 'undefined') {
-        if (data.MashTunWaterLevelProbe !== this.state.MashTunWaterLevelProbe) {
+        if (data.MashTunWaterLevelProbe.toFixed(1) !== this.state.MashTunWaterLevelProbe) {
           this.setState({MashTunWaterLevelProbe: data.MashTunWaterLevelProbe.toFixed(1)});
         }
       }
       if (typeof data.MashTunWaterLevelSetPoint !== 'undefined') {
-        if (data.MashTunWaterLevelSetPoint !== this.state.MashTunWaterLevelSetPoint) {
+        if (data.MashTunWaterLevelSetPoint.toFixed(1) !== this.state.MashTunWaterLevelSetPoint) {
           this.setState({MashTunWaterLevelSetPoint: data.MashTunWaterLevelSetPoint.toFixed(1)});
         }
       }
@@ -89,22 +89,22 @@ class Advanced extends Component {
       }
 
       if (typeof data.BoilKettleTemperatureProbe !== 'undefined') {
-        if (data.BoilKettleTemperatureProbe !== this.state.BoilKettleTemperatureProbe) {
+        if (data.BoilKettleTemperatureProbe.toFixed(1) !== this.state.BoilKettleTemperatureProbe) {
           this.setState({BoilKettleTemperatureProbe: data.BoilKettleTemperatureProbe.toFixed(1)});
         }
       }
       if (typeof data.BoilKettleTemperatureSetPoint !== 'undefined') {
-        if (data.BoilKettleTemperatureSetPoint !== this.state.BoilKettleTemperatureSetPoint) {
+        if (data.BoilKettleTemperatureSetPoint.toFixed(1) !== this.state.BoilKettleTemperatureSetPoint) {
           this.setState({BoilKettleTemperatureSetPoint: data.BoilKettleTemperatureSetPoint.toFixed(1)});
         }
       }
       if (typeof data.BoilKettleWaterLevelProbe !== 'undefined') {
-        if (data.BoilKettleWaterLevelProbe !== this.state.BoilKettleWaterLevelProbe) {
+        if (data.BoilKettleWaterLevelProbe.toFixed(1) !== this.state.BoilKettleWaterLevelProbe) {
           this.setState({BoilKettleWaterLevelProbe: data.BoilKettleWaterLevelProbe.toFixed(1)});
         }
       }
       if (typeof data.BoilKettleWaterLevelSetPoint !== 'undefined') {
-        if (data.BoilKettleWaterLevelSetPoint !== this.state.BoilKettleWaterLevelSetPoint) {
+        if (data.BoilKettleWaterLevelSetPoint.toFixed(1) !== this.state.BoilKettleWaterLevelSetPoint) {
           this.setState({BoilKettleWaterLevelSetPoint: data.BoilKettleWaterLevelSetPoint.toFixed(1)});
         }
       }
@@ -243,9 +243,9 @@ class Advanced extends Component {
   };
 
   handleSliderSetPoint = name => (event, value) => {
-    const { state } = this.state;
-    this.setState({ ...state, [name]: value });
-    console.log('[ADV]: SetPoint:', name, value);
+    // const { state } = this.state;
+    // this.setState({ ...state, [name]: value });
+    console.log('[ADV]: SetPoint:', name, parseFloat(value));
   
     ApiClient.setPoint(name, value).then((resp) => {
       console.log('[API]', resp);
@@ -296,7 +296,7 @@ class Advanced extends Component {
                 <h4>Mash Tun</h4>
                 <Slider
                   className="temperature"
-                  value={this.state.MashTunTemperatureSetPoint}
+                  value={(this.state.MashTunTemperatureSetPoint) ? parseFloat(this.state.MashTunTemperatureSetPoint) : 0}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={110}
@@ -308,7 +308,7 @@ class Advanced extends Component {
 
                 <Slider
                   className="water"
-                  value={this.state.MashTunWaterLevelSetPoint}
+                  value={(this.state.MashTunWaterLevelSetPoint) ? parseFloat(this.state.MashTunWaterLevelSetPoint) : 0}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
                   max={16}
@@ -320,7 +320,7 @@ class Advanced extends Component {
 
                 <Slider
                   className="time"
-                  value={this.state.MashTunTimeSetPoint}
+                  value={(this.state.MashTunTimeSetPoint) ? parseInt(this.state.MashTunTimeSetPoint) : 0}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={120}
@@ -355,7 +355,8 @@ class Advanced extends Component {
                 <h4>Boil Kettle</h4>
                 <Slider
                   className="temperature"
-                  value={this.state.BoilKettleTemperatureSetPoint}
+                  value={(this.state.BoilKettleTemperatureSetPoint) ? parseFloat(this.state.BoilKettleTemperatureSetPoint) : 0}
+                  // aria-valuetext={this.state.BoilKettleTemperatureSetPoint.toString()}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={110}
@@ -367,7 +368,7 @@ class Advanced extends Component {
 
                 <Slider
                   className="water"
-                  value={this.state.BoilKettleWaterLevelSetPoint}
+                  value={(this.state.BoilKettleWaterLevelSetPoint) ? parseFloat(this.state.BoilKettleWaterLevelSetPoint) : 0}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
                   max={16}
@@ -379,7 +380,7 @@ class Advanced extends Component {
 
                 <Slider
                   className="time"
-                  value={this.state.BoilKettleTimeSetPoint}
+                  value={(this.state.BoilKettleTimeSetPoint) ? parseInt(this.state.BoilKettleTimeSetPoint) : 0}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={120}
