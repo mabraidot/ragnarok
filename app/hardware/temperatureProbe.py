@@ -43,7 +43,10 @@ class temperatureProbe:
             elif self.value > 0:
                 self.value -= 0.1
 
-        return self.value + self.config.getint('TEMPERATURE_SENSOR_OFFSET')
+        currentTemperature = self.value + self.config.getint('TEMPERATURE_SENSOR_OFFSET')
+        if currentTemperature > 25 and self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
+            currentTemperature = ((45 / 35) * (currentTemperature - 25)) + 25
+        return currentTemperature
 
 
     def runDS18B20(self):

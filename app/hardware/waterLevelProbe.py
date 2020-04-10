@@ -91,8 +91,15 @@ class waterLevelProbe:
                             self.value -= flow
                         else:
                             self.value = 0
-
-        return ( self.value / 1000 ) / self.config.getfloat('ONE_LITER_WEIGHT')
+        currentLevel = ( self.value / 1000 ) / self.config.getfloat('ONE_LITER_WEIGHT')
+        print(currentLevel)
+        if self.name == 'MashTunWaterLevelProbe':
+            currentTemperature = self.app.mashTun.getTemperature()
+        else:
+            currentTemperature = self.app.boilKettle.getTemperature()
+        if currentTemperature > 25:
+            currentLevel -= (2 / 50) * (currentTemperature - 25)
+        return currentLevel
 
 
     def run(self):
