@@ -90,7 +90,7 @@ class pump:
 
     def valvesRunWaterIn(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
-            self.app.boilKettleValveInlet.set(100)
+            self.app.boilKettleValveInlet.set(80)
         else:
             self.app.boilKettleValveInlet.set(0)
 
@@ -119,7 +119,7 @@ class pump:
     def valvesRunMashTunToMashTun(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
             self.app.mashTunValveOutlet.set(100)
-            self.app.mashTunValveInlet.set(40)
+            self.app.mashTunValveInlet.set(50)
         else:
             self.set('false')
             if self.app.jobs.get_job('timerDelayedPump') is not None:
@@ -130,7 +130,7 @@ class pump:
     def valvesRunKettleToKettle(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
             self.app.boilKettleValveOutlet.set(100)
-            self.app.boilKettleValveReturn.set(40)
+            self.app.boilKettleValveReturn.set(50)
         else:
             self.set('false')
             if self.app.jobs.get_job('timerDelayedPump') is not None:
