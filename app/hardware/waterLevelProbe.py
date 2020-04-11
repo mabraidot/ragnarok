@@ -92,7 +92,6 @@ class waterLevelProbe:
                         else:
                             self.value = 0
         currentLevel = ( self.value / 1000 ) / self.config.getfloat('ONE_LITER_WEIGHT')
-        print(currentLevel)
         if self.name == 'MashTunWaterLevelProbe':
             currentTemperature = self.app.mashTun.getTemperature()
         else:
