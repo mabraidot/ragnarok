@@ -53,6 +53,7 @@ class pump:
             GPIO.output(self.pin, GPIO.LOW)
         else:
             self.value = False
+            self.setStatus(waterActionsEnum.FINISHED)
             GPIO.output(self.pin, GPIO.HIGH)
 
 
@@ -67,7 +68,6 @@ class pump:
 
 
     def shutAllDown(self):
-        self.setStatus(waterActionsEnum.FINISHED)
         self.set('false')
         self.app.boilKettleValveInlet.set(0)
         self.app.chillerValveWater.set(0)
@@ -100,7 +100,6 @@ class pump:
             self.app.boilKettleValveReturn.set(60)
         else:
             self.set('false')
-            self.setStatus(waterActionsEnum.FINISHED)
             if self.app.jobs.get_job('timerDelayedPump') is not None:
                 self.app.jobs.remove_job('timerDelayedPump')
             self.app.mashTunValveOutlet.set(0)
@@ -112,7 +111,6 @@ class pump:
             self.app.mashTunValveInlet.set(60)
         else:
             self.set('false')
-            self.setStatus(waterActionsEnum.FINISHED)
             if self.app.jobs.get_job('timerDelayedPump') is not None:
                 self.app.jobs.remove_job('timerDelayedPump')
             self.app.boilKettleValveOutlet.set(0)
@@ -124,7 +122,6 @@ class pump:
             self.app.mashTunValveInlet.set(40)
         else:
             self.set('false')
-            self.setStatus(waterActionsEnum.FINISHED)
             if self.app.jobs.get_job('timerDelayedPump') is not None:
                 self.app.jobs.remove_job('timerDelayedPump')
             self.app.mashTunValveOutlet.set(0)
@@ -136,7 +133,6 @@ class pump:
             self.app.boilKettleValveReturn.set(40)
         else:
             self.set('false')
-            self.setStatus(waterActionsEnum.FINISHED)
             if self.app.jobs.get_job('timerDelayedPump') is not None:
                 self.app.jobs.remove_job('timerDelayedPump')
             self.app.boilKettleValveOutlet.set(0)
@@ -149,7 +145,6 @@ class pump:
             self.app.chillerValveWort.set(40)
         else:
             self.set('false')
-            self.setStatus(waterActionsEnum.FINISHED)
             if self.app.jobs.get_job('timerDelayedPump') is not None:
                 self.app.jobs.remove_job('timerDelayedPump')
             self.app.chillerValveWater.set(0)
@@ -234,8 +229,8 @@ class pump:
     def moveWater(self, action = waterActionsEnum.FINISHED, ammount = 0, time = 0):
         if not isinstance(action, waterActionsEnum):
             raise TypeError("%s attribute must be set to an instance of %s" % (action, waterActionsEnum))
-        
-        if ((self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE or self.getStatus() == waterActionsEnum.MASHTUN_TO_MASHTUN) 
+
+        if ((self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE  or self.getStatus() == waterActionsEnum.MASHTUN_TO_MASHTUN) 
             and action != waterActionsEnum.FINISHED):
             task = threading.Thread(target=self.shutAllDown)
             task.start()

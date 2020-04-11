@@ -97,7 +97,7 @@ class waterLevelProbe:
         else:
             currentTemperature = self.app.boilKettle.getTemperature()
         if currentTemperature > 25 and self.config.get('ENVIRONMENT') == 'production':
-            currentLevel -= (1 / 50) * (currentTemperature - 25)
+            currentLevel -= (0.8 / 50) * (currentTemperature - 25)
         return currentLevel
 
 

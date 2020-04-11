@@ -40,7 +40,7 @@ Optional:
 CLASS
 -----
 mash = [{
-    state: ('Pending', 'Running', 'Finished'),
+    state: ('Pending', 'Preheating', 'Running', 'Finished'),
     type: ('Infusion', 'Temperature' or 'Decoction'),
     decoction_amount: 0,
     infuse_amount: 0,
@@ -247,6 +247,7 @@ class Cooking:
                 if self.mayNextStepStartPreHeating():
                     step = self.mash[self.currentStep['number'] + 1]
                     self.startStep(step, True)
+                    self.mash[self.currentStep['number'] + 1]['state'] = 'Preheating'
                 self.notifyAdjuncts()
             else:
                 self.mashTunTimeProbe = 0
