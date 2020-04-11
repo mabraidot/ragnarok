@@ -151,6 +151,10 @@ class Cooking:
                 })
                 self.currentStep['mash_total_time'] += float("{0:.2f}".format(float(step['STEP_TIME'])))
 
+            if not isinstance(recipe["beer_json"]["RECIPES"]["RECIPE"]["HOPS"]["HOP"], list):
+                recipe["beer_json"]["RECIPES"]["RECIPE"]["HOPS"]["HOP"] = [recipe["beer_json"]["RECIPES"]["RECIPE"]["HOPS"]["HOP"]]
+            if not isinstance(recipe["beer_json"]["RECIPES"]["RECIPE"]["MISCS"]["MISC"], list):
+                recipe["beer_json"]["RECIPES"]["RECIPE"]["MISCS"]["MISC"] = [recipe["beer_json"]["RECIPES"]["RECIPE"]["MISCS"]["MISC"]]
             hopAdjuncts = recipe["beer_json"]["RECIPES"]["RECIPE"]["HOPS"]["HOP"]
             hopAdjuncts += recipe["beer_json"]["RECIPES"]["RECIPE"]["MISCS"]["MISC"]
             hopAdjuncts = sorted(hopAdjuncts, key = lambda i: float(i['TIME']), reverse=True)
