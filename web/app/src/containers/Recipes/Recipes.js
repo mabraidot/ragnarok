@@ -131,9 +131,12 @@ class Recipes extends Component {
     description += '<h3>HOPS and ADJUNCTS</h3>';
     for (let i in adjuncts) {
       item = adjuncts[i];
-      if (item.USE === 'First Wort' || item.USE === 'Mash') {
+      if (item.USE === 'Mash') {
         orderMash += 1;
         descriptionMash += `${orderMash}). ${item.DISPLAY_TIME}: <strong>${item.NAME}</strong> ${item.USE} ${item.DISPLAY_AMOUNT}<br />`;
+      } else if (item.USE === 'First Wort') {
+        orderMash += 1;
+        descriptionMash += `${orderBoil}). ${0.1} mins: <strong>${item.NAME}</strong> ${item.USE} ${item.DISPLAY_AMOUNT}<br />`;
       } else if (item.USE === 'Boil' || item.USE === 'Aroma') {
         orderBoil += 1;
         descriptionBoil += `${orderBoil}). ${item.DISPLAY_TIME}: <strong>${item.NAME}</strong> ${item.USE} ${item.DISPLAY_AMOUNT}<br />`;

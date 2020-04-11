@@ -155,11 +155,18 @@ class Cooking:
             hopAdjuncts += recipe["beer_json"]["RECIPES"]["RECIPE"]["MISCS"]["MISC"]
             hopAdjuncts = sorted(hopAdjuncts, key = lambda i: float(i['TIME']), reverse=True)
             for step in hopAdjuncts:
-                if step['USE'] == 'Mash' or step['USE'] == 'First Wort':
+                if step['USE'] == 'Mash':
                     self.mashAdjuncts.append({
                         'state': 'Pending',
                         'name': step['NAME'],
                         'time': float("{0:.2f}".format(float(step['TIME']))),
+                        'amount': float("{0:.5f}".format(float(step['AMOUNT'])))
+                    })
+                elif step['USE'] == 'First Wort':
+                    self.mashAdjuncts.append({
+                        'state': 'Pending',
+                        'name': step['NAME'],
+                        'time': 0.1,
                         'amount': float("{0:.5f}".format(float(step['AMOUNT'])))
                     })
                 elif step['USE'] == 'Boil' or step['USE'] == 'Aroma':
