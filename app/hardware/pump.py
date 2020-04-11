@@ -97,7 +97,7 @@ class pump:
     def valvesRunMashTunToKettle(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
             self.app.mashTunValveOutlet.set(100)
-            self.app.boilKettleValveReturn.set(60)
+            self.app.boilKettleValveReturn.set(70)
         else:
             self.set('false')
             if self.app.jobs.get_job('timerDelayedPump') is not None:
@@ -108,7 +108,7 @@ class pump:
     def valvesRunKettleToMashTun(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
             self.app.boilKettleValveOutlet.set(100)
-            self.app.mashTunValveInlet.set(60)
+            self.app.mashTunValveInlet.set(70)
         else:
             self.set('false')
             if self.app.jobs.get_job('timerDelayedPump') is not None:
@@ -172,7 +172,7 @@ class pump:
                 self.waterLevelReadingCount = 0
             self.oldWaterLevelValue = self.app.boilKettle.getWaterLevel()
 
-            if (self.waterLevelReadingCount >= 3 or 
+            if (self.waterLevelReadingCount >= 6 or 
                 self.app.boilKettle.getWaterLevel() <= 0 or 
                 # self.app.mashTun.getWaterLevel() >= self.app.mashTun.getWaterLevelSetPoint() or
                 self.app.mashTun.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
@@ -191,7 +191,7 @@ class pump:
                 self.waterLevelReadingCount = 0
             self.oldWaterLevelValue = self.app.mashTun.getWaterLevel()
 
-            if (self.waterLevelReadingCount >= 3 or 
+            if (self.waterLevelReadingCount >= 6 or 
                 self.app.mashTun.getWaterLevel() <= 0 or 
                 # self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint() or 
                 self.app.boilKettle.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
