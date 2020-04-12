@@ -265,6 +265,8 @@ class Cooking:
             else:
                 self.boilKettleTimeProbe = 0
                 self.app.jobs.remove_job('timerProcess')
+                if self.app.jobs.get_job('timerRecirculation') is not None:
+                    self.app.jobs.remove_job('timerRecirculation')
                 self.boil['state'] = 'Finished'
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'paused'
@@ -336,24 +338,12 @@ class Cooking:
             if step['type'] == 'Temperature':
                 if self.app.mashTun.getTemperature() >= step['step_temp']:
                     self.app.jobs.remove_job('timerHeating')
-                    self.app.jobs.add_job(
-                        self.timerMashRecirculation, 
-                        'interval', 
-                        seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
-                        id='timerRecirculation', 
-                        replace_existing=True)
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                 else:
                     self.app.mashTun.heatToTemperature(step['step_temp'])
         elif self.currentStep['name'] == 'boil':
             if self.app.boilKettle.getTemperature() >= self.boil['step_temp']:
                 self.app.jobs.remove_job('timerHeating')
-                self.app.jobs.add_job(
-                    self.timerBoilRecirculation, 
-                    'interval', 
-                    seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
-                    id='timerRecirculation', 
-                    replace_existing=True)
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
             else:
                 self.app.boilKettle.heatToTemperature(self.boil['step_temp'])
@@ -369,10 +359,29 @@ class Cooking:
             
             if not preHeating:
                 self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, args=[preHeating], id='timerHeating', replace_existing=True)
+                
+                if self.app.mashTun.getWaterLevel() > 1:
+                    if self.app.jobs.get_job('timerRecirculation') is not None:
+                        self.app.jobs.remove_job('timerRecirculation')
+                    self.app.jobs.add_job(
+                        self.timerMashRecirculation, 
+                        'interval', 
+                        seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
+                        id='timerRecirculation', 
+                        replace_existing=True)
 
         elif step['type'] == 'Temperature' and not preHeating:
             self.app.mashTun.heatToTemperature(step['step_temp'])
             self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
+
+            if self.app.jobs.get_job('timerRecirculation') is not None:
+                self.app.jobs.remove_job('timerRecirculation')
+            self.app.jobs.add_job(
+                self.timerMashRecirculation, 
+                'interval', 
+                seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
+                id='timerRecirculation', 
+                replace_existing=True)
 
         elif step['type'] == 'Decoction' and not preHeating:
             # TODO: handle the decoction process
@@ -408,9 +417,18 @@ class Cooking:
                 self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_KETTLE)
                 self.app.boilKettle.heatToTemperature(step['step_temp'])
                 self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
+                if self.app.jobs.get_job('timerRecirculation') is not None:
+                    self.app.jobs.remove_job('timerRecirculation')
+                self.app.jobs.add_job(
+                    self.timerBoilRecirculation, 
+                    'interval', 
+                    seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
+                    id='timerRecirculation', 
+                    replace_existing=True)
                 print('[BOIL]', json.dumps(self.boil, indent=2))
 
             elif self.currentStep['name'] == 'paused':
+
                 self.currentStep['name'] = 'cool'
                 step = self.cool
                 self.boilKettleTimeSetPoint = 0
