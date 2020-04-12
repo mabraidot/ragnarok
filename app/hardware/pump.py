@@ -85,7 +85,8 @@ class pump:
 
     def setDelayedPumpState(self):
         self.set('true')
-        self.app.jobs.remove_job('timerDelayedPump')
+        if self.app.jobs.get_job('timerDelayedPump') is not None:
+            self.app.jobs.remove_job('timerDelayedPump')
 
 
     def valvesRunWaterIn(self, state = valveActions.CLOSE):
@@ -230,10 +231,13 @@ class pump:
         if not isinstance(action, waterActionsEnum):
             raise TypeError("%s attribute must be set to an instance of %s" % (action, waterActionsEnum))
 
+        # TODO: si justo está recirculando y arranca el trasvase, 
+        # se apaga la bomba al finalizar el thread de finalización de recirculado 
         if ((self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE  or self.getStatus() == waterActionsEnum.MASHTUN_TO_MASHTUN) 
             and action != waterActionsEnum.FINISHED):
-            task = threading.Thread(target=self.shutAllDown)
-            task.start()
+            self.shutAllDown()
+            # task = threading.Thread(target=self.shutAllDown)
+            # task.start()
 
         if time > 0:
             self.time = int(time)
