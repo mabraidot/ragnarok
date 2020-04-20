@@ -12,23 +12,24 @@ class waterLevelProbe:
         self.value = 0
         self.runningTare = False
 
-        if self.config.get('ENVIRONMENT') == 'production':
-            # https://github.com/tatobari/hx711py/blob/master/example.py
-            # https://tutorials-raspberrypi.com/digital-raspberry-pi-scale-weight-sensor-hx711/
-            self.hx = HX711(self.config.getint('WATER_LEVEL_SENSOR_DT'), self.config.getint('WATER_LEVEL_SENSOR_SCK'))
-            self.hx.set_reading_format("MSB", "MSB")
-            self.hx.set_reference_unit(self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
-            
-            tare = threading.Thread(target=self.runTare)
-            tare.start()
+        try:
+            if self.config.get('ENVIRONMENT') == 'production':
+                # https://github.com/tatobari/hx711py/blob/master/example.py
+                # https://tutorials-raspberrypi.com/digital-raspberry-pi-scale-weight-sensor-hx711/
+                self.hx = HX711(self.config.getint('WATER_LEVEL_SENSOR_DT'), self.config.getint('WATER_LEVEL_SENSOR_SCK'))
+                self.hx.set_reading_format("MSB", "MSB")
+                self.hx.set_reference_unit(self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
+                
+                tare = threading.Thread(target=self.runTare)
+                tare.start()
 
-            task = threading.Thread(target=self.run)
-            task.start()
+                task = threading.Thread(target=self.run)
+                task.start()
+        except Exception as e:
+            self.app.logger.exception(e)
 
 
     def tare(self):
-        # tare = threading.Thread(target=self.runTare)
-        # tare.start()
         if self.config.get('ENVIRONMENT') == 'production':
             self.runningTare = True
             self.hx.reset()
@@ -37,11 +38,16 @@ class waterLevelProbe:
 
 
     def runTare(self):
-        if self.config.get('ENVIRONMENT') == 'production':
-            self.runningTare = True
-            self.hx.reset()
-            self.hx.tare()
-            self.runningTare = False
+        try:
+            self.app.logger.info('Running Tare')
+            if self.config.get('ENVIRONMENT') == 'production':
+                self.runningTare = True
+                self.hx.reset()
+                self.hx.tare()
+                self.runningTare = False
+        except Exception as e:
+            self.app.logger.exception(e)
+
 
     def setPriorValue(self, value):
         if self.config.get('ENVIRONMENT') == 'production':
@@ -53,12 +59,12 @@ class waterLevelProbe:
         else:
             self.value = (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
 
-    def runPriorValue(self, value):
-        self.runningTare = True
-        newValue = -1 * (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
-        self.hx.reset()
-        self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
-        self.runningTare = False
+    # def runPriorValue(self, value):
+    #     self.runningTare = True
+    #     newValue = -1 * (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
+    #     self.hx.reset()
+    #     self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
+    #     self.runningTare = False
 
 
     def get(self):
@@ -114,5 +120,7 @@ class waterLevelProbe:
 
                     self.hx.reset()
                     time.sleep(0.5)
-        except:
+        except Exception as e:
+            self.app.logger.info('Exception calculating WaterLevel value')
+            self.app.logger.exception(e)
             GPIO.cleanup()
