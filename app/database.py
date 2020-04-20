@@ -87,8 +87,10 @@ class Database:
         try:
             cursor.execute(query, entities)
             self.conn.commit()
-        except Error:
-            print(query, entities, Error)
+        except Exception as e:
+            self.app.logger.debug('Update recipe. Query: %s. Entities: %s', query, entities)
+            self.app.logger.exception(e)
+            # print(query, entities, e)
 
 
     def listRecipes(self):
