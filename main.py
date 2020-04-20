@@ -13,6 +13,7 @@ from app.recipes import Recipes
 import configparser
 import platform
 import logging
+import logging.handlers
 
 
 try:
