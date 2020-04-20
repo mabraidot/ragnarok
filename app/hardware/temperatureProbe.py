@@ -19,7 +19,7 @@ class temperatureProbe:
     def initSensorDS18B20(self):
         if self.config.get('ENVIRONMENT') == 'production':
             try:
-                self.app.logger.info('Init DS18B20 sensor')
+                self.app.logger.info('Init DS18B20 sensor %s', self.name)
                 from w1thermsensor import W1ThermSensor
                 self.sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, self.config.get('TEMPERATURE_SENSOR_ADDRESS'))
                 task = threading.Thread(target=self.runDS18B20)
@@ -30,7 +30,7 @@ class temperatureProbe:
     def initSensorMax31865(self):
         if self.config.get('ENVIRONMENT') == 'production':
             try:
-                self.app.logger.info('Init Max31865 sensor')
+                self.app.logger.info('Init Max31865 sensor %s', self.name)
                 from app.lib import max31865
                 self.sensor = max31865.max31865(self.config.getint('TEMPERATURE_SENSOR_ADDRESS'), 9, 10, 11, 430, int(0xD2))
 
@@ -68,7 +68,7 @@ class temperatureProbe:
                 self.value = newValue
                 time.sleep(0.5)
         except Exception as e:
-            self.app.logger.info('Exception running DS18B20. Reloading ...')
+            self.app.logger.info('Exception running DS18B20 %s. Reloading ...', self.name)
             self.app.logger.exception(e)
             self.initSensorDS18B20()
 
@@ -82,6 +82,6 @@ class temperatureProbe:
                 self.value = newValue
                 time.sleep(0.5)
         except Exception as e:
-            self.app.logger.info('Exception running Max31865. Reloading ...')
+            self.app.logger.info('Exception running Max31865 %s. Reloading ...', self.name)
             self.app.logger.exception(e)
             self.initSensorMax31865()

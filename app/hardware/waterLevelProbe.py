@@ -39,7 +39,7 @@ class waterLevelProbe:
 
     def runTare(self):
         try:
-            self.app.logger.info('Running Tare')
+            self.app.logger.info('Running Tare %s', self.name)
             if self.config.get('ENVIRONMENT') == 'production':
                 self.runningTare = True
                 self.hx.reset()
@@ -121,6 +121,6 @@ class waterLevelProbe:
                     self.hx.reset()
                     time.sleep(0.5)
         except Exception as e:
-            self.app.logger.info('Exception calculating WaterLevel value')
+            self.app.logger.info('Exception calculating WaterLevel value %s', self.name)
             self.app.logger.exception(e)
             GPIO.cleanup()
