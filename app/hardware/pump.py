@@ -231,13 +231,10 @@ class pump:
         if not isinstance(action, waterActionsEnum):
             raise TypeError("%s attribute must be set to an instance of %s" % (action, waterActionsEnum))
 
-        # TODO: si justo está recirculando y arranca el trasvase, 
-        # se apaga la bomba al finalizar el thread de finalización de recirculado 
+        self.app.logger.info('Pump current action: %s. Set new action: %s', self.getStatus(), action)
         if ((self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE  or self.getStatus() == waterActionsEnum.MASHTUN_TO_MASHTUN) 
             and action != waterActionsEnum.FINISHED):
             self.shutAllDown()
-            # task = threading.Thread(target=self.shutAllDown)
-            # task.start()
 
         if time > 0:
             self.time = int(time)
