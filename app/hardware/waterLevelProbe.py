@@ -14,6 +14,9 @@ class waterLevelProbe:
 
         try:
             if self.config.get('ENVIRONMENT') == 'production':
+                GPIO.setmode(GPIO.BCM)
+                GPIO.setup(self.config.getint('WATER_LEVEL_SENSOR_DT'), GPIO.OUT)
+                GPIO.setup(self.config.getint('WATER_LEVEL_SENSOR_SCK'), GPIO.IN)
                 # https://github.com/tatobari/hx711py/blob/master/example.py
                 # https://tutorials-raspberrypi.com/digital-raspberry-pi-scale-weight-sensor-hx711/
                 self.hx = HX711(self.config.getint('WATER_LEVEL_SENSOR_DT'), self.config.getint('WATER_LEVEL_SENSOR_SCK'))
