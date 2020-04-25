@@ -17,6 +17,7 @@ class HX711:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.PD_SCK, GPIO.OUT)
         GPIO.setup(self.DOUT, GPIO.IN)
+        time.sleep(0.2)
 
         self.GAIN = 0
 
