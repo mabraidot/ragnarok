@@ -17,13 +17,9 @@ import logging.handlers
 
 
 try:
+    app = web.Application()
     config = configparser.ConfigParser()
     config.read('app/config/config.cfg')
-
-    app = web.Application()
-    app.recipes = Recipes(app, config)
-    app.sound = Sound(app, config)
-    app.started = False
 
     # Logging
     LOG_FILENAME = 'app/logs/app.log'
@@ -33,6 +29,11 @@ try:
     handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=200000, backupCount=5)
     handler.setFormatter(formatter)
     app.logger.addHandler(handler)
+    app.logger.info('===============================================================================')
+    
+    app.recipes = Recipes(app, config)
+    app.sound = Sound(app, config)
+    app.started = False
 
     # Jobs scheduler
     executors = {
@@ -69,6 +70,6 @@ except Exception as e:
 if __name__ == '__main__':
     try:
         web.run_app(app, port=8000)
-    finally:  
+    finally:
         print('Exiting Ragnarok ...')
         GPIO.cleanup()
