@@ -190,6 +190,11 @@ class Recipes extends Component {
     console.log('see ', this.state.recipes[recipeId]);
 
     if (typeof this.state.recipes[recipeId].id !== 'undefined') {
+      
+      this.props.enqueueSnackbar('Setting up everything for the cooking process. Please wait ...', { 
+        variant: 'success',
+      });
+
       ApiClient.cook(this.state.recipes[recipeId].id).then((resp) => {
         console.log('[API]', resp);
         if (resp.notice) {
