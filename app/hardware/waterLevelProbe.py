@@ -105,6 +105,7 @@ class waterLevelProbe:
             currentTemperature = self.app.mashTun.getTemperature()
         else:
             currentTemperature = self.app.boilKettle.getTemperature()
+
         if currentTemperature > 25 and self.config.get('ENVIRONMENT') == 'production':
             currentLevel -= (0.8 / 50) * (currentTemperature - 25)
         return currentLevel
@@ -116,7 +117,7 @@ class waterLevelProbe:
                 if not self.runningTare:
                     oldValue = self.value
                     newValue = self.hx.get_weight(5)
-                    if oldValue - newValue > -2000:
+                    if oldValue - newValue > -3000:
                         self.value = newValue
                         if self.value < 0:
                             self.value = 0
