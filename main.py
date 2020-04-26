@@ -23,14 +23,23 @@ try:
 
     # Logging
     LOG_FILENAME = 'app/logs/app.log'
+    outFormatter = logging.Formatter('%(levelname)s:%(message)s')
     formatter = logging.Formatter('%(asctime)s;%(levelname)s;%(message)s')
     app.logger = logging.getLogger('RagnarokLogger')
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    app.logger.setLevel(logging.DEBUG)
+    
     handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=200000, backupCount=5)
+    handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     app.logger.addHandler(handler)
-    app.logger.info('===============================================================================')
     
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.WARNING)
+    stream_handler.setFormatter(outFormatter)
+    app.logger.addHandler(stream_handler)
+    app.logger.info('===============================================================================')
+
+
     app.recipes = Recipes(app, config)
     app.sound = Sound(app, config)
     app.started = False
