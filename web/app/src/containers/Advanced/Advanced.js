@@ -243,8 +243,8 @@ class Advanced extends Component {
   };
 
   handleSliderSetPoint = name => (event, value) => {
-    // const { state } = this.state;
-    // this.setState({ ...state, [name]: value });
+    const { state } = this.state;
+    this.setState({ ...state, [name]: value });
     console.log('[ADV]: SetPoint:', name, parseFloat(value));
   
     ApiClient.setPoint(name, value).then((resp) => {
@@ -260,30 +260,6 @@ class Advanced extends Component {
 
   render() {
     
-    // const marksTemperature = [
-    //   { value: 0, label: '0°C' },
-    //   { value: 25, label: '25°C' },
-    //   { value: 50, label: '50°C' },
-    //   { value: 75, label: '75°C' },
-    //   { value: 100, label: '100°C' },
-    // ];
-
-    // const marksWater = [
-    //   { value: 0, label: '0L' },
-    //   { value: 4, label: '4L' },
-    //   { value: 8, label: '8L' },
-    //   { value: 12, label: '12L' },
-    //   { value: 16, label: '16L' },
-    // ];
-
-    // const marksTime = [
-    //   { value: 0, label: '0\'' },
-    //   { value: 30, label: '30\'' },
-    //   { value: 60, label: '60\'' },
-    //   { value: 90, label: '90\'' },
-    //   { value: 120, label: '120\'' },
-    // ];
-
     return(
       <Grow in={true}>
         <div className="Advanced">
@@ -296,7 +272,8 @@ class Advanced extends Component {
                 <h4>Mash Tun</h4>
                 <Slider
                   className="temperature"
-                  value={(this.state.MashTunTemperatureSetPoint) ? parseFloat(this.state.MashTunTemperatureSetPoint) : 0}
+                  aria-valuetext={this.state.MashTunTemperatureSetPoint.toString()}
+                  defaultValue={0}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={110}
@@ -308,7 +285,8 @@ class Advanced extends Component {
 
                 <Slider
                   className="water"
-                  value={(this.state.MashTunWaterLevelSetPoint) ? parseFloat(this.state.MashTunWaterLevelSetPoint) : 0}
+                  aria-valuetext={this.state.MashTunWaterLevelSetPoint.toString()}
+                  defaultValue={0}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
                   max={16}
@@ -320,7 +298,8 @@ class Advanced extends Component {
 
                 <Slider
                   className="time"
-                  value={(this.state.MashTunTimeSetPoint) ? parseInt(this.state.MashTunTimeSetPoint) : 0}
+                  aria-valuetext={this.state.MashTunTimeSetPoint.toString()}
+                  defaultValue={0}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={120}
@@ -355,8 +334,8 @@ class Advanced extends Component {
                 <h4>Boil Kettle</h4>
                 <Slider
                   className="temperature"
-                  value={(this.state.BoilKettleTemperatureSetPoint) ? parseFloat(this.state.BoilKettleTemperatureSetPoint) : 0}
-                  // aria-valuetext={this.state.BoilKettleTemperatureSetPoint.toString()}
+                  aria-valuetext={this.state.BoilKettleTemperatureSetPoint.toString()}
+                  defaultValue={0}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={110}
@@ -368,7 +347,8 @@ class Advanced extends Component {
 
                 <Slider
                   className="water"
-                  value={(this.state.BoilKettleWaterLevelSetPoint) ? parseFloat(this.state.BoilKettleWaterLevelSetPoint) : 0}
+                  aria-valuetext={this.state.BoilKettleWaterLevelSetPoint.toString()}
+                  defaultValue={0}
                   aria-labelledby="discrete-slider-always"
                   step={0.1}
                   max={16}
@@ -380,7 +360,8 @@ class Advanced extends Component {
 
                 <Slider
                   className="time"
-                  value={(this.state.BoilKettleTimeSetPoint) ? parseInt(this.state.BoilKettleTimeSetPoint) : 0}
+                  aria-valuetext={this.state.BoilKettleTimeSetPoint.toString()}
+                  defaultValue={0}
                   aria-labelledby="discrete-slider-always"
                   step={1}
                   max={120}
