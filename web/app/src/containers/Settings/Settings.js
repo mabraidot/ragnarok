@@ -74,7 +74,7 @@ class Settings extends Component {
 
           <h4>Valves</h4>
           <div className="valves">
-            <label>Open all valves to help empty hoses</label>
+            <label>Open all valves to help drain hoses</label>
             <Fab variant="extended" onClick={this.handleAllValvesClick} size="large" aria-label="open-all-valves">
               Open valves
             </Fab>
