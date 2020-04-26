@@ -213,7 +213,6 @@ class Recipes extends Component {
             variant: 'success',
             persist: true,
           });
-          this.props.history.push('/')
         }
         if (resp.persistent_error) {
           this.props.enqueueSnackbar(resp.persistent_error, { 
@@ -223,6 +222,8 @@ class Recipes extends Component {
         }
       });
     }
+    
+    this.props.history.push('/')
 
   }
 

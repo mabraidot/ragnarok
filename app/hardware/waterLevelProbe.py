@@ -36,9 +36,13 @@ class waterLevelProbe:
         if self.config.get('ENVIRONMENT') == 'production':
             while not self.hx.is_ready():
                 pass
+            self.value = -1000
             self.runningTare = True
             self.hx.reset()
             self.hx.tare()
+            self.value = 0
+            self.runningTare = False
+        else:
             self.value = 0
             self.runningTare = False
 
@@ -49,9 +53,13 @@ class waterLevelProbe:
             if self.config.get('ENVIRONMENT') == 'production':
                 while not self.hx.is_ready():
                     pass
+                self.value = -1000
                 self.runningTare = True
                 self.hx.reset()
                 self.hx.tare()
+                self.value = 0
+                self.runningTare = False
+            else:
                 self.value = 0
                 self.runningTare = False
         except Exception as e:
