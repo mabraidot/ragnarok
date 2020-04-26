@@ -14,7 +14,7 @@ class Loading extends Component {
     render() {
         return(
             <Grow in={true}>
-                <div className="Loading"></div>
+                <div className="Loading">Loading<span>Please wait ...</span></div>
             </Grow>
         );
     }

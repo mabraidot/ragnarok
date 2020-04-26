@@ -4,4 +4,23 @@
     background-position: top;
     background-repeat: no-repeat;
     background-size: cover;
+    padding-top: 30vh;
+    font-size: 1.5em;
+    font-weight: bold;
+    animation-name: loading;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+
+    @keyframes loading {
+        0% {color: white;}
+        50% {color: rgb(58, 139, 245);}
+        100% {color: white;}
+    }
+
+    span {
+        display: block;
+        font-size: 0.6em;
+        font-weight: lighter;
+        color: white;
+    }
 }
