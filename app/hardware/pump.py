@@ -92,7 +92,7 @@ class pump:
 
     def valvesRunWaterIn(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
-            self.app.boilKettleValveInlet.set(80)
+            self.app.boilKettleValveInlet.set(60)
         else:
             self.app.boilKettleValveInlet.set(0)
 
