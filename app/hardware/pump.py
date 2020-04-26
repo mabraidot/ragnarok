@@ -159,7 +159,7 @@ class pump:
         if self.getStatus() == waterActionsEnum.WATER_IN_FILTERED or self.getStatus() == waterActionsEnum.WATER_IN:
             if (self.app.boilKettle.getWaterLevelSetPoint() > 0 and 
                 (self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint() or 
-                self.app.boilKettle.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL'))):
+                self.app.boilKettle.getWaterLevel() >= self.config.getfloat('BOIL_KETTLE_PINS', 'MAX_WATER_LEVEL'))):
 
                 task = threading.Thread(target=self.valvesRunWaterIn, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
@@ -177,7 +177,7 @@ class pump:
             if (self.waterLevelReadingCount >= 6 or 
                 self.app.boilKettle.getWaterLevel() <= 0 or 
                 # self.app.mashTun.getWaterLevel() >= self.app.mashTun.getWaterLevelSetPoint() or
-                self.app.mashTun.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
+                self.app.mashTun.getWaterLevel() >= self.config.getfloat('MASH_TUN_PINS', 'MAX_WATER_LEVEL')):
 
                 task = threading.Thread(target=self.valvesRunKettleToMashTun, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
@@ -196,7 +196,7 @@ class pump:
             if (self.waterLevelReadingCount >= 6 or 
                 self.app.mashTun.getWaterLevel() <= 0 or 
                 # self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint() or 
-                self.app.boilKettle.getWaterLevel() >= self.config.getfloat('DEFAULT', 'MAX_WATER_LEVEL')):
+                self.app.boilKettle.getWaterLevel() >= self.config.getfloat('BOIL_KETTLE_PINS', 'MAX_WATER_LEVEL')):
 
                 task = threading.Thread(target=self.valvesRunMashTunToKettle, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
