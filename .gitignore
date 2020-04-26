@@ -1,6 +1,9 @@
 .vscode/*
 venv/*
 RPi/*
+app/logs/*
+app/config/*
+app/database/ragnarok.db
 *__pycache__*
 *.pyc
 yarn.lock
