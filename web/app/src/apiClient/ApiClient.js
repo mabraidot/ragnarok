@@ -220,6 +220,18 @@ class ApiClient {
   };
 
 
+  async openAllValves() {
+
+    return client({
+      method: 'GET',
+      url: '/valves/open',
+      data: null
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
 }
 
 export default new ApiClient();

@@ -68,6 +68,18 @@ class pump:
         self.status = newStatus
 
 
+    def openAllVaves(self):
+        self.app.boilKettleValveInlet.set(100)
+        self.app.chillerValveWater.set(100)
+        # self.app.boilKettleValveWater.set(100)
+        self.app.outletValveDump.set(100)
+        self.app.chillerValveWort.set(100)
+        self.app.boilKettleValveOutlet.set(100)
+        self.app.boilKettleValveReturn.set(100)
+        self.app.mashTunValveOutlet.set(100)
+        self.app.mashTunValveInlet.set(100)
+
+
     def shutAllDown(self):
         self.set('false')
         self.app.boilKettleValveInlet.set(0)

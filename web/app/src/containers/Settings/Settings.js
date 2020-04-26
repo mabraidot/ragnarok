@@ -11,6 +11,7 @@ class Settings extends Component {
 
     this.handleMashTunPIDClick = this.handleMashTunPIDClick.bind(this);
     this.handleBoilKettlePIDClick = this.handleBoilKettlePIDClick.bind(this);
+    this.handleAllValvesClick = this.handleAllValvesClick.bind(this);
   }
 
   handleMashTunPIDClick() {
@@ -38,6 +39,19 @@ class Settings extends Component {
     this.props.history.push('/advanced')
   }
 
+  handleAllValvesClick() {
+    ApiClient.openAllValves().then((resp) => {
+      console.log('[API]', resp);
+      if (resp.error) {
+        this.props.enqueueSnackbar(resp.error, { 
+          variant: 'error',
+        });
+      }
+    });
+    this.props.history.push('/advanced')
+  };
+
+
   render() {
     return(
       <Grow in={true}>
@@ -45,13 +59,27 @@ class Settings extends Component {
           <h1>Settings</h1>
           <h4>PID Auto Tunning</h4>
           <div className="pid-autotune">
+            <label>Perform PID autotune on MashTun</label>
             <Fab variant="extended" onClick={this.handleMashTunPIDClick} size="large" aria-label="mashtun-autotune">
-              Auto tune Mash Tun
-            </Fab>
-            <Fab variant="extended" onClick={this.handleBoilKettlePIDClick} size="large" aria-label="boilkettle-autotune">
-              Auto tune Boil Kettle
+              Auto tune
             </Fab>
           </div>
+
+          <div className="pid-autotune">
+            <label>Perform PID autotune on Boil Kettle</label>
+            <Fab variant="extended" onClick={this.handleBoilKettlePIDClick} size="large" aria-label="boilkettle-autotune">
+              Auto tune
+            </Fab>
+          </div>
+
+          <h4>Valves</h4>
+          <div className="valves">
+            <label>Open all valves to help empty hoses</label>
+            <Fab variant="extended" onClick={this.handleAllValvesClick} size="large" aria-label="open-all-valves">
+              Open valves
+            </Fab>
+          </div>
+
         </div>
       </Grow>
     );

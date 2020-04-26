@@ -43,6 +43,7 @@ class routes:
             web.get('/boilkettle/valve/set/outlet/{on}', self.setBoilKettleValveOutlet),
 
             web.get('/boilkettle/PIDAutoTune', self.sartBoilKettlePIDAutoTune),
+            web.get('/valves/open', self.openAllValves),
 
             web.get('/chiller/set/water/{on}', self.setChillerValveWater),
             web.get('/chiller/set/wort/{on}', self.setChillerValveWort),
@@ -285,6 +286,16 @@ class routes:
         on = request.match_info.get('on', 0)
         self.app.outletValveDump.set(on)
         return web.json_response({'response': str(on)})
+
+
+    def openAllValves(self, request):
+        message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'Open all valves'}
+        if self.app.cooking.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        else:
+            task = threading.Thread(target=self.app.pump.openAllVaves)
+            task.start()
+        return web.json_response(message)
 
 
     ## PUMP #########################

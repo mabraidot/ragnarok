@@ -5,16 +5,49 @@
     background-repeat: no-repeat;
     background-size: cover;
 
+    h4 {
+        border-bottom: white 1px solid;
+        padding-bottom: 5px;
+    }
+
     .pid-autotune {
         display: flex;
         flex-direction: row;
         justify-content: space-evenly;
+        padding: 10px 0;
+
+        label {
+            width: 50vw;
+            text-align: start;
+            font-size: 0.8em;
+        }
 
         .MuiFab-root {
             background-color: crimson;
             color: white;
             font-weight: bold;
         }
+    }
+
+
+    .valves {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        padding: 10px 0;
+
+        label {
+            width: 50vw;
+            text-align: start;
+            font-size: 0.8em;
+        }
+
+        .MuiFab-root {
+            background-color: crimson;
+            color: white;
+            font-weight: bold;
+        }
+
     }
 
 }
