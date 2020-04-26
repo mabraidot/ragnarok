@@ -9,8 +9,8 @@ class waterLevelProbe:
         self.app = app
         self.name = name
         self.config = config
-        self.value = 0
-        self.runningTare = False
+        self.value = -10000
+        self.runningTare = True
 
         try:
             if self.config.get('ENVIRONMENT') == 'production':
@@ -34,9 +34,12 @@ class waterLevelProbe:
 
     def tare(self):
         if self.config.get('ENVIRONMENT') == 'production':
+            while not self.hx.is_ready():
+                pass
             self.runningTare = True
             self.hx.reset()
             self.hx.tare()
+            self.value = 0
             self.runningTare = False
 
 
@@ -44,9 +47,12 @@ class waterLevelProbe:
         try:
             self.app.logger.info('Running Tare %s', self.name)
             if self.config.get('ENVIRONMENT') == 'production':
+                while not self.hx.is_ready():
+                    pass
                 self.runningTare = True
                 self.hx.reset()
                 self.hx.tare()
+                self.value = 0
                 self.runningTare = False
         except Exception as e:
             self.app.logger.exception(e)
