@@ -10,7 +10,8 @@ class pump:
         self.name = name
         self.value = False
         self.time = 0
-        self.app.jobs.add_job(self.pumpDaemon, 'interval', seconds=0.5, id='pumpDaemon')
+        self.daemonTime = 0.5
+        self.app.jobs.add_job(self.pumpDaemon, 'interval', seconds=self.daemonTime, id='pumpDaemon')
         self.status = waterActionsEnum.FINISHED
         self.pin = self.config.getint('GENERAL_PINS', 'PUMP')
         GPIO.setmode(GPIO.BCM)
@@ -211,7 +212,7 @@ class pump:
                 task.start()
                 self.setStatus(waterActionsEnum.FINISHED)
             else:
-                self.time -= 1
+                self.time -= self.daemonTime
 
         # Recirculation through boil kettle
         if self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE:
@@ -221,7 +222,7 @@ class pump:
                 task.start()
                 self.setStatus(waterActionsEnum.FINISHED)
             else:
-                self.time -= 1
+                self.time -= self.daemonTime
 
 
 
