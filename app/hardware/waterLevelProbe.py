@@ -9,7 +9,7 @@ class waterLevelProbe:
         self.app = app
         self.name = name
         self.config = config
-        self.value = -10000
+        self.value = -1000
         self.runningTare = True
 
         try:

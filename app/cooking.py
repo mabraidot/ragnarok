@@ -214,7 +214,6 @@ class Cooking:
                     })
                     self.app.sound.play(soundsEnum.ALARM, 25)
                     self.app.logger.info('[MASH_ADJUNCTS] %s', adjunct)
-                    # print('[MASH_ADJUNCTS]', json.dumps(adjunct, indent=2))
                     self.app.logger.info('[MASH_ADJUNCTS] %s', adjunct)
 
         elif self.currentStep['name'] == 'boil':
@@ -227,7 +226,6 @@ class Cooking:
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
                     })
                     self.app.sound.play(soundsEnum.ALARM, 25)
-                    # print('[BOIL_ADJUNCTS]', json.dumps(adjunct, indent=2))
                     self.app.logger.info('[BOIL_ADJUNCTS] %s', adjunct)
 
 
@@ -403,7 +401,6 @@ class Cooking:
                     if self.mashTunTimeProbe == 0:
                         self.mashTunTimeProbe = step['step_time']
                     self.mash[self.currentStep['number']]['state'] = 'Running'
-                    # print('[STEP-MASH: '+str(self.currentStep['number'])+']', json.dumps(self.mash[self.currentStep['number']], indent=2))
                     self.app.logger.info('[STEP-MASH: '+str(self.currentStep['number'])+'] %s', self.mash[self.currentStep['number']])
 
                 else:
@@ -429,7 +426,6 @@ class Cooking:
                     seconds=self.config.getint('DEFAULT', 'RECIRCULATION_FREQUENCY_TIME'), 
                     id='timerRecirculation', 
                     replace_existing=True)
-                # print('[BOIL]', json.dumps(self.boil, indent=2))
                 self.app.logger.info('[BOIL] %s', self.boil)
 
             elif self.currentStep['name'] == 'paused':
@@ -444,7 +440,6 @@ class Cooking:
                 self.app.boilKettle.stopHeating()
                 self.app.pump.moveWater(action=waterActionsEnum.CHILL)
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
-                # print('[COOL]', json.dumps(self.cool, indent=2))
                 self.app.logger.info('[COOL] %s', self.cool)
 
             elif self.currentStep['name'] == 'finish':
@@ -453,9 +448,7 @@ class Cooking:
                     self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                     'The cooking process has finished!. Please dump the wort manually.'
                 })
-                # print('[END]', json.dumps(self.currentStep, indent=2))
                 self.app.logger.info('[END] %s', self.currentStep)
-            # print('[CURRENT_STEP]: ', json.dumps(self.currentStep, indent=2))
             self.app.logger.info('[CURRENT_STEP] %s', self.currentStep)
         else:
             return
