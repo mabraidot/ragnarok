@@ -28,6 +28,11 @@ class waterLevelProbe:
 
                 task = threading.Thread(target=self.run)
                 task.start()
+
+            else:
+                tare = threading.Thread(target=self.runTare)
+                tare.start()
+
         except Exception as e:
             self.app.logger.exception(e)
 
