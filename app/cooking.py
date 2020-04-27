@@ -245,8 +245,8 @@ class Cooking:
 
     def rackMushTunRest(self):
         if self.currentStep['name'] == 'boil':
-            if self.boil['state'] != 'racking' and self.boilKettleTimeProbe > 0 and (self.boil['step_time'] - self.boilKettleTimeProbe) >= self.config.getfloat('DEFAULT', 'RACK_MASHTUN_REST_TIME'):
-                self.boil['state'] = 'racking'
+            if self.boil['state'] != 'Racking' and self.boilKettleTimeProbe > 0 and (self.boil['step_time'] - self.boilKettleTimeProbe) >= self.config.getfloat('DEFAULT', 'RACK_MASHTUN_REST_TIME'):
+                self.boil['state'] = 'Racking'
                 self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_KETTLE)
                 self.app.logger.info('[BOIL] %s', self.boil)
 
