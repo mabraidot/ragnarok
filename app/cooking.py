@@ -243,6 +243,13 @@ class Cooking:
         return False
 
 
+    def rackMushTunRest(self):
+        if self.currentStep['name'] == 'boil':
+            if self.boil['state'] != 'racking' and self.boilKettleTimeProbe > 0 and (self.boil['step_time'] - self.boilKettleTimeProbe) >= self.config.getfloat('DEFAULT', 'RACK_MASHTUN_REST_TIME'):
+                self.boil['state'] = 'racking'
+                self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_KETTLE)
+                self.app.logger.info('[BOIL] %s', self.boil)
+
 
     def timerProcess(self):
         if self.currentStep['name'] == 'mash':
@@ -263,6 +270,7 @@ class Cooking:
             if self.boilKettleTimeProbe > 0:
                 self.boilKettleTimeProbe -= 1/60
                 self.notifyAdjuncts()
+                self.rackMushTunRest()
             else:
                 self.boilKettleTimeProbe = 0
                 self.app.jobs.remove_job('timerProcess')
@@ -302,7 +310,7 @@ class Cooking:
         if self.currentStep['name'] == 'mash' and self.currentStep['number'] >= 0 and self.currentStep['number'] < len(self.mash):
             step = self.mash[self.currentStep['number']]
             if step['type'] == 'Infusion':
-                if self.app.pump.getStatus() == waterActionsEnum.FINISHED and self.app.mashTun.getTemperature() >= step['step_temp']:
+                if self.app.pump.getStatus() != waterActionsEnum.KETTLE_TO_MASHTUN and self.app.mashTun.getTemperature() >= step['step_temp']:
                     self.app.jobs.remove_job('timerPump')
                     self.app.jobs.add_job(
                         self.timerMashRecirculation, 
@@ -328,10 +336,9 @@ class Cooking:
             if step['type'] == 'Infusion':
                 targetWaterLevelSoFar = self.getMashWaterLevelSoFar(self.currentStep['number'])
                 if self.app.boilKettle.getTemperature() >= step['infuse_temp'] or (not preHeating and self.app.mashTun.getWaterLevel() >= targetWaterLevelSoFar):
-                    self.app.jobs.remove_job('timerHeating')
                     self.app.boilKettle.stopHeating()
                     self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN)
-
+                    self.app.jobs.remove_job('timerHeating')
                     self.app.mashTun.heatToTemperature(step['step_temp'])
                     self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
                 else:
