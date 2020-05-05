@@ -10,6 +10,10 @@ RECIPE
 ------
 * BOIL_TIME: duration of boiling expressed in minutes
 
+MASH
+----
+* SPARGE_TEMP: target temperature for sparging before boiling
+
 MASH STEP
 ---------
 * TYPE: it can be 'Infusion', 'Temperature' or 'Decoction'. Respectively, adding water, raising temp only and draw off some mash for boiling.
@@ -48,8 +52,16 @@ mash = [{
     step_time: 0,
     step_temp: 0
 }]
+sparge = {
+    state: ('Pending', 'Preheating', 'Running', 'Finished'),
+    type: 'Sparge',
+    infuse_amount: 0,
+    infuse_temp: 75,
+    step_temp: 75,
+    count: 6
+}
 boil = {
-    state: ('Pending', 'Running', 'Finished'),
+    state: ('Pending', 'Racking', 'Running', 'Finished'),
     step_time: 0,
     step_temp: 105
 }
@@ -93,6 +105,7 @@ class Cooking:
         self.mashAdjuncts = []
         self.boilAdjuncts = []
         self.boil = {}
+        self.sparge = {}
 
         self.currentStep = {
             'mash_total_time': 0.0,
@@ -181,6 +194,15 @@ class Cooking:
                         'amount': float("{0:.5f}".format(float(step['AMOUNT'])))
                     })
 
+            self.sparge =  {
+                'state': 'Pending',
+                'type': 'Sparge',
+                'infuse_amount': self.config.getfloat('DEFAULT', 'SPARGE_INFUSE_AMOUNT'),
+                'infuse_temp': float("{0:.2f}".format(float(recipe["beer_json"]["RECIPES"]["RECIPE"]["MASH"]["SPARGE_TEMP"]))),
+                'step_temp': float("{0:.2f}".format(float(recipe["beer_json"]["RECIPES"]["RECIPE"]["MASH"]["SPARGE_TEMP"]))),
+                'count': self.config.getfloat('DEFAULT', 'SPARGE_CYCLES_COUNT')
+            }
+
             self.boil =  {
                 'state': 'Pending',
                 'step_time': float("{0:.2f}".format(float(recipe["beer_json"]["RECIPES"]["RECIPE"]["BOIL_TIME"]))),
@@ -231,14 +253,22 @@ class Cooking:
 
 
     def mayNextStepStartPreHeating(self):
-        if self.currentStep['name'] == 'mash' and self.currentStep['number'] + 1 < len(self.mash):
-            step = self.mash[self.currentStep['number'] + 1]
-            if step['type'] == 'Infusion' and step['state'] == 'Pending':
+        if self.currentStep['name'] == 'mash': 
+            if self.currentStep['number'] + 1 < len(self.mash):
+                step = self.mash[self.currentStep['number'] + 1]
+                if step['type'] == 'Infusion' and step['state'] == 'Pending':
+                    if (
+                        self.mashTunTimeProbe < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME') or
+                        self.mash[self.currentStep['number']]['step_time'] < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')
+                    ):
+                        self.mash[self.currentStep['number'] + 1]['state'] == 'Preheating'
+                        return True
+            elif self.sparge['state'] == 'Pending':
                 if (
                     self.mashTunTimeProbe < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME') or
                     self.mash[self.currentStep['number']]['step_time'] < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')
                 ):
-                    self.mash[self.currentStep['number'] + 1]['state'] == 'Running'
+                    self.sparge['state'] = 'Preheating'
                     return True
         return False
 
@@ -257,9 +287,11 @@ class Cooking:
                 self.mashTunTimeProbe -= 1/60
                 self.currentStep['mash_total_time'] -= 1/60
                 if self.mayNextStepStartPreHeating():
-                    step = self.mash[self.currentStep['number'] + 1]
+                    if self.currentStep['number'] + 1 < len(self.mash):
+                        step = self.mash[self.currentStep['number'] + 1]
+                    else:
+                        step = self.sparge
                     self.startStep(step, True)
-                    self.mash[self.currentStep['number'] + 1]['state'] = 'Preheating'
                 self.notifyAdjuncts()
             else:
                 self.mashTunTimeProbe = 0
@@ -321,6 +353,13 @@ class Cooking:
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                 else:
                     self.app.mashTun.heatToTemperature(step['step_temp'])
+        elif self.currentStep['name'] == 'sparge':
+            if self.app.jobs.get_job('timerRecirculation') is not None:
+                self.app.jobs.remove_job('timerRecirculation')
+            if self.app.pump.getStatus() == waterActionsEnum.FINISHED:
+                self.app.jobs.remove_job('timerPump')
+                self.setNextStep()
+
 
 
     def getMashWaterLevelSoFar(self, stepNumber):
@@ -355,6 +394,15 @@ class Cooking:
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
             else:
                 self.app.boilKettle.heatToTemperature(self.boil['step_temp'])
+        elif self.currentStep['name'] == 'sparge':
+            step = self.sparge
+            if self.app.boilKettle.getTemperature() >= step['infuse_temp']:
+                if int(step['count']) % 2 != 0:
+                    self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_KETTLE, amount=step['infuse_amount'])
+                else:
+                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN, amount=step['infuse_amount'])
+                self.app.jobs.remove_job('timerHeating')
+                self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
 
 
 
@@ -362,7 +410,7 @@ class Cooking:
         if step['type'] == 'Infusion' and step['infuse_amount'] > 0:
 
             if preHeating or (( not preHeating or self.app.boilKettle.getTemperature() < step['infuse_temp'] ) and self.app.mashTun.getWaterLevel() <= 0.5 ):
-                self.app.pump.moveWater(action=waterActionsEnum.WATER_IN_FILTERED, ammount=step['infuse_amount'])
+                self.app.pump.moveWater(action=waterActionsEnum.WATER_IN_FILTERED, amount=step['infuse_amount'])
                 self.app.boilKettle.heatToTemperature(step['infuse_temp'])
             
             if not preHeating:
@@ -395,6 +443,11 @@ class Cooking:
             # TODO: handle the decoction process
             self.setNextStep()
 
+        elif step['type'] == 'Sparge' and step['infuse_amount'] > 0 and preHeating:
+            self.app.pump.moveWater(action=waterActionsEnum.WATER_IN_FILTERED, amount=step['infuse_amount'])
+            self.app.boilKettle.heatToTemperature(step['infuse_temp'])
+
+
 
     def setNextStep(self):
         if self.currentStep['recipe_id'] > 0:
@@ -412,8 +465,19 @@ class Cooking:
 
                 else:
                     self.currentStep['number'] = -1
+                    self.currentStep['name'] = 'sparge'
+                    self.setNextStep()
+
+            elif self.currentStep['name'] == 'sparge':
+                step = self.sparge
+                if step['count'] <= 0:
+                    self.currentStep['number'] = -1
                     self.currentStep['name'] = 'boil'
                     self.setNextStep()
+                    return
+                step['count'] -= 1
+                self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, id='timerHeating', replace_existing=True)
+                self.app.logger.info('[STEP-SPARGE: '+str(step['count'])+'] %s', step)
 
             elif self.currentStep['name'] == 'boil':
                 step = self.boil

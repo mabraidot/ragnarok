@@ -19,6 +19,8 @@ class pump:
         GPIO.setwarnings(False)
         GPIO.output(self.pin, GPIO.HIGH)
         self.oldWaterLevelValue = 0
+        self.originalWaterLevelValue = 0
+        self.amountToMove = 0
         self.waterLevelReadingCount = 0
         self.initValves()
         
@@ -188,13 +190,15 @@ class pump:
 
             if (self.waterLevelReadingCount >= 6 or 
                 self.app.boilKettle.getWaterLevel() <= 0 or 
-                # self.app.mashTun.getWaterLevel() >= self.app.mashTun.getWaterLevelSetPoint() or
+                (self.amountToMove > 0 and self.originalWaterLevelValue - self.oldWaterLevelValue >= self.amountToMove) or 
                 self.app.mashTun.getWaterLevel() >= self.config.getfloat('MASH_TUN_PINS', 'MAX_WATER_LEVEL')):
 
                 task = threading.Thread(target=self.valvesRunKettleToMashTun, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
                 self.oldWaterLevelValue = 0
                 self.waterLevelReadingCount = 0
+                self.amountToMove = 0
+                self.originalWaterLevelValue = 0
                 self.setStatus(waterActionsEnum.FINISHED)
 
         # Rack water from mashtun to boilkettle
@@ -207,13 +211,15 @@ class pump:
 
             if (self.waterLevelReadingCount >= 6 or 
                 self.app.mashTun.getWaterLevel() <= 0 or 
-                # self.app.boilKettle.getWaterLevel() >= self.app.boilKettle.getWaterLevelSetPoint() or 
+                (self.amountToMove > 0 and self.originalWaterLevelValue - self.oldWaterLevelValue >= self.amountToMove) or 
                 self.app.boilKettle.getWaterLevel() >= self.config.getfloat('BOIL_KETTLE_PINS', 'MAX_WATER_LEVEL')):
 
                 task = threading.Thread(target=self.valvesRunMashTunToKettle, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
                 self.oldWaterLevelValue = 0
                 self.waterLevelReadingCount = 0
+                self.amountToMove = 0
+                self.originalWaterLevelValue = 0
                 self.setStatus(waterActionsEnum.FINISHED)
 
         # Recirculation through mashtun
@@ -240,7 +246,7 @@ class pump:
 
 
 
-    def moveWater(self, action = waterActionsEnum.FINISHED, ammount = 0, time = 0):
+    def moveWater(self, action = waterActionsEnum.FINISHED, amount = 0, time = 0):
         if not isinstance(action, waterActionsEnum):
             raise TypeError("%s attribute must be set to an instance of %s" % (action, waterActionsEnum))
 
@@ -257,14 +263,17 @@ class pump:
 
             # Fill in the kettle with filtered or non-filtered tap water
             if action == waterActionsEnum.WATER_IN_FILTERED or action == waterActionsEnum.WATER_IN:
-                if ammount > 0:
-                    self.app.boilKettle.setWaterLevel(max(ammount, self.config.getfloat('DEFAULT', 'SAFE_WATER_LEVEL_FOR_HEATERS')))
+                if amount > 0:
+                    self.app.boilKettle.setWaterLevel(max(amount, self.config.getfloat('DEFAULT', 'SAFE_WATER_LEVEL_FOR_HEATERS')))
                     if self.app.boilKettle.getWaterLevel() < self.app.boilKettle.getWaterLevelSetPoint():
                         task = threading.Thread(target=self.valvesRunWaterIn, kwargs=dict(state=valveActions.OPEN))
                         task.start()
 
             # Rack water from boilkettle to mashtun
             if action == waterActionsEnum.KETTLE_TO_MASHTUN:
+                if amount > 0:
+                    self.amountToMove = amount
+                    self.originalWaterLevelValue = self.app.boilKettle.getWaterLevel()
                 # self.app.mashTun.setWaterLevel(self.app.mashTun.getWaterLevel() + self.app.boilKettle.getWaterLevel())
                 task = threading.Thread(target=self.valvesRunKettleToMashTun, kwargs=dict(state=valveActions.OPEN))
                 task.start()
@@ -277,6 +286,9 @@ class pump:
 
             # Rack water from mashtun to boilkettle
             if action == waterActionsEnum.MASHTUN_TO_KETTLE:
+                if amount > 0:
+                    self.amountToMove = amount
+                    self.originalWaterLevelValue = self.app.mashTun.getWaterLevel()
                 # self.app.boilKettle.setWaterLevel(self.app.boilKettle.getWaterLevel() + self.app.mashTun.getWaterLevel())
                 task = threading.Thread(target=self.valvesRunMashTunToKettle, kwargs=dict(state=valveActions.OPEN))
                 task.start()

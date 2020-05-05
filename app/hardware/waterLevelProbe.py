@@ -4,6 +4,14 @@ import random
 import threading
 import time
 
+# Temperature compensation
+# Wcomp = Wraw*(1−c*(Tcal−Tsc))
+# Wraw : raw weight values from scale
+# c : compensation coefficient (I use 0.0002 for the same scale/ADC setup)
+# Tcal : Temperature at calibration time (around 25°C)
+# Tsc : Temperature of scale (put the sensor close to the scale)
+
+
 class waterLevelProbe:
     def __init__(self, app, config, name = 'MashTunWaterLevelProbe'):
         self.app = app
@@ -73,20 +81,11 @@ class waterLevelProbe:
 
     def setPriorValue(self, value):
         if self.config.get('ENVIRONMENT') == 'production':
-            # offsetTask = threading.Thread(target=self.runPriorValue, kwargs=dict(value=value))
-            # offsetTask.start()
             newValue = -1 * (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
             self.hx.reset()
             self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
         else:
             self.value = (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
-
-    # def runPriorValue(self, value):
-    #     self.runningTare = True
-    #     newValue = -1 * (value * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
-    #     self.hx.reset()
-    #     self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
-    #     self.runningTare = False
 
 
     def get(self):
