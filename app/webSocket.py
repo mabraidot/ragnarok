@@ -76,6 +76,7 @@ class webSocket:
         self._clients.add(ws)
 
         try:
+            self.app.logger.info('[WEBSOCKET] Connection successfull')
             await self.send('connection/success')
             if not self.app.started:
                 self.app.sound.play(soundsEnum.WELCOME)
@@ -87,7 +88,10 @@ class webSocket:
                     else:
                         for _ws in self._clients:
                             self.send(msg)
+        except Exception as e:
+            self.app.logger.exception('[WEBSOCKET] Error:', e)
         finally:
+            self.app.logger.info('[WEBSOCKET] Connection closed')
             self._clients.discard(ws)
 
         return ws
