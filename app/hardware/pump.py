@@ -188,7 +188,7 @@ class pump:
                 self.waterLevelReadingCount = 0
             self.oldWaterLevelValue = self.app.boilKettle.getWaterLevel()
 
-            if (self.waterLevelReadingCount >= 6 or 
+            if (self.waterLevelReadingCount >= self.config.getint('DEFAULT', 'PUMP_READING_COUNT') or 
                 self.app.boilKettle.getWaterLevel() <= 0 or 
                 (self.amountToMove > 0 and self.originalWaterLevelValue - self.oldWaterLevelValue >= self.amountToMove) or 
                 self.app.mashTun.getWaterLevel() >= self.config.getfloat('MASH_TUN_PINS', 'MAX_WATER_LEVEL')):
@@ -209,7 +209,7 @@ class pump:
                 self.waterLevelReadingCount = 0
             self.oldWaterLevelValue = self.app.mashTun.getWaterLevel()
 
-            if (self.waterLevelReadingCount >= 6 or 
+            if (self.waterLevelReadingCount >= self.config.getint('DEFAULT', 'PUMP_READING_COUNT') or 
                 self.app.mashTun.getWaterLevel() <= 0 or 
                 (self.amountToMove > 0 and self.originalWaterLevelValue - self.oldWaterLevelValue >= self.amountToMove) or 
                 self.app.boilKettle.getWaterLevel() >= self.config.getfloat('BOIL_KETTLE_PINS', 'MAX_WATER_LEVEL')):
