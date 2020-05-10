@@ -17,6 +17,11 @@ class routes:
             web.get('/cook/delete', self.cookUnfinishedDelete),
             web.get('/cook/{recipe}/resume', self.cookUnfinishedResume),
             web.get('/cook/{recipe}', self.cook),
+            
+            web.get('/clean/short', self.cleanShort),
+            web.get('/clean/sanitization', self.cleanSanitization),
+            web.get('/clean/full', self.cleanFull),
+            web.get('/clean/stop', self.cleanStop),
 
             web.post('/recipes/import', self.importRecipe),
             web.post('/recipes/list', self.listRecipes),
@@ -86,15 +91,24 @@ class routes:
 
     async def cook(self, request):
         recipe = request.match_info.get('recipe', 0)
-        self.app.cooking.start(recipe)
 
-        return web.json_response({self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'The cooking process started'})
+        message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cooking process started'}
+        if self.app.cleaning.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cleaning process is running'}
+        else:
+            self.app.cooking.start(recipe)
+
+        return web.json_response(message)
 
 
     async def cookResume(self, request):
-        self.app.cooking.setNextStep()
+        message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cooking process was resumed'}
+        if self.app.cleaning.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cleaning process is running'}
+        else:
+            self.app.cooking.setNextStep()
 
-        return web.json_response({self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'The cooking process was resumed'})
+        return web.json_response(message)
 
 
     async def cookStop(self, request):
@@ -201,8 +215,8 @@ class routes:
     
     def sartMashTunPIDAutoTune(self, request):
         message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A PID auto tunning process is already running'}
-        if self.app.cooking.isRunning():
-            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        if self.app.cooking.isRunning() or self.app.cleaning.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking or cleaning process is running'}
         elif not self.app.mashTun.PIDAutoTune.running and not self.app.boilKettle.PIDAutoTune.running:
             message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'Starting a PID auto tunning process'}
             task = threading.Thread(target=self.app.mashTun.PIDAutoTune.run)
@@ -224,8 +238,8 @@ class routes:
 
     async def sartBoilKettlePIDAutoTune(self, request):
         message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A PID auto tunning process is already running'}
-        if self.app.cooking.isRunning():
-            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        if self.app.cooking.isRunning() or self.app.cleaning.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking or cleaning process is running'}
         elif not self.app.mashTun.PIDAutoTune.running and not self.app.boilKettle.PIDAutoTune.running:
             message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'Starting a PID auto tunning process'}
             task = threading.Thread(target=self.app.boilKettle.PIDAutoTune.run)
@@ -290,8 +304,8 @@ class routes:
 
     def openAllValves(self, request):
         message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'Open all valves'}
-        if self.app.cooking.isRunning():
-            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        if self.app.cooking.isRunning() or self.app.cleaning.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking or cleaning process is running'}
         else:
             task = threading.Thread(target=self.app.pump.openAllVaves)
             task.start()
@@ -303,3 +317,36 @@ class routes:
         on = request.match_info.get('on', 'false')
         self.app.pump.set(on)
         return web.json_response({'response': str(on)})
+
+
+    ## CLEANING ############################
+
+    async def cleanShort(self, request):
+        message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cleaning process started'}
+        if self.app.cooking.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        else:
+            self.app.cleaning.startShort()
+        return web.json_response(message)
+
+    async def cleanSanitization(self, request):
+        message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cleaning process started'}
+        if self.app.cooking.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        else:
+            self.app.cleaning.startShort()
+        return web.json_response(message)
+
+    async def cleanFull(self, request):
+        message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cleaning process started'}
+        if self.app.cooking.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        else:
+            self.app.cleaning.startShort()
+        return web.json_response(message)
+
+
+    async def cleanStop(self, request):
+        self.app.cleaning.stop()
+
+        return web.json_response({self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'The cleaning process was stopped'})

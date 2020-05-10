@@ -2,6 +2,7 @@ from RPi import GPIO
 from aiohttp import web
 from app.routes import routes
 from app.webSocket import webSocket
+from app.cleaning import Cleaning
 from app.cooking import Cooking
 from app.hardware.kettle import kettle
 from app.hardware.pump import pump
@@ -65,6 +66,9 @@ try:
 
     # Main cooking process
     app.cooking = Cooking(app, config)
+
+    # Main cleaning process
+    app.cleaning = Cleaning(app, config)
 
     # Start websocket server
     app.ws = webSocket(app)
