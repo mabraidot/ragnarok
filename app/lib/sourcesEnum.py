@@ -34,3 +34,15 @@ class soundsEnum(Enum):
 class valveActions(Enum):
     CLOSE               = auto()
     OPEN                = auto()
+
+class cleaningProgramsActions(Enum):
+    SHORT               = auto()
+    SANITIZATION        = auto()
+    FULL                = auto()
+
+class cookingStates(Enum):
+    PENDING             = auto()
+    PREHEATING          = auto()
+    RUNNING             = auto()
+    RACKING             = auto()
+    FINISHED            = auto()

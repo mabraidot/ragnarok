@@ -1,6 +1,6 @@
 import json
 import math
-from app.lib.sourcesEnum import soundsEnum, waterActionsEnum
+from app.lib.sourcesEnum import soundsEnum, waterActionsEnum, cookingStates
 
 
 """
@@ -154,7 +154,7 @@ class Cooking:
             mashSteps = recipe["beer_json"]["RECIPES"]["RECIPE"]["MASH"]["MASH_STEPS"]["MASH_STEP"]
             for step in mashSteps:
                 self.mash.append({
-                    'state': 'Pending',
+                    'state': cookingStates.PENDING,
                     'type': step['TYPE'],
                     'decoction_amount': float("{0:.2f}".format(float(step['DECOCTION_AMT'].split(" ")[0]))),
                     'infuse_amount': float("{0:.2f}".format(float(step['INFUSE_AMOUNT']))),
@@ -174,28 +174,28 @@ class Cooking:
             for step in hopAdjuncts:
                 if step['USE'] == 'Mash':
                     self.mashAdjuncts.append({
-                        'state': 'Pending',
+                        'state': cookingStates.PENDING,
                         'name': step['NAME'],
                         'time': float("{0:.2f}".format(float(step['TIME']))),
                         'amount': float("{0:.5f}".format(float(step['AMOUNT'])))
                     })
                 elif step['USE'] == 'First Wort':
                     self.mashAdjuncts.append({
-                        'state': 'Pending',
+                        'state': cookingStates.PENDING,
                         'name': step['NAME'],
                         'time': 0.1,
                         'amount': float("{0:.5f}".format(float(step['AMOUNT'])))
                     })
                 elif step['USE'] == 'Boil' or step['USE'] == 'Aroma':
                     self.boilAdjuncts.append({
-                        'state': 'Pending',
+                        'state': cookingStates.PENDING,
                         'name': step['NAME'],
                         'time': float("{0:.2f}".format(float(step['TIME']))),
                         'amount': float("{0:.5f}".format(float(step['AMOUNT'])))
                     })
 
             self.sparge =  {
-                'state': 'Pending',
+                'state': cookingStates.PENDING,
                 'type': 'Sparge',
                 'infuse_amount': self.config.getfloat('DEFAULT', 'SPARGE_INFUSE_AMOUNT'),
                 'infuse_temp': float("{0:.2f}".format(float(recipe["beer_json"]["RECIPES"]["RECIPE"]["MASH"]["SPARGE_TEMP"]))),
@@ -204,13 +204,13 @@ class Cooking:
             }
 
             self.boil =  {
-                'state': 'Pending',
+                'state': cookingStates.PENDING,
                 'step_time': float("{0:.2f}".format(float(recipe["beer_json"]["RECIPES"]["RECIPE"]["BOIL_TIME"]))),
                 'step_temp': self.config.getfloat('DEFAULT', 'BOIL_TEMPERATURE')
             }
 
             self.cool =  {
-                'state': 'Pending',
+                'state': cookingStates.PENDING,
                 'step_time': self.config.getfloat('DEFAULT', 'COOL_TIME'),
                 'step_temp': self.config.getfloat('DEFAULT', 'COOL_TEMPERATURE')
             }
@@ -227,9 +227,9 @@ class Cooking:
     def notifyAdjuncts(self):
         if self.currentStep['name'] == 'mash':
             for adjunct in self.mashAdjuncts:
-                if adjunct['state'] == 'Pending' and abs(adjunct['time'] - self.currentStep['mash_total_time']) <= 1/60:
+                if adjunct['state'] == cookingStates.PENDING and abs(adjunct['time'] - self.currentStep['mash_total_time']) <= 1/60:
                     # NOTIFY
-                    adjunct['state'] = 'Finished'
+                    adjunct['state'] = cookingStates.FINISHED
                     self.app.ws.setLog({
                         self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
@@ -240,9 +240,9 @@ class Cooking:
 
         elif self.currentStep['name'] == 'boil':
             for adjunct in self.boilAdjuncts:
-                if adjunct['state'] == 'Pending' and abs(adjunct['time'] - self.boilKettleTimeProbe) <= 1/60:
+                if adjunct['state'] == cookingStates.PENDING and abs(adjunct['time'] - self.boilKettleTimeProbe) <= 1/60:
                     # NOTIFY
-                    adjunct['state'] = 'Finished'
+                    adjunct['state'] = cookingStates.FINISHED
                     self.app.ws.setLog({
                         self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
@@ -256,27 +256,27 @@ class Cooking:
         if self.currentStep['name'] == 'mash': 
             if self.currentStep['number'] + 1 < len(self.mash):
                 step = self.mash[self.currentStep['number'] + 1]
-                if step['type'] == 'Infusion' and step['state'] == 'Pending':
+                if step['type'] == 'Infusion' and step['state'] == cookingStates.PENDING:
                     if (
                         self.mashTunTimeProbe < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME') or
                         self.mash[self.currentStep['number']]['step_time'] < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')
                     ):
-                        self.mash[self.currentStep['number'] + 1]['state'] == 'Preheating'
+                        self.mash[self.currentStep['number'] + 1]['state'] == cookingStates.PREHEATING
                         return True
-            elif self.sparge['state'] == 'Pending':
+            elif self.sparge['state'] == cookingStates.PENDING:
                 if (
                     self.mashTunTimeProbe < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME') or
                     self.mash[self.currentStep['number']]['step_time'] < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')
                 ):
-                    self.sparge['state'] = 'Preheating'
+                    self.sparge['state'] = cookingStates.PREHEATING
                     return True
         return False
 
 
     def rackMushTunRest(self):
         if self.currentStep['name'] == 'boil':
-            if self.boil['state'] != 'Racking' and self.boilKettleTimeProbe > 0 and (self.boil['step_time'] - self.boilKettleTimeProbe) >= self.config.getfloat('DEFAULT', 'RACK_MASHTUN_REST_TIME'):
-                self.boil['state'] = 'Racking'
+            if self.boil['state'] != cookingStates.RACKING and self.boilKettleTimeProbe > 0 and (self.boil['step_time'] - self.boilKettleTimeProbe) >= self.config.getfloat('DEFAULT', 'RACK_MASHTUN_REST_TIME'):
+                self.boil['state'] = cookingStates.RACKING
                 self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_KETTLE)
                 self.app.logger.info('[BOIL] %s', self.boil)
 
@@ -296,7 +296,7 @@ class Cooking:
             else:
                 self.mashTunTimeProbe = 0
                 self.app.jobs.remove_job('timerProcess')
-                self.mash[self.currentStep['number']]['state'] = 'Finished'
+                self.mash[self.currentStep['number']]['state'] = cookingStates.FINISHED
                 self.setNextStep()
         elif self.currentStep['name'] == 'boil':
             if self.boilKettleTimeProbe > 0:
@@ -308,7 +308,7 @@ class Cooking:
                 self.app.jobs.remove_job('timerProcess')
                 if self.app.jobs.get_job('timerRecirculation') is not None:
                     self.app.jobs.remove_job('timerRecirculation')
-                self.boil['state'] = 'Finished'
+                self.boil['state'] = cookingStates.FINISHED
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'paused'
         elif self.currentStep['name'] == 'cool':
@@ -317,7 +317,7 @@ class Cooking:
             if self.app.boilKettle.getTemperature() < self.cool['step_temp'] or self.boilKettleTimeProbe <= 0:
                 self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
                 self.app.jobs.remove_job('timerProcess')
-                self.cool['state'] = 'Finished'
+                self.cool['state'] = cookingStates.FINISHED
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'finish'
                 self.setNextStep()
@@ -460,7 +460,7 @@ class Cooking:
                     self.mashTunTimeSetPoint = step['step_time']
                     if self.mashTunTimeProbe == 0:
                         self.mashTunTimeProbe = step['step_time']
-                    self.mash[self.currentStep['number']]['state'] = 'Running'
+                    self.mash[self.currentStep['number']]['state'] = cookingStates.RUNNING
                     self.app.logger.info('[STEP-MASH: '+str(self.currentStep['number'])+'] %s', self.mash[self.currentStep['number']])
 
                 else:
@@ -484,7 +484,7 @@ class Cooking:
                 self.boilKettleTimeSetPoint = step['step_time']
                 if self.boilKettleTimeProbe == 0:
                     self.boilKettleTimeProbe = step['step_time']
-                self.boil['state'] = 'Running'
+                self.boil['state'] = cookingStates.RUNNING
                 self.app.mashTun.stopHeating()
                 self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_KETTLE)
                 self.app.boilKettle.heatToTemperature(step['step_temp'])
@@ -504,7 +504,7 @@ class Cooking:
                 self.currentStep['name'] = 'cool'
                 step = self.cool
                 self.boilKettleTimeSetPoint = 0
-                self.cool['state'] = 'Running'
+                self.cool['state'] = cookingStates.RUNNING
                 self.boilKettleTimeSetPoint = step['step_time']
                 self.boilKettleTimeProbe = step['step_time']
                 self.app.boilKettle.setTemperature(0)
