@@ -13,8 +13,8 @@
     .pid-autotune {
         display: flex;
         flex-direction: row;
-        justify-content: space-evenly;
-        padding: 10px 0;
+        justify-content: flex-start;
+        padding: 10px 10vw;
 
         label {
             width: 50vw;
@@ -33,8 +33,29 @@
     .valves {
         display: flex;
         flex-direction: row;
-        justify-content: space-evenly;
-        padding: 10px 0;
+        justify-content: flex-start;
+        padding: 10px 10vw;
+
+        label {
+            width: 50vw;
+            text-align: start;
+            font-size: 0.8em;
+        }
+
+        .MuiFab-root {
+            background-color: crimson;
+            color: white;
+            font-weight: bold;
+        }
+
+    }
+
+
+    .cleaning {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 10px 10vw;
 
         label {
             width: 50vw;

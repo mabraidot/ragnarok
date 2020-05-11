@@ -41,6 +41,7 @@ class Home extends Component {
       BoilKettleTimeProbe: 0,
 
       cookingRunning: false,
+      cleaningRunning: false,
       automaticGaugeOrder: true,
       dialogOpen: false,
       dialogTitle: '',
@@ -149,6 +150,13 @@ class Home extends Component {
         }
       }
 
+      if (typeof data.cleaningRunning !== 'undefined') {
+        const cleaningNewValue = (data.cleaningRunning === 'False') ? false : true;
+        if (cleaningNewValue !== this.state.cleaningRunning) {
+          this.setState({cleaningRunning: cleaningNewValue});
+        }
+      }
+
 
 
       if (data.notice) {
@@ -243,6 +251,23 @@ class Home extends Component {
     });    
   }
 
+  handleStopCleaningClick = () => {
+    this.handleClose();
+    ApiClient.cleanStop().then((resp) => {
+      console.log('[API]', resp);
+      if (resp.notice) {
+        this.props.enqueueSnackbar(resp.notice, { 
+          variant: 'success',
+        });
+      }
+      if (resp.error) {
+        this.props.enqueueSnackbar(resp.error, { 
+          variant: 'error',
+        });
+      }
+    });    
+  }
+
   handleAdvancedClick() {
     this.props.history.push('/advanced')
   }
@@ -295,11 +320,15 @@ class Home extends Component {
             </DialogContent>
             <DialogActions>
               <Button onClick={this.handleClose} color="secondary" autoFocus>Cancel</Button>
-              {this.state.dialogProcess === 'stopCooking' ? 
+              {(this.state.dialogProcess === 'stopCleaning') && (
+                <Button onClick={this.handleStopCleaningClick} color="primary">Stop</Button>
+              )}
+              {(this.state.dialogProcess === 'stopCooking') && (
                 <Button onClick={this.handleStopCookingClick} color="primary">Stop</Button>
-              :
+              )}
+              {(this.state.dialogProcess !== 'stopCleaning' && this.state.dialogProcess !== 'stopCooking') && (
                 <Button onClick={this.handleContinueAction} color="primary">Continue</Button>
-              }
+              )}
             </DialogActions>
           </Dialog>
           <Grid container>
@@ -330,6 +359,16 @@ class Home extends Component {
                     });}} size="large" aria-label="stop">
                   <PanToolIcon />
                   Stop Cooking
+                </Fab>
+                )}
+                {(this.state.cleaningRunning) && (
+                <Fab variant="extended" onClick={() => {this.handleOpen({
+                      'title': 'Stop Cleaning Process', 
+                      'description': 'Are you sure to stop the current cleaning process?',
+                      'process': 'stopCleaning'
+                    });}} size="large" aria-label="stop">
+                  <PanToolIcon />
+                  Stop Cleaning
                 </Fab>
                 )}
               </div>

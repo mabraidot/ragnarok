@@ -232,6 +232,50 @@ class ApiClient {
   }
 
 
+  async cleanShort() {
+
+    return client({
+      method: 'GET',
+      url: `/clean/short`,
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
+  async cleanSanitization() {
+
+    return client({
+      method: 'GET',
+      url: `/clean/sanitization`,
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
+  async cleanFull() {
+
+    return client({
+      method: 'GET',
+      url: `/clean/full`,
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
+  async cleanStop() {
+
+    return client({
+      method: 'GET',
+      url: `/clean/stop`,
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
 }
 
 export default new ApiClient();

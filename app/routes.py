@@ -323,24 +323,24 @@ class routes:
 
     async def cleanShort(self, request):
         message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cleaning process started'}
-        if self.app.cooking.isRunning():
-            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        if self.app.cooking.isRunning() or self.app.cleaning.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking or cleaning process is running'}
         else:
             self.app.cleaning.startShort()
         return web.json_response(message)
 
     async def cleanSanitization(self, request):
         message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cleaning process started'}
-        if self.app.cooking.isRunning():
-            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        if self.app.cooking.isRunning() or self.app.cleaning.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking or cleaning process is running'}
         else:
             self.app.cleaning.startShort()
         return web.json_response(message)
 
     async def cleanFull(self, request):
         message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cleaning process started'}
-        if self.app.cooking.isRunning():
-            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking process is running'}
+        if self.app.cooking.isRunning() or self.app.cleaning.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking or cleaning process is running'}
         else:
             self.app.cleaning.startShort()
         return web.json_response(message)

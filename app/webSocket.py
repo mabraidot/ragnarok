@@ -51,6 +51,7 @@ class webSocket:
         data[self.app.pump.name] = str(self.app.pump.get())
         data['cookingStep'] = self.app.cooking.getCurrentStepName()
         data['cookingRunning'] = str(self.app.cooking.isRunning())
+        data['cleaningRunning'] = str(self.app.cleaning.isRunning())
 
         for log in self.getLogs():
             key = list(log)[0]
