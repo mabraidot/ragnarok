@@ -154,6 +154,17 @@ class pump:
             self.app.boilKettleValveOutlet.set(0)
             self.app.boilKettleValveReturn.set(0)
 
+    def valvesRunKettleToChiller(self, state = valveActions.CLOSE):
+        if state == valveActions.OPEN:
+            self.app.chillerValveWort.set(100)
+            self.app.boilKettleValveOutlet.set(100)
+        else:
+            self.set('false')
+            if self.app.jobs.get_job('timerDelayedPump') is not None:
+                self.app.jobs.remove_job('timerDelayedPump')
+            self.app.boilKettleValveOutlet.set(0)
+            self.app.chillerValveWort.set(0)
+
     def valvesRunChill(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
             self.app.chillerValveWort.set(40)
@@ -265,6 +276,16 @@ class pump:
             else:
                 self.time -= self.daemonTime
 
+        # Recirculation from boil kettle through chiller
+        if self.getStatus() == waterActionsEnum.KETTLE_TO_CHILLER:
+            if self.time <= 0:
+                self.time = 0
+                task = threading.Thread(target=self.valvesRunKettleToChiller, kwargs=dict(state=valveActions.CLOSE))
+                task.start()
+                self.setStatus(waterActionsEnum.FINISHED)
+            else:
+                self.time -= self.daemonTime
+
         # Dump water from boilkettle
         if self.getStatus() == waterActionsEnum.KETTLE_TO_DUMP:
             if self.get() and abs(self.oldWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.01:
@@ -365,6 +386,17 @@ class pump:
             # Recirculation through boil kettle
             if action == waterActionsEnum.KETTLE_TO_KETTLE:
                 task = threading.Thread(target=self.valvesRunKettleToKettle, kwargs=dict(state=valveActions.OPEN))
+                task.start()
+                self.app.jobs.add_job(
+                    self.setDelayedPumpState, 
+                    'interval', 
+                    seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
+                    id='timerDelayedPump',
+                    replace_existing=True)
+
+            # Recirculation from boil kettle through chiller
+            if action == waterActionsEnum.KETTLE_TO_CHILLER:
+                task = threading.Thread(target=self.valvesRunKettleToChiller, kwargs=dict(state=valveActions.OPEN))
                 task.start()
                 self.app.jobs.add_job(
                     self.setDelayedPumpState, 

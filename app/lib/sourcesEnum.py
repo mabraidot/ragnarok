@@ -22,6 +22,7 @@ class waterActionsEnum(Enum):
     KETTLE_TO_MASHTUN   = auto()
     MASHTUN_TO_DUMP     = auto()
     KETTLE_TO_DUMP      = auto()
+    KETTLE_TO_CHILLER   = auto()
     MASHTUN_TO_MASHTUN  = auto()
     KETTLE_TO_KETTLE    = auto()
     CHILL               = auto()
