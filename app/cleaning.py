@@ -57,19 +57,19 @@ class Cleaning:
             self.clean.append({
                 'state': cookingStates.PENDING,
                 'type': 'BoilKettle',
-                'water_amount': 8,
+                'water_amount': 13,
                 'kettle_recirculation_time': 0.1,
-                'chiller_recirculation_time': 0,
-                'step_temp': 20,
+                'chiller_recirculation_time': 0.1,
+                'step_temp': 25,
                 'dump': False,
             })
             self.clean.append({
                 'state': cookingStates.PENDING,
                 'type': 'MashTun',
-                'water_amount': 8,
+                'water_amount': 4,
                 'kettle_recirculation_time': 0.1,
                 'chiller_recirculation_time': 0,
-                'step_temp': 20,
+                'step_temp': 25,
                 'dump': True,
             })
             # self.clean.append({
@@ -175,10 +175,11 @@ class Cleaning:
         if step['type'] == 'MashTun':
             if self.mashTunTimeProbe > 0:
                 self.mashTunTimeProbe -= 1/60
-                # TODO: check recirculation time
             else:
                 self.mashTunTimeProbe = 0
                 self.app.mashTun.stopHeating()
+                if step['state'] != cookingStates.DUMPING:
+                    self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
                 if step['dump'] and step['state'] != cookingStates.DUMPING:
                     step['state'] = cookingStates.DUMPING
                     self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_DUMP)
@@ -190,9 +191,14 @@ class Cleaning:
         if step['type'] == 'BoilKettle':
             if self.boilKettleTimeProbe > 0:
                 self.boilKettleTimeProbe -= 1/60
+                if step['chiller_recirculation_time'] > 0 and self.boilKettleTimeProbe <= step['kettle_recirculation_time']:
+                    self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
+                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_KETTLE, time=step['kettle_recirculation_time'] * 60)
             else:
                 self.boilKettleTimeProbe = 0
                 self.app.boilKettle.stopHeating()
+                if step['state'] != cookingStates.DUMPING:
+                    self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
                 if step['dump'] and step['state'] != cookingStates.DUMPING:
                     step['state'] = cookingStates.DUMPING
                     self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_DUMP)
@@ -205,27 +211,31 @@ class Cleaning:
     def timerHeating(self):
         step = self.clean[self.currentStep['number']]
         if step['type'] == 'MashTun':
+            # if self.app.mashTun.getTemperature() >= step['step_temp'] and self.app.mashTun.getWaterLevel() >= step['water_amount']:
             if self.app.mashTun.getTemperature() >= step['step_temp']:
-                # TODO: start recirculation timers
-                self.app.jobs.remove_job('timerHeating')
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
-                # self.app.logger.info('[timerheating removed] %s', step['type'])
+                # TODO: fix temperature coming first of waterlevel
+                if step['kettle_recirculation_time'] > 0:
+                    self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_MASHTUN, time=step['kettle_recirculation_time'] * 60)
+                self.app.jobs.remove_job('timerHeating')
             else:
                 if self.app.boilKettle.getWaterLevel() >= step['water_amount'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
                     self.app.boilKettle.stopHeating()
                     self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN)
                 self.app.mashTun.heatToTemperature(step['step_temp'])
-                # self.app.logger.info('[timerheating] %s', step['type'])
 
         elif step['type'] == 'BoilKettle':
+            # if self.app.boilKettle.getTemperature() >= step['step_temp'] and self.app.boilKettle.getWaterLevel() >= step['water_amount']:
             if self.app.boilKettle.getTemperature() >= step['step_temp']:
-                # TODO: start recirculation timers
                 self.app.jobs.remove_job('timerHeating')
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
-                self.app.logger.info('[timerheating removed] %s', step['type'])
+                # TODO: fix temperature coming first of waterlevel
+                if step['chiller_recirculation_time'] > 0:
+                    self.app.pump.moveWater(action=waterActionsEnum.CHILL)
+                elif step['kettle_recirculation_time'] > 0:
+                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_KETTLE, time=step['kettle_recirculation_time'] * 60)
             else:
                 self.app.boilKettle.heatToTemperature(step['step_temp'])
-                # self.app.logger.info('[timerheating] %s', step['type'])
 
 
     def startStep(self, step):
@@ -267,7 +277,6 @@ class Cleaning:
             self.app.logger.info('[STEP-CLEAN: '+str(self.currentStep['number'])+'] %s', step)
 
         else:
-            # TODO: dump the remaining water, if there is any
             self.stop()
             self.app.ws.setLog({
                 self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
