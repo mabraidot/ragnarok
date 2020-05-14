@@ -4,7 +4,7 @@ from app.lib.sourcesEnum import waterActionsEnum, cleaningProgramsActions, cooki
 """
 clean[{
     state: ('Pending', 'Dumping', 'Running', 'Finished'),
-    type: ('BoilKettle', 'MashTun'),
+    target: ('BoilKettle', 'MashTun'),
     water_amount: 0,
     kettle_recirculation_time: 0,
     chiller_recirculation_time: 0,
