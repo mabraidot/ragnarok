@@ -167,6 +167,29 @@ class pump:
             self.app.boilKettleValveOutlet.set(0)
             self.app.chillerValveWort.set(0)
 
+    def valvesRunKettleToDump(self, state = valveActions.CLOSE):
+        if state == valveActions.OPEN:
+            self.app.outletValveDump.set(100)
+            self.app.boilKettleValveOutlet.set(100)
+        else:
+            self.set('false')
+            if self.app.jobs.get_job('timerDelayedPump') is not None:
+                self.app.jobs.remove_job('timerDelayedPump')
+            self.app.boilKettleValveOutlet.set(0)
+            self.app.outletValveDump.set(0)
+
+    def valvesRunMashTunToDump(self, state = valveActions.CLOSE):
+        if state == valveActions.OPEN:
+            self.app.outletValveDump.set(100)
+            self.app.mashTunValveOutlet.set(100)
+        else:
+            self.set('false')
+            if self.app.jobs.get_job('timerDelayedPump') is not None:
+                self.app.jobs.remove_job('timerDelayedPump')
+            self.app.mashTunValveOutlet.set(0)
+            self.app.outletValveDump.set(0)
+
+
     def pumpDaemon(self):
 
         # Fill in the kettle with filtered or non-filtered tap water
@@ -241,6 +264,46 @@ class pump:
                 self.setStatus(waterActionsEnum.FINISHED)
             else:
                 self.time -= self.daemonTime
+
+        # Dump water from boilkettle
+        if self.getStatus() == waterActionsEnum.KETTLE_TO_DUMP:
+            if self.get() and abs(self.oldWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.01:
+                self.waterLevelReadingCount += 1
+            else:
+                self.waterLevelReadingCount = 0
+            self.oldWaterLevelValue = self.app.boilKettle.getWaterLevel()
+
+            if (self.waterLevelReadingCount >= self.config.getint('DEFAULT', 'PUMP_READING_COUNT') or 
+                self.app.boilKettle.getWaterLevel() <= 0 or 
+                (self.amountToMove > 0 and self.originalWaterLevelValue - self.oldWaterLevelValue >= self.amountToMove)):
+
+                task = threading.Thread(target=self.valvesRunKettleToDump, kwargs=dict(state=valveActions.CLOSE))
+                task.start()
+                self.oldWaterLevelValue = 0
+                self.waterLevelReadingCount = 0
+                self.amountToMove = 0
+                self.originalWaterLevelValue = 0
+                self.setStatus(waterActionsEnum.FINISHED)
+
+        # Dump water from mashtun
+        if self.getStatus() == waterActionsEnum.MASHTUN_TO_DUMP:
+            if self.get() and abs(self.oldWaterLevelValue - self.app.mashTun.getWaterLevel()) <= 0.01:
+                self.waterLevelReadingCount += 1
+            else:
+                self.waterLevelReadingCount = 0
+            self.oldWaterLevelValue = self.app.mashTun.getWaterLevel()
+
+            if (self.waterLevelReadingCount >= self.config.getint('DEFAULT', 'PUMP_READING_COUNT') or 
+                self.app.mashTun.getWaterLevel() <= 0 or 
+                (self.amountToMove > 0 and self.originalWaterLevelValue - self.oldWaterLevelValue >= self.amountToMove)):
+
+                task = threading.Thread(target=self.valvesRunMashTunToDump, kwargs=dict(state=valveActions.CLOSE))
+                task.start()
+                self.oldWaterLevelValue = 0
+                self.waterLevelReadingCount = 0
+                self.amountToMove = 0
+                self.originalWaterLevelValue = 0
+                self.setStatus(waterActionsEnum.FINISHED)
 
 
 
@@ -331,6 +394,35 @@ class pump:
                     seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                     id='timerDelayedPump',
                     replace_existing=True)
+
+            # Dump water from boilkettle
+            if action == waterActionsEnum.KETTLE_TO_DUMP:
+                if amount > 0:
+                    self.amountToMove = amount
+                    self.originalWaterLevelValue = self.app.boilKettle.getWaterLevel()
+                task = threading.Thread(target=self.valvesRunKettleToDump, kwargs=dict(state=valveActions.OPEN))
+                task.start()
+                self.app.jobs.add_job(
+                    self.setDelayedPumpState, 
+                    'interval', 
+                    seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
+                    id='timerDelayedPump',
+                    replace_existing=True)
+
+            # Dump water from mash tun
+            if action == waterActionsEnum.MASHTUN_TO_DUMP:
+                if amount > 0:
+                    self.amountToMove = amount
+                    self.originalWaterLevelValue = self.app.mashTun.getWaterLevel()
+                task = threading.Thread(target=self.valvesRunMashTunToDump, kwargs=dict(state=valveActions.OPEN))
+                task.start()
+                self.app.jobs.add_job(
+                    self.setDelayedPumpState, 
+                    'interval', 
+                    seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
+                    id='timerDelayedPump',
+                    replace_existing=True)
+
 
         if action == waterActionsEnum.FINISHED:
             task = threading.Thread(target=self.shutAllDown)

@@ -27,16 +27,24 @@ class webSocket:
         data[self.app.mashTun.name + 'WaterLevelSetPoint'] = float(self.app.mashTun.getWaterLevelSetPoint())
         data[self.app.mashTun.name + 'WaterLevelProbe'] = float(self.app.mashTun.getWaterLevel())
         data[self.app.mashTun.name + 'Heater'] = str(self.app.mashTun.getHeater())
-        data[self.app.mashTun.name + 'TimeSetPoint'] = float(self.app.cooking.getMashTunTimeSetPoint())
-        data[self.app.mashTun.name + 'TimeProbe'] = float(self.app.cooking.getMashTunTimeProbe())
+        if self.app.cooking.isRunning():
+            data[self.app.mashTun.name + 'TimeSetPoint'] = float(self.app.cooking.getMashTunTimeSetPoint())
+            data[self.app.mashTun.name + 'TimeProbe'] = float(self.app.cooking.getMashTunTimeProbe())
+        if self.app.cleaning.isRunning():
+            data[self.app.mashTun.name + 'TimeSetPoint'] = float(self.app.cleaning.getMashTunTimeSetPoint())
+            data[self.app.mashTun.name + 'TimeProbe'] = float(self.app.cleaning.getMashTunTimeProbe())
 
         data[self.app.boilKettle.name + 'TemperatureSetPoint'] = float(self.app.boilKettle.getTemperatureSetPoint())
         data[self.app.boilKettle.name + 'TemperatureProbe'] = float(self.app.boilKettle.getTemperature())
         data[self.app.boilKettle.name + 'WaterLevelSetPoint'] = float(self.app.boilKettle.getWaterLevelSetPoint())
         data[self.app.boilKettle.name + 'WaterLevelProbe'] = float(self.app.boilKettle.getWaterLevel())
         data[self.app.boilKettle.name + 'Heater'] = str(self.app.boilKettle.getHeater())
-        data[self.app.boilKettle.name + 'TimeSetPoint'] = float(self.app.cooking.getBoilKettleTimeSetPoint())
-        data[self.app.boilKettle.name + 'TimeProbe'] = float(self.app.cooking.getBoilKettleTimeProbe())
+        if self.app.cooking.isRunning():
+            data[self.app.boilKettle.name + 'TimeSetPoint'] = float(self.app.cooking.getBoilKettleTimeSetPoint())
+            data[self.app.boilKettle.name + 'TimeProbe'] = float(self.app.cooking.getBoilKettleTimeProbe())
+        if self.app.cleaning.isRunning():
+            data[self.app.boilKettle.name + 'TimeSetPoint'] = float(self.app.cleaning.getBoilKettleTimeSetPoint())
+            data[self.app.boilKettle.name + 'TimeProbe'] = float(self.app.cleaning.getBoilKettleTimeProbe())
 
         data[self.app.outletValveDump.name] = str(self.app.outletValveDump.get())
         data[self.app.chillerValveWort.name] = str(self.app.chillerValveWort.get())
