@@ -31,9 +31,13 @@ class Cleaning:
 
         self.clean = []
         self.currentStep = {
+            'name': 'mash',
             'number': -1,
             'program': cleaningProgramsActions.SHORT
         }
+
+    def getCurrentStepName(self):
+        return self.currentStep['name']
 
     def getMashTunTimeSetPoint(self):
         return self.mashTunTimeSetPoint
@@ -56,57 +60,39 @@ class Cleaning:
             self.currentStep['program'] = cleaningProgramsActions.SHORT
             self.clean.append({
                 'state': cookingStates.PENDING,
-                'type': 'BoilKettle',
-                'water_amount': 13,
-                'kettle_recirculation_time': 0.2,
-                'chiller_recirculation_time': 0.2,
-                'step_temp': 15,
-                'dump': False,
+                'target': 'BoilKettle',
+                'water_amount': 4,
+                'kettle_recirculation_time': 0.1,
+                'chiller_recirculation_time': 0.1,
+                'step_temp': 50,
+                'dump': True,
             })
             self.clean.append({
                 'state': cookingStates.PENDING,
-                'type': 'MashTun',
+                'target': 'MashTun',
                 'water_amount': 4,
                 'kettle_recirculation_time': 0.1,
                 'chiller_recirculation_time': 0,
-                'step_temp': 15,
+                'step_temp': 50,
                 'dump': True,
             })
-            # self.clean.append({
-            #     'state': cookingStates.PENDING,
-            #     'type': 'BoilKettle',
-            #     'water_amount': 4,
-            #     'kettle_recirculation_time': 1,
-            #     'chiller_recirculation_time': 1,
-            #     'step_temp': 50,
-            #     'dump': True,
-            # })
-            # self.clean.append({
-            #     'state': cookingStates.PENDING,
-            #     'type': 'MashTun',
-            #     'water_amount': 4,
-            #     'kettle_recirculation_time': 1,
-            #     'chiller_recirculation_time': 0,
-            #     'step_temp': 50,
-            #     'dump': True,
-            # })
 
         if program == cleaningProgramsActions.SANITIZATION:
             self.currentStep['program'] = cleaningProgramsActions.SANITIZATION
             self.clean.append({
                 'state': cookingStates.PENDING,
-                'type': 'BoilKettle',
+                'target': 'BoilKettle',
                 'water_amount': 5,
-                'kettle_recirculation_time': 2,
-                'chiller_recirculation_time': 2,
+                'kettle_recirculation_time': 0.2,
+                'chiller_recirculation_time': 0.2,
                 'step_temp': 80,
                 'dump': False,
             })
             self.clean.append({
                 'state': cookingStates.PENDING,
-                'type': 'MashTun',
+                'target': 'MashTun',
                 'water_amount': 5,
-                'kettle_recirculation_time': 2,
+                'kettle_recirculation_time': 0.2,
                 'chiller_recirculation_time': 0,
                 'step_temp': 80,
                 'dump': True,
@@ -116,54 +102,54 @@ class Cleaning:
             self.currentStep['program'] = cleaningProgramsActions.FULL
             self.clean.append({
                 'state': cookingStates.PENDING,
-                'type': 'BoilKettle',
+                'target': 'BoilKettle',
                 'water_amount': 4,
-                'kettle_recirculation_time': 1,
-                'chiller_recirculation_time': 1,
+                'kettle_recirculation_time': 0.1,
+                'chiller_recirculation_time': 0.1,
                 'step_temp': 50,
                 'dump': True,
             })
             self.clean.append({
                 'state': cookingStates.PENDING,
-                'type': 'MashTun',
+                'target': 'MashTun',
                 'water_amount': 4,
-                'kettle_recirculation_time': 1,
+                'kettle_recirculation_time': 0.1,
                 'chiller_recirculation_time': 0,
                 'step_temp': 50,
                 'dump': True,
             })
             self.clean.append({
                 'state': cookingStates.PENDING,
-                'type': 'BoilKettle',
+                'target': 'BoilKettle',
                 'water_amount': 6,
-                'kettle_recirculation_time': 2,
-                'chiller_recirculation_time': 3,
+                'kettle_recirculation_time': 0.2,
+                'chiller_recirculation_time': 0.3,
                 'step_temp': 80,
                 'dump': False,
             })
             self.clean.append({
                 'state': cookingStates.PENDING,
-                'type': 'MashTun',
+                'target': 'MashTun',
                 'water_amount': 6,
-                'kettle_recirculation_time': 2,
+                'kettle_recirculation_time': 0.2,
                 'chiller_recirculation_time': 0,
                 'step_temp': 80,
                 'dump': True,
             })
             self.clean.append({
                 'state': cookingStates.PENDING,
-                'type': 'BoilKettle',
+                'target': 'BoilKettle',
                 'water_amount': 5,
-                'kettle_recirculation_time': 2,
-                'chiller_recirculation_time': 2,
+                'kettle_recirculation_time': 0.2,
+                'chiller_recirculation_time': 0.2,
                 'step_temp': 50,
                 'dump': False,
             })
             self.clean.append({
                 'state': cookingStates.PENDING,
-                'type': 'MashTun',
+                'target': 'MashTun',
                 'water_amount': 5,
-                'kettle_recirculation_time': 2,
+                'kettle_recirculation_time': 0.2,
                 'chiller_recirculation_time': 0,
                 'step_temp': 50,
                 'dump': True,
@@ -172,7 +158,7 @@ class Cleaning:
 
     def timerProcess(self):
         step = self.clean[self.currentStep['number']]
-        if step['type'] == 'MashTun':
+        if step['target'] == 'MashTun':
             if self.mashTunTimeProbe > 0:
                 self.mashTunTimeProbe -= 1/60
             else:
@@ -188,7 +174,7 @@ class Cleaning:
                     self.clean[self.currentStep['number']]['state'] = cookingStates.FINISHED
                     self.setNextStep()
 
-        if step['type'] == 'BoilKettle':
+        if step['target'] == 'BoilKettle':
             if self.boilKettleTimeProbe > 0:
                 self.boilKettleTimeProbe -= 1/60
                 if step['chiller_recirculation_time'] > 0 and self.boilKettleTimeProbe <= step['kettle_recirculation_time'] and (self.app.pump.getStatus() == waterActionsEnum.KETTLE_TO_CHILLER or self.app.pump.getStatus() == waterActionsEnum.FINISHED):
@@ -210,7 +196,7 @@ class Cleaning:
 
     def timerHeating(self):
         step = self.clean[self.currentStep['number']]
-        if step['type'] == 'MashTun':
+        if step['target'] == 'MashTun':
             if self.app.mashTun.getTemperature() >= step['step_temp'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                 if step['kettle_recirculation_time'] > 0:
@@ -222,7 +208,7 @@ class Cleaning:
                     self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN)
                 self.app.mashTun.heatToTemperature(step['step_temp'])
 
-        elif step['type'] == 'BoilKettle':
+        elif step['target'] == 'BoilKettle':
             if self.app.boilKettle.getTemperature() >= step['step_temp'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
                 self.app.jobs.remove_job('timerHeating')
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
@@ -236,11 +222,11 @@ class Cleaning:
 
     def startStep(self, step):
         if self.currentStep['number'] > 0 and not self.clean[self.currentStep['number']-1]['dump']:
-            if step['type'] == 'BoilKettle' and self.clean[self.currentStep['number']-1]['type'] == 'MashTun':
+            if step['target'] == 'BoilKettle' and self.clean[self.currentStep['number']-1]['target'] == 'MashTun':
                 self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_KETTLE)
                 self.app.mashTun.stopHeating()
                 self.app.boilKettle.heatToTemperature(step['step_temp'])
-            elif step['type'] == 'MashTun' and self.clean[self.currentStep['number']-1]['type'] == 'BoilKettle':
+            elif step['target'] == 'MashTun' and self.clean[self.currentStep['number']-1]['target'] == 'BoilKettle':
                 self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN)
                 self.app.boilKettle.stopHeating()
                 self.app.mashTun.heatToTemperature(step['step_temp'])
@@ -261,11 +247,13 @@ class Cleaning:
 
             self.startStep(step)
 
-            if step['type'] == 'MashTun':
+            if step['target'] == 'MashTun':
+                self.currentStep['name'] = 'mash'
                 self.mashTunTimeSetPoint = step['kettle_recirculation_time']
                 if self.mashTunTimeProbe == 0:
                     self.mashTunTimeProbe = self.mashTunTimeSetPoint
-            elif step['type'] == 'BoilKettle':
+            elif step['target'] == 'BoilKettle':
+                self.currentStep['name'] = 'boil'
                 self.boilKettleTimeSetPoint = step['kettle_recirculation_time'] + step['chiller_recirculation_time']
                 if self.boilKettleTimeProbe == 0:
                     self.boilKettleTimeProbe = self.boilKettleTimeSetPoint
@@ -278,7 +266,7 @@ class Cleaning:
                 self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                 'The cleaning process has finished!.'
             })
-            self.app.logger.info('[END] %s', self.currentStep)
+            self.app.logger.info('[END-CLEAN] %s', self.currentStep)
 
 
     def isRunning(self):

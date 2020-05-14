@@ -334,7 +334,7 @@ class routes:
         if self.app.cooking.isRunning() or self.app.cleaning.isRunning():
             message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking or cleaning process is running'}
         else:
-            self.app.cleaning.startShort()
+            self.app.cleaning.startSanitization()
         return web.json_response(message)
 
     async def cleanFull(self, request):
@@ -342,7 +342,7 @@ class routes:
         if self.app.cooking.isRunning() or self.app.cleaning.isRunning():
             message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cooking or cleaning process is running'}
         else:
-            self.app.cleaning.startShort()
+            self.app.cleaning.startFull()
         return web.json_response(message)
 
 

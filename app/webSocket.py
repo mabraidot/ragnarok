@@ -57,9 +57,13 @@ class webSocket:
         data[self.app.mashTunValveInlet.name] = str(self.app.mashTunValveInlet.get())
 
         data[self.app.pump.name] = str(self.app.pump.get())
-        data['cookingStep'] = self.app.cooking.getCurrentStepName()
         data['cookingRunning'] = str(self.app.cooking.isRunning())
         data['cleaningRunning'] = str(self.app.cleaning.isRunning())
+        if self.app.cleaning.isRunning():
+            data['cookingStep'] = self.app.cleaning.getCurrentStepName()
+        else:
+            data['cookingStep'] = self.app.cooking.getCurrentStepName()
+
 
         for log in self.getLogs():
             key = list(log)[0]
