@@ -36,6 +36,12 @@ class Cleaning:
             'program': cleaningProgramsActions.SHORT
         }
 
+        if self.app.jobs.get_job('timerHeating') is not None:
+            self.app.jobs.remove_job('timerHeating')
+        if self.app.jobs.get_job('timerProcess') is not None:
+            self.app.jobs.remove_job('timerProcess')
+        
+
     def getCurrentStepName(self):
         return self.currentStep['name']
 
