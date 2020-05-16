@@ -184,7 +184,6 @@ class Cleaning:
             if self.boilKettleTimeProbe > 0:
                 self.boilKettleTimeProbe -= 1/60
                 if step['chiller_recirculation_time'] > 0 and self.boilKettleTimeProbe <= step['kettle_recirculation_time'] and (self.app.pump.getStatus() == waterActionsEnum.KETTLE_TO_CHILLER or self.app.pump.getStatus() == waterActionsEnum.FINISHED):
-                    self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
                     self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_KETTLE, time=step['kettle_recirculation_time'] * 60)
             else:
                 self.boilKettleTimeProbe = 0

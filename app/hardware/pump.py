@@ -335,7 +335,7 @@ class pump:
             raise TypeError("%s attribute must be set to an instance of %s" % (action, waterActionsEnum))
 
         self.app.logger.info('Pump current action: %s. Set new action: %s', self.getStatus(), action)
-        if ((self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE  or self.getStatus() == waterActionsEnum.MASHTUN_TO_MASHTUN) 
+        if ((self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE  or self.getStatus() == waterActionsEnum.MASHTUN_TO_MASHTUN  or self.getStatus() == waterActionsEnum.KETTLE_TO_CHILLER) 
             and action != waterActionsEnum.FINISHED):
             self.shutAllDown()
 
