@@ -111,7 +111,8 @@ class waterLevelProbe:
                 elif self.app.pump.get():
                     returnValveState = self.app.boilKettleValveReturn.get()
                     outletValveState = self.app.boilKettleValveOutlet.get()
-                    if returnValveState > 0:
+                    chillerValveState = self.app.chillerValveWort.get()
+                    if returnValveState > 0 or chillerValveState > 0:
                         self.value += flow
                     if outletValveState > 0:
                         if self.value > flow:

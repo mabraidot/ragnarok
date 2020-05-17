@@ -30,3 +30,5 @@ class valve:
                 self.app.servoKit.servo[self.channel].fraction = None
                 GPIO.output(self.enablePin, GPIO.HIGH)
                 sleep(0.2)
+            else:
+                sleep(1.4)

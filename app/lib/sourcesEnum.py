@@ -15,6 +15,7 @@ class sourcesEnum(Enum):
     DUMP                = auto()
 
 class waterActionsEnum(Enum):
+    BUSY                = auto()
     FINISHED            = auto()
     WATER_IN            = auto()
     WATER_IN_FILTERED   = auto()

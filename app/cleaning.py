@@ -170,14 +170,14 @@ class Cleaning:
             else:
                 self.mashTunTimeProbe = 0
                 self.app.mashTun.stopHeating()
-                if step['state'] != cookingStates.DUMPING:
-                    self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
-                if step['dump'] and step['state'] != cookingStates.DUMPING:
-                    step['state'] = cookingStates.DUMPING
-                    self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_DUMP)
+                if step['dump'] and (step['state'] != cookingStates.DUMPING or self.app.pump.getStatus() == waterActionsEnum.BUSY):
+                    state = self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_DUMP)
+                    if state != waterActionsEnum.BUSY:
+                        step['state'] = cookingStates.DUMPING
                 elif self.app.pump.getStatus() == waterActionsEnum.FINISHED:
-                    self.app.jobs.remove_job('timerProcess')
-                    self.clean[self.currentStep['number']]['state'] = cookingStates.FINISHED
+                    step['state'] = cookingStates.FINISHED
+                    if self.app.jobs.get_job('timerProcess') is not None:
+                        self.app.jobs.remove_job('timerProcess')
                     self.setNextStep()
 
         if step['target'] == 'BoilKettle':
@@ -188,14 +188,14 @@ class Cleaning:
             else:
                 self.boilKettleTimeProbe = 0
                 self.app.boilKettle.stopHeating()
-                if step['state'] != cookingStates.DUMPING:
-                    self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
                 if step['dump'] and step['state'] != cookingStates.DUMPING:
-                    step['state'] = cookingStates.DUMPING
-                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_DUMP)
+                    state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_DUMP)
+                    if state != waterActionsEnum.BUSY:
+                        step['state'] = cookingStates.DUMPING
                 elif self.app.pump.getStatus() == waterActionsEnum.FINISHED:
-                    self.app.jobs.remove_job('timerProcess')
-                    self.clean[self.currentStep['number']]['state'] = cookingStates.FINISHED
+                    step['state'] = cookingStates.FINISHED
+                    if self.app.jobs.get_job('timerProcess') is not None:
+                        self.app.jobs.remove_job('timerProcess')
                     self.setNextStep()
 
 
@@ -203,10 +203,10 @@ class Cleaning:
         step = self.clean[self.currentStep['number']]
         if step['target'] == 'MashTun':
             if self.app.mashTun.getTemperature() >= step['step_temp'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
-                self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                 if step['kettle_recirculation_time'] > 0:
                     self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_MASHTUN, time=step['kettle_recirculation_time'] * 60)
                 self.app.jobs.remove_job('timerHeating')
+                self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
             else:
                 if self.app.boilKettle.getWaterLevel() >= step['water_amount'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
                     self.app.boilKettle.stopHeating()
@@ -214,13 +214,16 @@ class Cleaning:
                 self.app.mashTun.heatToTemperature(step['step_temp'])
 
         elif step['target'] == 'BoilKettle':
-            if self.app.boilKettle.getTemperature() >= step['step_temp'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
-                self.app.jobs.remove_job('timerHeating')
-                self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
+            if self.app.boilKettle.getTemperature() >= step['step_temp'] and (self.app.pump.getStatus() == waterActionsEnum.FINISHED or self.app.pump.getStatus() == waterActionsEnum.BUSY):
                 if step['chiller_recirculation_time'] > 0:
-                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_CHILLER, time=step['kettle_recirculation_time'] * 60)
+                    state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_CHILLER, time=step['chiller_recirculation_time'] * 60)
                 elif step['kettle_recirculation_time'] > 0:
-                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_KETTLE, time=step['kettle_recirculation_time'] * 60)
+                    state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_KETTLE, time=step['kettle_recirculation_time'] * 60)
+                else:
+                    state = waterActionsEnum.FINISHED
+                if state != waterActionsEnum.BUSY:
+                    self.app.jobs.remove_job('timerHeating')
+                    self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
             else:
                 self.app.boilKettle.heatToTemperature(step['step_temp'])
 
@@ -249,9 +252,6 @@ class Cleaning:
         self.currentStep['number'] += 1
         if self.currentStep['number'] < len(self.clean):
             step = self.clean[self.currentStep['number']]
-
-            self.startStep(step)
-
             if step['target'] == 'MashTun':
                 self.currentStep['name'] = 'mash'
                 self.mashTunTimeSetPoint = step['kettle_recirculation_time']
@@ -264,6 +264,7 @@ class Cleaning:
                     self.boilKettleTimeProbe = self.boilKettleTimeSetPoint
             step['state'] = cookingStates.RUNNING
             self.app.logger.info('[STEP-CLEAN: '+str(self.currentStep['number'])+'] %s', step)
+            self.startStep(step)
 
         else:
             self.stop()

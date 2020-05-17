@@ -81,6 +81,7 @@ class Settings extends Component {
         });
       }
     });
+    this.props.history.push('/')
   }
 
   handleCleaningSanitizationClick() {
@@ -110,6 +111,7 @@ class Settings extends Component {
         });
       }
     });
+    this.props.history.push('/')
   }
 
   handleCleaningFullClick() {
@@ -139,6 +141,7 @@ class Settings extends Component {
         });
       }
     });
+    this.props.history.push('/')
   }
 
 
