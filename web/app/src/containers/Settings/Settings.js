@@ -55,6 +55,11 @@ class Settings extends Component {
   };
 
   handleCleaningShortClick() {
+
+    this.props.enqueueSnackbar('Setting up everything for the cleaning process. Please wait ...', { 
+      variant: 'success',
+    });
+
     ApiClient.cleanShort().then((resp) => {
       console.log('[API]', resp);
       if (resp.notice) {
@@ -85,6 +90,11 @@ class Settings extends Component {
   }
 
   handleCleaningSanitizationClick() {
+    
+    this.props.enqueueSnackbar('Setting up everything for the cleaning process. Please wait ...', { 
+      variant: 'success',
+    });
+
     ApiClient.cleanSanitization().then((resp) => {
       console.log('[API]', resp);
       if (resp.notice) {
@@ -115,6 +125,11 @@ class Settings extends Component {
   }
 
   handleCleaningFullClick() {
+    
+    this.props.enqueueSnackbar('Setting up everything for the cleaning process. Please wait ...', { 
+      variant: 'success',
+    });
+
     ApiClient.cleanFull().then((resp) => {
       console.log('[API]', resp);
       if (resp.notice) {
