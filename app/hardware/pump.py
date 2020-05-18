@@ -107,6 +107,7 @@ class pump:
 
     def shutAllDown(self):
         self.app.logger.info('[PUMP] Shutting all down')
+        self.setStatus(waterActionsEnum.BUSY)
         self.set('false')
         self.app.boilKettleValveInlet.set(0)
         self.app.chillerValveWater.set(0)
@@ -541,6 +542,8 @@ class pump:
 
         if action == waterActionsEnum.FINISHED:
             self.app.logger.info('[PUMP] Shutting all down in a new thread')
+            self.setMashTunRecirculation(False)
+            self.setBoilKettleRecirculation(False)
             task = threading.Thread(target=self.shutAllDown)
             task.start()
             return action

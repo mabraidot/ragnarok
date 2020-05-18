@@ -38,11 +38,45 @@ class waterLevelProbe:
                 task.start()
 
             else:
+                self.app.jobs.add_job(self.waterDaemon, 'interval', seconds=0.5, id='waterDaemon'+self.name, replace_existing=True)
                 tare = threading.Thread(target=self.runTare)
                 tare.start()
 
         except Exception as e:
             self.app.logger.exception(e)
+
+
+    def waterDaemon(self):
+        if self.config.get('ENVIRONMENT') == 'development':
+            flow = 100
+            if self.name == 'MashTunWaterLevelProbe':
+                if self.app.pump.get():
+                    inletValveState = self.app.mashTunValveInlet.get()
+                    outletValveState = self.app.mashTunValveOutlet.get()
+                    if inletValveState > 0:
+                        self.value += flow
+                    if outletValveState > 0:
+                        if self.value > flow:
+                            self.value -= flow
+                        else:
+                            self.value = 0
+
+            else:
+                inletValveState = self.app.boilKettleValveInlet.get()
+                waterValveState = self.app.boilKettleValveWater.get()
+                if inletValveState > 0 or waterValveState > 0:
+                    self.value += flow
+                elif self.app.pump.get():
+                    returnValveState = self.app.boilKettleValveReturn.get()
+                    outletValveState = self.app.boilKettleValveOutlet.get()
+                    chillerValveState = self.app.chillerValveWort.get()
+                    if returnValveState > 0 or chillerValveState > 0:
+                        self.value += flow
+                    if outletValveState > 0:
+                        if self.value > flow:
+                            self.value -= flow
+                        else:
+                            self.value = 0
 
 
     def tare(self):
@@ -89,36 +123,6 @@ class waterLevelProbe:
 
 
     def get(self):
-        if self.config.get('ENVIRONMENT') == 'development':
-            flow = 100
-            if self.name == 'MashTunWaterLevelProbe':
-                if self.app.pump.get():
-                    inletValveState = self.app.mashTunValveInlet.get()
-                    outletValveState = self.app.mashTunValveOutlet.get()
-                    if inletValveState > 0:
-                        self.value += flow
-                    if outletValveState > 0:
-                        if self.value > flow:
-                            self.value -= flow
-                        else:
-                            self.value = 0
-
-            else:
-                inletValveState = self.app.boilKettleValveInlet.get()
-                waterValveState = self.app.boilKettleValveWater.get()
-                if inletValveState > 0 or waterValveState > 0:
-                    self.value += flow
-                elif self.app.pump.get():
-                    returnValveState = self.app.boilKettleValveReturn.get()
-                    outletValveState = self.app.boilKettleValveOutlet.get()
-                    chillerValveState = self.app.chillerValveWort.get()
-                    if returnValveState > 0 or chillerValveState > 0:
-                        self.value += flow
-                    if outletValveState > 0:
-                        if self.value > flow:
-                            self.value -= flow
-                        else:
-                            self.value = 0
         currentLevel = ( self.value / 1000 ) / self.config.getfloat('ONE_LITER_WEIGHT')
         if self.name == 'MashTunWaterLevelProbe':
             currentTemperature = self.app.mashTun.getTemperature()

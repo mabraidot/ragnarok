@@ -260,14 +260,14 @@ class Cooking:
                         self.mashTunTimeProbe < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME') or
                         self.mash[self.currentStep['number']]['step_time'] < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')
                     ):
-                        self.mash[self.currentStep['number'] + 1]['state'] == cookingStates.PREHEATING
+                        # self.mash[self.currentStep['number'] + 1]['state'] == cookingStates.PREHEATING
                         return True
             elif self.sparge['state'] == cookingStates.PENDING:
                 if (
                     self.mashTunTimeProbe < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME') or
                     self.mash[self.currentStep['number']]['step_time'] < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')
                 ):
-                    self.sparge['state'] = cookingStates.PREHEATING
+                    # self.sparge['state'] = cookingStates.PREHEATING
                     return True
         return False
 
@@ -390,6 +390,8 @@ class Cooking:
                     self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
                     if self.app.jobs.get_job('timerHeating') is not None:
                         self.app.jobs.remove_job('timerHeating')
+                else:
+                    self.app.logger.info('[SPARGE ATTEMPT] %s', state)
 
 
 
@@ -508,8 +510,6 @@ class Cooking:
 
         self.app.mashTun.stopHeating()
         self.app.boilKettle.stopHeating()
-        self.app.pump.setMashTunRecirculation(False)
-        self.app.pump.setBoilKettleRecirculation(False)
         self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
         self.initialize()
 

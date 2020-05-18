@@ -59,10 +59,10 @@ try:
 
     # Hardware
     app.power = Power(app)
+    app.pump = pump(app, config, 'Pump')
     app.mashTun = kettle(app, config['MASH_TUN_PINS'], 'MashTun')
     app.boilKettle = kettle(app, config['BOIL_KETTLE_PINS'], 'BoilKettle')
 
-    app.pump = pump(app, config, 'Pump')
 
     # Main cooking process
     app.cooking = Cooking(app, config)
