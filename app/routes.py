@@ -91,12 +91,11 @@ class routes:
 
     async def cook(self, request):
         recipe = request.match_info.get('recipe', 0)
-
         message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cooking process started'}
         if self.app.cleaning.isRunning():
             message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cleaning process is running'}
         else:
-            self.app.cooking.start(recipe)
+            self.app.cooking.start(int(recipe))
 
         return web.json_response(message)
 
@@ -127,7 +126,7 @@ class routes:
 
     async def cookUnfinishedResume(self, request):
         recipe = request.match_info.get('recipe', 0)
-        self.app.cooking.resume(recipe)
+        self.app.cooking.resume(int(recipe))
 
         return web.json_response({self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'The unfinished cooking process was resumed'})
 
@@ -157,7 +156,7 @@ class routes:
         self.app.recipes = Recipes(self.app, self.config)
         recipe = request.match_info.get('recipe', 0)
         response = {self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'Recipe '+str(recipe)+' was successfully deleted'}
-        result = self.app.recipes.deleteRecipe(recipe)
+        result = self.app.recipes.deleteRecipe(int(recipe))
         if not result:
             response = {self.config.get('DEFAULT', 'LOG_ERROR_LABEL'): 'There was an error deleting the recipe'}
         return web.json_response(response)

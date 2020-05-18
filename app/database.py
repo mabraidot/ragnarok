@@ -128,7 +128,7 @@ class Database:
     def getRecipe(self, id):
         cursor = self.conn.cursor()
         query = "SELECT *, DATETIME(cooked, 'localtime'), DATETIME(created, 'localtime') FROM recipes WHERE id = ?"
-        cursor.execute(query, id)
+        cursor.execute(query, (id,))
         row = cursor.fetchone()
 
         if row is not None:
@@ -156,7 +156,7 @@ class Database:
     def deleteRecipe(self, recipeId):
         cursor = self.conn.cursor()
         query = "DELETE FROM recipes WHERE id = ?"
-        cursor.execute(query, recipeId)
+        cursor.execute(query, (recipeId,))
         self.conn.commit()
 
 
