@@ -114,6 +114,11 @@ class Recipes extends Component {
 
     description += '<h3>MASH</h3>';
     description += `<strong>${recipe.RECIPES.RECIPE.MASH.NAME}</strong><br />`;
+    if (typeof recipe.RECIPES.RECIPE.MASH.MASH_STEPS.MASH_STEP.length === 'undefined') {
+      const mashObj = recipe.RECIPES.RECIPE.MASH.MASH_STEPS.MASH_STEP;
+      recipe.RECIPES.RECIPE.MASH.MASH_STEPS.MASH_STEP = [];
+      recipe.RECIPES.RECIPE.MASH.MASH_STEPS.MASH_STEP.push(mashObj);
+    }
     for (let i in recipe.RECIPES.RECIPE.MASH.MASH_STEPS.MASH_STEP) {
       item = recipe.RECIPES.RECIPE.MASH.MASH_STEPS.MASH_STEP[i];
       description += `${(parseInt(i)+1)}). ${item.NAME} ${item.DISPLAY_STEP_TEMP}: <strong>${item.DESCRIPTION}</strong><br />`;
