@@ -149,6 +149,8 @@ class Cooking:
 
             self.currentStep['recipe_id'] = int(recipeId)
 
+            if not isinstance(recipe["beer_json"]["RECIPES"]["RECIPE"]["MASH"]["MASH_STEPS"]["MASH_STEP"], list):
+                recipe["beer_json"]["RECIPES"]["RECIPE"]["MASH"]["MASH_STEPS"]["MASH_STEP"] = [recipe["beer_json"]["RECIPES"]["RECIPE"]["MASH"]["MASH_STEPS"]["MASH_STEP"]]
             mashSteps = recipe["beer_json"]["RECIPES"]["RECIPE"]["MASH"]["MASH_STEPS"]["MASH_STEP"]
             for step in mashSteps:
                 self.mash.append({
@@ -277,7 +279,7 @@ class Cooking:
                 self.app.logger.info('[RACKING MASHTUN_TO_KETTLE] %s', state)
                 if state != waterActionsEnum.BUSY:
                     self.boil['state'] = cookingStates.RACKING
-                    self.app.logger.info('[BOIL] %s', self.boil)
+                    self.app.logger.info('[BOIL] RACKING %s', self.boil)
 
 
     def timerProcess(self):
@@ -305,6 +307,7 @@ class Cooking:
             else:
                 self.boilKettleTimeProbe = 0
                 self.app.pump.setBoilKettleRecirculation(False)
+                self.app.pump.moveWater(waterActionsEnum.FINISHED)
                 self.boil['state'] = cookingStates.FINISHED
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'paused'

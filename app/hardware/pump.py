@@ -57,7 +57,7 @@ class pump:
             GPIO.setup(self.config.getint('GENERAL_PINS','SERVO_ENABLE'), GPIO.OUT)
             GPIO.setwarnings(False)
             GPIO.output(self.config.getint('GENERAL_PINS','SERVO_ENABLE'), GPIO.HIGH)
-        
+
         self.app.outletValveDump = valve(self.app, self.config, 0, 'OutletValveDump')
         self.app.chillerValveWort = valve(self.app, self.config, 1, 'ChillerValveWort')
         self.app.chillerValveWater = valve(self.app, self.config, 2, 'ChillerValveWater')
@@ -133,17 +133,22 @@ class pump:
 
     def valvesRunWaterIn(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
+            currentAction = self.getStatus()
+            self.setStatus(waterActionsEnum.BUSY)
             if self.mashTunRecirculation:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if self.boilKettleRecirculation:
                 self.valvesRunKettleToKettle(state=valveActions.CLOSE, silent=True)
             self.app.boilKettleValveInlet.set(60)
+            self.setStatus(currentAction)
         else:
             self.app.boilKettleValveInlet.set(0)
             self.setStatus(waterActionsEnum.FINISHED)
 
     def valvesRunMashTunToKettle(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
+            currentAction = self.getStatus()
+            self.setStatus(waterActionsEnum.BUSY)
             if self.mashTunRecirculation:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if self.boilKettleRecirculation:
@@ -156,6 +161,7 @@ class pump:
                 seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                 id='timerDelayedPump',
                 replace_existing=True)
+            self.setStatus(currentAction)
         else:
             self.set('false')
             if self.app.jobs.get_job('timerDelayedPump') is not None:
@@ -166,6 +172,8 @@ class pump:
 
     def valvesRunKettleToMashTun(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
+            currentAction = self.getStatus()
+            self.setStatus(waterActionsEnum.BUSY)
             if self.mashTunRecirculation:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if self.boilKettleRecirculation:
@@ -178,6 +186,7 @@ class pump:
                 seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                 id='timerDelayedPump',
                 replace_existing=True)
+            self.setStatus(currentAction)
         else:
             self.set('false')
             if self.app.jobs.get_job('timerDelayedPump') is not None:
@@ -188,6 +197,8 @@ class pump:
 
     def valvesRunMashTunToMashTun(self, state = valveActions.CLOSE, silent = False):
         if state == valveActions.OPEN:
+            currentAction = self.getStatus()
+            self.setStatus(waterActionsEnum.BUSY)
             if self.boilKettleRecirculation:
                 self.valvesRunKettleToKettle(state=valveActions.CLOSE, silent=True)
             if silent:
@@ -200,6 +211,7 @@ class pump:
                 seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                 id='timerDelayedPump',
                 replace_existing=True)
+            self.setStatus(currentAction)
         else:
             if silent:
                 self.recirculationStatus = valveActions.CLOSE
@@ -213,6 +225,8 @@ class pump:
 
     def valvesRunKettleToKettle(self, state = valveActions.CLOSE, silent = False):
         if state == valveActions.OPEN:
+            currentAction = self.getStatus()
+            self.setStatus(waterActionsEnum.BUSY)
             if self.mashTunRecirculation:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if silent:
@@ -225,6 +239,7 @@ class pump:
                 seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                 id='timerDelayedPump',
                 replace_existing=True)
+            self.setStatus(currentAction)
         else:
             if silent:
                 self.recirculationStatus = valveActions.CLOSE
@@ -238,6 +253,8 @@ class pump:
 
     def valvesRunKettleToChiller(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
+            currentAction = self.getStatus()
+            self.setStatus(waterActionsEnum.BUSY)
             if self.mashTunRecirculation:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if self.boilKettleRecirculation:
@@ -250,6 +267,7 @@ class pump:
                 seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                 id='timerDelayedPump',
                 replace_existing=True)
+            self.setStatus(currentAction)
         else:
             self.set('false')
             if self.app.jobs.get_job('timerDelayedPump') is not None:
@@ -260,6 +278,8 @@ class pump:
 
     def valvesRunChill(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
+            currentAction = self.getStatus()
+            self.setStatus(waterActionsEnum.BUSY)
             if self.mashTunRecirculation:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if self.boilKettleRecirculation:
@@ -273,6 +293,7 @@ class pump:
                 seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                 id='timerDelayedPump',
                 replace_existing=True)
+            self.setStatus(currentAction)
         else:
             self.set('false')
             if self.app.jobs.get_job('timerDelayedPump') is not None:
@@ -284,6 +305,8 @@ class pump:
 
     def valvesRunKettleToDump(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
+            currentAction = self.getStatus()
+            self.setStatus(waterActionsEnum.BUSY)
             if self.mashTunRecirculation:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if self.boilKettleRecirculation:
@@ -296,6 +319,7 @@ class pump:
                 seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                 id='timerDelayedPump',
                 replace_existing=True)
+            self.setStatus(currentAction)
         else:
             self.set('false')
             if self.app.jobs.get_job('timerDelayedPump') is not None:
@@ -306,6 +330,8 @@ class pump:
 
     def valvesRunMashTunToDump(self, state = valveActions.CLOSE):
         if state == valveActions.OPEN:
+            currentAction = self.getStatus()
+            self.setStatus(waterActionsEnum.BUSY)
             if self.mashTunRecirculation:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if self.boilKettleRecirculation:
@@ -318,6 +344,7 @@ class pump:
                 seconds=self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'), 
                 id='timerDelayedPump',
                 replace_existing=True)
+            self.setStatus(currentAction)
         else:
             self.set('false')
             if self.app.jobs.get_job('timerDelayedPump') is not None:
