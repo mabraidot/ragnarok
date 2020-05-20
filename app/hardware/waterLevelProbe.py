@@ -124,13 +124,13 @@ class waterLevelProbe:
 
     def get(self):
         currentLevel = ( self.value / 1000 ) / self.config.getfloat('ONE_LITER_WEIGHT')
-        if self.name == 'MashTunWaterLevelProbe':
-            currentTemperature = self.app.mashTun.getTemperature()
-        else:
-            currentTemperature = self.app.boilKettle.getTemperature()
+        # if self.name == 'MashTunWaterLevelProbe':
+        #     currentTemperature = self.app.mashTun.getTemperature()
+        # else:
+        #     currentTemperature = self.app.boilKettle.getTemperature()
 
-        if currentTemperature > 25 and self.config.get('ENVIRONMENT') == 'production':
-            currentLevel -= (0.8 / 50) * (currentTemperature - 25)
+        # if currentTemperature > 25 and self.config.get('ENVIRONMENT') == 'production':
+        #     currentLevel -= (0.8 / 50) * (currentTemperature - 25)
         return currentLevel
 
 

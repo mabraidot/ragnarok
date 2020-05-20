@@ -285,8 +285,8 @@ class pump:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if self.boilKettleRecirculation:
                 self.valvesRunKettleToKettle(state=valveActions.CLOSE, silent=True)
-            self.app.chillerValveWort.set(40)
             self.app.boilKettleValveOutlet.set(100)
+            self.app.chillerValveWort.set(40)
             self.app.chillerValveWater.set(100)
             self.app.jobs.add_job(
                 self.setDelayedPumpState, 
@@ -299,8 +299,8 @@ class pump:
             self.set('false')
             if self.app.jobs.get_job('timerDelayedPump') is not None:
                 self.app.jobs.remove_job('timerDelayedPump')
-            self.app.chillerValveWort.set(0)
             self.app.boilKettleValveOutlet.set(0)
+            self.app.chillerValveWort.set(0)
             self.app.chillerValveWater.set(0)
             self.setStatus(waterActionsEnum.FINISHED)
 
