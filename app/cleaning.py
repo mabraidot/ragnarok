@@ -68,18 +68,18 @@ class Cleaning:
                 'state': cookingStates.PENDING,
                 'target': 'BoilKettle',
                 'water_amount': 4,
-                'kettle_recirculation_time': 1,
-                'chiller_recirculation_time': 1,
-                'step_temp': 50,
+                'kettle_recirculation_time': 0.5,
+                'chiller_recirculation_time': 0.5,
+                'step_temp': 30,
                 'dump': True,
             })
             self.clean.append({
                 'state': cookingStates.PENDING,
                 'target': 'MashTun',
                 'water_amount': 4,
-                'kettle_recirculation_time': 1,
+                'kettle_recirculation_time': 0.5,
                 'chiller_recirculation_time': 0,
-                'step_temp': 50,
+                'step_temp': 30,
                 'dump': True,
             })
 
@@ -183,8 +183,8 @@ class Cleaning:
         if step['target'] == 'BoilKettle':
             if self.boilKettleTimeProbe > 0:
                 self.boilKettleTimeProbe -= 1/60
-                if step['chiller_recirculation_time'] > 0 and self.boilKettleTimeProbe <= step['kettle_recirculation_time'] and (self.app.pump.getStatus() == waterActionsEnum.KETTLE_TO_CHILLER or self.app.pump.getStatus() == waterActionsEnum.FINISHED):
-                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_KETTLE, time=step['kettle_recirculation_time'] * 60)
+                if step['kettle_recirculation_time'] > 0 and self.boilKettleTimeProbe <= step['chiller_recirculation_time'] and (self.app.pump.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE or self.app.pump.getStatus() == waterActionsEnum.FINISHED):
+                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_CHILLER, time=step['chiller_recirculation_time'] * 60)
             else:
                 self.boilKettleTimeProbe = 0
                 self.app.boilKettle.stopHeating()
@@ -215,10 +215,10 @@ class Cleaning:
 
         elif step['target'] == 'BoilKettle':
             if self.app.boilKettle.getTemperature() >= step['step_temp'] and (self.app.pump.getStatus() == waterActionsEnum.FINISHED or self.app.pump.getStatus() == waterActionsEnum.BUSY):
-                if step['chiller_recirculation_time'] > 0:
-                    state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_CHILLER, time=step['chiller_recirculation_time'] * 60)
-                elif step['kettle_recirculation_time'] > 0:
+                if step['kettle_recirculation_time'] > 0:
                     state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_KETTLE, time=step['kettle_recirculation_time'] * 60)
+                elif step['chiller_recirculation_time'] > 0:
+                    state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_CHILLER, time=step['chiller_recirculation_time'] * 60)
                 else:
                     state = waterActionsEnum.FINISHED
                 if state != waterActionsEnum.BUSY:
