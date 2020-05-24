@@ -387,6 +387,7 @@ class Cooking:
                 else:
                     state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN, amount=step['infuse_amount'])
                 if state != waterActionsEnum.BUSY:
+                    self.app.mashTun.stopHeating()
                     self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
                     if self.app.jobs.get_job('timerHeating') is not None:
                         self.app.jobs.remove_job('timerHeating')

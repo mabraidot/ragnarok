@@ -48,7 +48,7 @@ class waterLevelProbe:
 
     def waterDaemon(self):
         if self.config.get('ENVIRONMENT') == 'development':
-            flow = 100
+            flow = 500
             if self.name == 'MashTunWaterLevelProbe':
                 if self.app.pump.get():
                     inletValveState = self.app.mashTunValveInlet.get()
