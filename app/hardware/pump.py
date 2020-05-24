@@ -567,7 +567,7 @@ class pump:
             # Fill in the kettle with filtered or non-filtered tap water
             if action == waterActionsEnum.WATER_IN_FILTERED or action == waterActionsEnum.WATER_IN:
                 if amount > 0:
-                    self.app.boilKettle.setWaterLevel(max(amount, self.config.getfloat('DEFAULT', 'SAFE_WATER_LEVEL_FOR_HEATERS')))
+                    self.app.boilKettle.setWaterLevel(max(amount + self.app.boilKettle.getWaterLevel(), self.config.getfloat('DEFAULT', 'SAFE_WATER_LEVEL_FOR_HEATERS')))
                     if self.app.boilKettle.getWaterLevel() < self.app.boilKettle.getWaterLevelSetPoint():
                         task = threading.Thread(target=self.valvesRunWaterIn, kwargs=dict(state=valveActions.OPEN))
                         task.start()

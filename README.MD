@@ -26,7 +26,7 @@ The Python API is executed as follows:
 ~~~
 or for production:
 ~~~
-    source ./venv/Scripts/activate
+    source ./venv/bin/activate
     python main.py
 ~~~
 The server will be listening on http://localhost:8000/
@@ -144,6 +144,8 @@ Reference (https://github.com/timofurrer/w1thermsensor)
 
 Config content
 ==============
+Create the file /home/pi/Documents/ragnarok/app/config/config.cfg and place the next content,
+then comment/uncomment appropriate section and adjust settings according environment:
 ~~~
 [DEFAULT]
 ### PRODUCTION
@@ -154,9 +156,9 @@ Config content
 # RECIRCULATION_TIME=60
 # NEXT_STEP_PRE_HEATING_TIME=15
 # RACK_MASHTUN_REST_TIME=5
-# BOIL_TEMPERATURE=105
+# BOIL_TEMPERATURE=115
 # SPARGE_CYCLES_COUNT=6
-# SPARGE_INFUSE_AMOUNT=4
+# SPARGE_INFUSE_AMOUNT=3
 # COOL_TIME=30
 # PUMP_PRIMING_TIME=6
 ### DEVELOPMENT
