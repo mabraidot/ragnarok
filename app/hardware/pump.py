@@ -154,7 +154,10 @@ class pump:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if self.boilKettleRecirculation:
                 self.valvesRunKettleToKettle(state=valveActions.CLOSE, silent=True)
-            self.app.boilKettleValveReturn.set(80)
+            if self.app.cleaning.isRunning():
+                self.app.boilKettleValveReturn.set(100)
+            else:
+                self.app.boilKettleValveReturn.set(70)
             self.app.mashTunValveOutlet.set(100)
             self.app.jobs.add_job(
                 self.setDelayedPumpState, 
@@ -179,7 +182,10 @@ class pump:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if self.boilKettleRecirculation:
                 self.valvesRunKettleToKettle(state=valveActions.CLOSE, silent=True)
-            self.app.mashTunValveInlet.set(80)
+            if self.app.cleaning.isRunning():
+                self.app.mashTunValveInlet.set(100)
+            else:
+                self.app.mashTunValveInlet.set(70)
             self.app.boilKettleValveOutlet.set(100)
             self.app.jobs.add_job(
                 self.setDelayedPumpState, 
@@ -204,7 +210,10 @@ class pump:
                 self.valvesRunKettleToKettle(state=valveActions.CLOSE, silent=True)
             if silent:
                 self.recirculationStatus = valveActions.OPEN
-            self.app.mashTunValveInlet.set(70)
+            if self.app.cleaning.isRunning():
+                self.app.mashTunValveInlet.set(100)
+            else:
+                self.app.mashTunValveInlet.set(50)
             self.app.mashTunValveOutlet.set(100)
             self.app.jobs.add_job(
                 self.setDelayedPumpState, 
@@ -232,7 +241,10 @@ class pump:
                 self.valvesRunMashTunToMashTun(state=valveActions.CLOSE, silent=True)
             if silent:
                 self.recirculationStatus = valveActions.OPEN
-            self.app.boilKettleValveReturn.set(70)
+            if self.app.cleaning.isRunning():
+                self.app.boilKettleValveReturn.set(100)
+            else:
+                self.app.boilKettleValveReturn.set(50)
             self.app.boilKettleValveOutlet.set(100)
             self.app.jobs.add_job(
                 self.setDelayedPumpState, 
