@@ -110,18 +110,18 @@ class Cleaning:
                 'state': cookingStates.PENDING,
                 'target': 'BoilKettle',
                 'water_amount': 4,
-                'kettle_recirculation_time': 1,
-                'chiller_recirculation_time': 1,
-                'step_temp': 50,
+                'kettle_recirculation_time': 0.5,
+                'chiller_recirculation_time': 0.5,
+                'step_temp': 20,
                 'dump': True,
             })
             self.clean.append({
                 'state': cookingStates.PENDING,
                 'target': 'MashTun',
                 'water_amount': 4,
-                'kettle_recirculation_time': 1,
+                'kettle_recirculation_time': 0.5,
                 'chiller_recirculation_time': 0,
-                'step_temp': 50,
+                'step_temp': 20,
                 'dump': True,
             })
             self.clean.append({
@@ -148,7 +148,7 @@ class Cleaning:
                 'water_amount': 5,
                 'kettle_recirculation_time': 2,
                 'chiller_recirculation_time': 2,
-                'step_temp': 60,
+                'step_temp': 50,
                 'dump': False,
             })
             self.clean.append({
@@ -157,7 +157,7 @@ class Cleaning:
                 'water_amount': 5,
                 'kettle_recirculation_time': 2,
                 'chiller_recirculation_time': 0,
-                'step_temp': 60,
+                'step_temp': 50,
                 'dump': True,
             })
 
