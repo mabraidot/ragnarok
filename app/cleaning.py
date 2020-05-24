@@ -70,7 +70,7 @@ class Cleaning:
                 'water_amount': 4,
                 'kettle_recirculation_time': 0.5,
                 'chiller_recirculation_time': 0.5,
-                'step_temp': 30,
+                'step_temp': 20,
                 'dump': True,
             })
             self.clean.append({
@@ -79,7 +79,7 @@ class Cleaning:
                 'water_amount': 4,
                 'kettle_recirculation_time': 0.5,
                 'chiller_recirculation_time': 0,
-                'step_temp': 30,
+                'step_temp': 20,
                 'dump': True,
             })
 
@@ -183,8 +183,8 @@ class Cleaning:
         if step['target'] == 'BoilKettle':
             if self.boilKettleTimeProbe > 0:
                 self.boilKettleTimeProbe -= 1/60
-                if step['kettle_recirculation_time'] > 0 and self.boilKettleTimeProbe <= step['chiller_recirculation_time'] and (self.app.pump.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE or self.app.pump.getStatus() == waterActionsEnum.FINISHED):
-                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_CHILLER, time=step['chiller_recirculation_time'] * 60)
+                if step['kettle_recirculation_time'] > 0 and self.boilKettleTimeProbe <= (step['chiller_recirculation_time'] + (self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME') / 60)) and (self.app.pump.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE or self.app.pump.getStatus() == waterActionsEnum.FINISHED):
+                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_CHILLER, time=(step['chiller_recirculation_time'] * 60) + self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'))
             else:
                 self.boilKettleTimeProbe = 0
                 self.app.boilKettle.stopHeating()
@@ -204,7 +204,7 @@ class Cleaning:
         if step['target'] == 'MashTun':
             if self.app.mashTun.getTemperature() >= step['step_temp'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
                 if step['kettle_recirculation_time'] > 0:
-                    self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_MASHTUN, time=step['kettle_recirculation_time'] * 60)
+                    self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_MASHTUN, time=(step['kettle_recirculation_time'] * 60) + self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'))
                 self.app.jobs.remove_job('timerHeating')
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
             else:
@@ -216,9 +216,9 @@ class Cleaning:
         elif step['target'] == 'BoilKettle':
             if self.app.boilKettle.getTemperature() >= step['step_temp'] and (self.app.pump.getStatus() == waterActionsEnum.FINISHED or self.app.pump.getStatus() == waterActionsEnum.BUSY):
                 if step['kettle_recirculation_time'] > 0:
-                    state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_KETTLE, time=step['kettle_recirculation_time'] * 60)
+                    state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_KETTLE, time=(step['kettle_recirculation_time'] * 60) + self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'))
                 elif step['chiller_recirculation_time'] > 0:
-                    state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_CHILLER, time=step['chiller_recirculation_time'] * 60)
+                    state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_CHILLER, time=(step['chiller_recirculation_time'] * 60) + self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'))
                 else:
                     state = waterActionsEnum.FINISHED
                 if state != waterActionsEnum.BUSY:
@@ -254,12 +254,12 @@ class Cleaning:
             step = self.clean[self.currentStep['number']]
             if step['target'] == 'MashTun':
                 self.currentStep['name'] = 'mash'
-                self.mashTunTimeSetPoint = step['kettle_recirculation_time']
+                self.mashTunTimeSetPoint = step['kettle_recirculation_time'] + (self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME') / 60)
                 if self.mashTunTimeProbe == 0:
                     self.mashTunTimeProbe = self.mashTunTimeSetPoint
             elif step['target'] == 'BoilKettle':
                 self.currentStep['name'] = 'boil'
-                self.boilKettleTimeSetPoint = step['kettle_recirculation_time'] + step['chiller_recirculation_time']
+                self.boilKettleTimeSetPoint = step['kettle_recirculation_time'] + step['chiller_recirculation_time'] + ((self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME') * 2) / 60)
                 if self.boilKettleTimeProbe == 0:
                     self.boilKettleTimeProbe = self.boilKettleTimeSetPoint
             step['state'] = cookingStates.RUNNING
