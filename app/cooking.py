@@ -93,6 +93,7 @@ class Cooking:
 
     def initialize(self):
         self.running = False
+        self.paused = False
 
         self.mashTunTimeSetPoint = 0.0
         self.mashTunTimeProbe = 0.0
@@ -285,15 +286,16 @@ class Cooking:
     def timerProcess(self):
         if self.currentStep['name'] == 'mash':
             if self.mashTunTimeProbe > 0:
-                self.mashTunTimeProbe -= 1/60
-                self.currentStep['mash_total_time'] -= 1/60
-                if self.mayNextStepStartPreHeating():
-                    if self.currentStep['number'] + 1 < len(self.mash):
-                        step = self.mash[self.currentStep['number'] + 1]
-                    else:
-                        step = self.sparge
-                    self.startStep(step, True)
-                self.notifyAdjuncts()
+                if not self.isPaused():
+                    self.mashTunTimeProbe -= 1/60
+                    self.currentStep['mash_total_time'] -= 1/60
+                    if self.mayNextStepStartPreHeating():
+                        if self.currentStep['number'] + 1 < len(self.mash):
+                            step = self.mash[self.currentStep['number'] + 1]
+                        else:
+                            step = self.sparge
+                        self.startStep(step, True)
+                    self.notifyAdjuncts()
             else:
                 self.mashTunTimeProbe = 0
                 self.mash[self.currentStep['number']]['state'] = cookingStates.FINISHED
@@ -301,9 +303,10 @@ class Cooking:
                 self.setNextStep()
         elif self.currentStep['name'] == 'boil':
             if self.boilKettleTimeProbe > 0:
-                self.boilKettleTimeProbe -= 1/60
-                self.notifyAdjuncts()
-                self.rackMushTunRest()
+                if not self.isPaused():
+                    self.boilKettleTimeProbe -= 1/60
+                    self.notifyAdjuncts()
+                    self.rackMushTunRest()
             else:
                 self.boilKettleTimeProbe = 0
                 self.app.pump.setBoilKettleRecirculation(False)
@@ -315,7 +318,8 @@ class Cooking:
                 self.app.jobs.remove_job('timerProcess')
         elif self.currentStep['name'] == 'cool':
             if self.boilKettleTimeProbe > 0:
-                self.boilKettleTimeProbe -= 1/60
+                if not self.isPaused():
+                    self.boilKettleTimeProbe -= 1/60
             if self.app.boilKettle.getTemperature() < self.cool['step_temp'] or self.boilKettleTimeProbe <= 0:
                 self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
                 self.cool['state'] = cookingStates.FINISHED
@@ -502,6 +506,18 @@ class Cooking:
 
     def isRunning(self):
         return self.running
+
+
+    def isPaused(self):
+        return self.paused
+
+
+    def pause(self):
+        self.paused = not self.paused
+        if self.paused:
+            self.app.logger.info('[COOKING PAUSED]')
+        else:
+            self.app.logger.info('[COOKING RESUMED]')
 
 
     def stop(self):

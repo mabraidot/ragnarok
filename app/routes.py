@@ -13,6 +13,7 @@ class routes:
             web.get('/', self.home),
 
             web.get('/cook/resume', self.cookResume),
+            web.get('/cook/pause', self.cookPause),
             web.get('/cook/stop', self.cookStop),
             web.get('/cook/delete', self.cookUnfinishedDelete),
             web.get('/cook/{recipe}/resume', self.cookUnfinishedResume),
@@ -22,6 +23,7 @@ class routes:
             web.get('/clean/sanitization', self.cleanSanitization),
             web.get('/clean/full', self.cleanFull),
             web.get('/clean/stop', self.cleanStop),
+            web.get('/clean/pause', self.cleanPause),
 
             web.post('/recipes/import', self.importRecipe),
             web.post('/recipes/list', self.listRecipes),
@@ -106,6 +108,19 @@ class routes:
             message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'A cleaning process is running'}
         else:
             self.app.cooking.setNextStep()
+
+        return web.json_response(message)
+
+
+    async def cookPause(self, request):
+        if not self.app.cooking.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'Cooking process is not running'}
+        else:
+            if self.app.cooking.isPaused():
+                message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cooking process was resumed'}
+            else:
+                message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cooking process was paused'}
+            self.app.cooking.pause()
 
         return web.json_response(message)
 
@@ -349,3 +364,15 @@ class routes:
         self.app.cleaning.stop()
 
         return web.json_response({self.config.get('DEFAULT', 'LOG_NOTICE_LABEL'): 'The cleaning process was stopped'})
+
+    async def cleanPause(self, request):
+        if not self.app.cleaning.isRunning():
+            message = {self.config['DEFAULT']['LOG_ERROR_LABEL']: 'Cleaning process is not running'}
+        else:
+            if self.app.cleaning.isPaused():
+                message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cleaning process was resumed'}
+            else:
+                message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The cleaning process was paused'}
+            self.app.cleaning.pause()
+
+        return web.json_response(message)

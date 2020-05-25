@@ -58,10 +58,16 @@ class webSocket:
 
         data[self.app.pump.name] = str(self.app.pump.get())
         data['cookingRunning'] = str(self.app.cooking.isRunning())
+        if self.app.cooking.isRunning():
+            data['cookingPaused'] = str(self.app.cooking.isPaused())
+        else:
+            data['cookingPaused'] = str(False)
         data['cleaningRunning'] = str(self.app.cleaning.isRunning())
         if self.app.cleaning.isRunning():
+            data['cleaningPaused'] = str(self.app.cleaning.isPaused())
             data['cookingStep'] = self.app.cleaning.getCurrentStepName()
         else:
+            data['cleaningPaused'] = str(False)
             data['cookingStep'] = self.app.cooking.getCurrentStepName()
 
 

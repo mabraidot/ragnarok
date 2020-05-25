@@ -18,9 +18,11 @@ class Cleaning:
         self.config = config
         self.initialize()
         self.running = False
+        self.paused = False
 
     def initialize(self):
         self.running = False
+        self.paused = False
 
         self.mashTunTimeSetPoint = 0.0
         self.mashTunTimeProbe = 0.0
@@ -166,7 +168,8 @@ class Cleaning:
         step = self.clean[self.currentStep['number']]
         if step['target'] == 'MashTun':
             if self.mashTunTimeProbe > 0:
-                self.mashTunTimeProbe -= 1/60
+                if not self.isPaused():
+                    self.mashTunTimeProbe -= 1/60
             else:
                 self.mashTunTimeProbe = 0
                 self.app.mashTun.stopHeating()
@@ -182,9 +185,10 @@ class Cleaning:
 
         if step['target'] == 'BoilKettle':
             if self.boilKettleTimeProbe > 0:
-                self.boilKettleTimeProbe -= 1/60
-                if step['kettle_recirculation_time'] > 0 and self.boilKettleTimeProbe <= (step['chiller_recirculation_time'] + (self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME') / 60)) and (self.app.pump.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE or self.app.pump.getStatus() == waterActionsEnum.FINISHED):
-                    self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_CHILLER, time=(step['chiller_recirculation_time'] * 60) + self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'))
+                if not self.isPaused():
+                    self.boilKettleTimeProbe -= 1/60
+                    if step['kettle_recirculation_time'] > 0 and self.boilKettleTimeProbe <= (step['chiller_recirculation_time'] + (self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME') / 60)) and (self.app.pump.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE or self.app.pump.getStatus() == waterActionsEnum.FINISHED):
+                        self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_CHILLER, time=(step['chiller_recirculation_time'] * 60) + self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'))
             else:
                 self.boilKettleTimeProbe = 0
                 self.app.boilKettle.stopHeating()
@@ -277,6 +281,18 @@ class Cleaning:
 
     def isRunning(self):
         return self.running
+
+
+    def isPaused(self):
+        return self.paused
+
+
+    def pause(self):
+        self.paused = not self.paused
+        if self.paused:
+            self.app.logger.info('[CLEANING PAUSED]')
+        else:
+            self.app.logger.info('[CLEANING RESUMED]')
 
 
     def stop(self):

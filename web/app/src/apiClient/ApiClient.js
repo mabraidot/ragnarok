@@ -167,6 +167,27 @@ class ApiClient {
   };
 
 
+  async pauseProcess(process = 'cookingPaused', newValue = false) {
+    let url;
+    switch (process) {
+      case 'cookingPaused':
+        url = '/cook/pause';
+        break;
+      case 'cleaningPaused':
+        url = '/clean/pause';
+        break;
+    }
+
+    return client({
+      method: 'GET',
+      url,
+      data: null
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
   async setSwitch(hardware = 'MashTunValveInlet', newValue = false) {
     
     let url;

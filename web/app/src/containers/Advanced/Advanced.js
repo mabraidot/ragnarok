@@ -16,6 +16,11 @@ class Advanced extends Component {
     this.state = {
       socket: new Socket(),
 
+      cookingPaused: false,
+      cookingRunning: false,
+      cleaningPaused: false,
+      cleaningRunning: false,
+
       MashTunHeater: false,
       MashTunValveInlet: false,
       MashTunValveOutlet: false,
@@ -182,7 +187,36 @@ class Advanced extends Component {
           this.setState({Pump: pumpNewValue});
         }
       }
-      
+
+      if (typeof data.cookingRunning !== 'undefined') {
+        const cookingNewValue = (data.cookingRunning === 'False') ? false : true;
+        if (cookingNewValue !== this.state.cookingRunning) {
+          this.setState({cookingRunning: cookingNewValue});
+        }
+      }
+
+      if (typeof data.cookingPaused !== 'undefined') {
+        const cookingPausedNewValue = (data.cookingPaused === 'False') ? false : true;
+        if (cookingPausedNewValue !== this.state.cookingPaused) {
+          this.setState({cookingPaused: cookingPausedNewValue});
+        }
+      }
+
+      if (typeof data.cleaningRunning !== 'undefined') {
+        const cleaningNewValue = (data.cleaningRunning === 'False') ? false : true;
+        if (cleaningNewValue !== this.state.cleaningRunning) {
+          this.setState({cleaningRunning: cleaningNewValue});
+        }
+      }
+
+      if (typeof data.cleaningPaused !== 'undefined') {
+        const cleaningPausedNewValue = (data.cleaningPaused === 'False') ? false : true;
+        if (cleaningPausedNewValue !== this.state.cleaningPaused) {
+          this.setState({cleaningPaused: cleaningPausedNewValue});
+        }
+      }
+
+
       if (data.notice) {
         for(const message in data.notice){
           this.props.enqueueSnackbar(data.notice[message], { 
@@ -231,6 +265,24 @@ class Advanced extends Component {
     }
     return time
   }
+
+  handlePauseChange = name => event => {
+    const { state } = this.state;
+    this.setState({ ...state, [name]: event.target.checked });
+    console.log('[ADV]: Pause:', name, (event.target.checked) ? 'ON' : 'OFF');
+    
+    ApiClient.pauseProcess(name, event.target.checked).then((resp) => {
+      if (resp.error) {
+        this.props.enqueueSnackbar(resp.error, { 
+          variant: 'error',
+        });
+      } else {
+        this.props.enqueueSnackbar(resp.notice, { 
+          variant: 'success',
+        });
+      }
+    });
+  };
 
   handleSwitchChange = name => event => {
     const { state } = this.state;
@@ -308,7 +360,7 @@ class Advanced extends Component {
                 />
                 <div className="label"><span>{this.intToMinutes(this.state.MashTunTimeProbe)}</span> / {this.intToMinutes(this.state.MashTunTimeSetPoint)}</div>
                 <div className="foot">Process time</div>
-
+                
                 <p> </p>
                 <h4>Mash Tun Valves</h4>
                 <FormControlLabel
@@ -437,6 +489,30 @@ class Advanced extends Component {
                 /> 
               </Paper>
             </Grid>
+
+            {(this.state.cookingRunning) ? (
+              <Grid item xs={6}>
+                <Paper elevation={2}>
+                  <h4>Cooking</h4>
+                  <FormControlLabel
+                    control={<Switch checked={this.state.cookingPaused} onChange={this.handlePauseChange('cookingPaused')}  value="cookingPaused" className="paused" />}
+                    label="Paused"
+                  />
+                </Paper>
+              </Grid>
+              ) : ('')}
+
+            {(this.state.cleaningRunning) ? (
+              <Grid item xs={6}>
+                <Paper elevation={2}>
+                  <h4>Cleaning</h4>
+                  <FormControlLabel
+                    control={<Switch checked={this.state.cleaningPaused} onChange={this.handlePauseChange('cleaningPaused')}  value="cleaningPaused" className="paused" />}
+                    label="Paused"
+                  />
+                </Paper>
+              </Grid>
+              ) : ('')}
 
 
           </Grid>
