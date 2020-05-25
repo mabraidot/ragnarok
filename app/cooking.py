@@ -308,6 +308,7 @@ class Cooking:
                 self.boilKettleTimeProbe = 0
                 self.app.pump.setBoilKettleRecirculation(False)
                 self.app.pump.moveWater(waterActionsEnum.FINISHED)
+                self.app.boilKettle.stopHeating()
                 self.boil['state'] = cookingStates.FINISHED
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'paused'
@@ -387,7 +388,7 @@ class Cooking:
                 else:
                     state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN, amount=step['infuse_amount'])
                 if state != waterActionsEnum.BUSY:
-                    self.app.mashTun.stopHeating()
+                    # self.app.mashTun.stopHeating()
                     self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
                     if self.app.jobs.get_job('timerHeating') is not None:
                         self.app.jobs.remove_job('timerHeating')
@@ -482,7 +483,6 @@ class Cooking:
                 self.cool['state'] = cookingStates.RUNNING
                 self.boilKettleTimeSetPoint = step['step_time']
                 self.boilKettleTimeProbe = step['step_time']
-                self.app.boilKettle.setTemperature(0)
                 self.app.boilKettle.stopHeating()
                 self.app.pump.moveWater(action=waterActionsEnum.CHILL)
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
