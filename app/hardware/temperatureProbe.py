@@ -46,7 +46,7 @@ class temperatureProbe:
             if self.name == 'BoilKettleTemperatureProbe':
                 heater = self.app.boilKettle.getHeater()
                 pwm = self.app.boilKettle.getPWM()
-            if heater and pwm > 0 and self.value < 110:
+            if heater and pwm > 0 and self.value < 125:
                 self.value += 1 * (pwm / 100)
             elif self.value > 0:
                 self.value -= 0.1

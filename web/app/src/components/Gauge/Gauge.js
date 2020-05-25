@@ -23,8 +23,8 @@ class Gauge extends Component {
 
   render() {
 
-    let currentTemp = this.props.valueTemperature * 100 / 110;
-    let currentTime = this.props.valueTime * 100 / 130;
+    let currentTemp = this.props.valueTemperature * 100 / 125;
+    let currentTime = this.props.valueTime * 100 / 120;
     let currentWater = this.props.valueWater * 100 / 16;
 
     const multiplier = (this.props.focus) ? 1 : 0.4 ;

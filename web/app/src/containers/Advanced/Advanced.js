@@ -276,7 +276,7 @@ class Advanced extends Component {
                   defaultValue={0}
                   aria-labelledby="discrete-slider-always"
                   step={1}
-                  max={110}
+                  max={125}
                   valueLabelDisplay="auto"
                   onChangeCommitted={this.handleSliderSetPoint("MashTunTemperatureSetPoint")}
                 />
@@ -338,7 +338,7 @@ class Advanced extends Component {
                   defaultValue={0}
                   aria-labelledby="discrete-slider-always"
                   step={1}
-                  max={110}
+                  max={125}
                   valueLabelDisplay="auto"
                   onChangeCommitted={this.handleSliderSetPoint("BoilKettleTemperatureSetPoint")}
                 />
