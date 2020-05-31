@@ -190,7 +190,7 @@ LOG_ERROR_LABEL=error
 LOG_ERROR_PERSISTENT_LABEL=persistent_error
 COOL_TEMPERATURE=23
 # PID AutoTune
-PID_SET_POINT_TEMPERATURE=70
+PID_SET_POINT_TEMPERATURE=65
 # Default: 100. Sets the output when stepping up/down.
 PID_OUTSTEP=100
 # Default: 100. Sets the max power output.
