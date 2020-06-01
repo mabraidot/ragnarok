@@ -368,22 +368,22 @@ class Cooking:
                         self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
                         if self.app.jobs.get_job('timerHeating') is not None:
                             self.app.jobs.remove_job('timerHeating')
-                else:
-                    self.app.boilKettle.heatToTemperature(step['infuse_temp'])
+                # else:
+                #     self.app.boilKettle.heatToTemperature(step['infuse_temp'])
             if step['type'] == 'Temperature':
                 if self.app.mashTun.getTemperature() >= step['step_temp']:
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                     if self.app.jobs.get_job('timerHeating') is not None:
                         self.app.jobs.remove_job('timerHeating')
-                else:
-                    self.app.mashTun.heatToTemperature(step['step_temp'])
+                # else:
+                #     self.app.mashTun.heatToTemperature(step['step_temp'])
         elif self.currentStep['name'] == 'boil':
             if self.app.boilKettle.getTemperature() >= self.boil['step_temp']:
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                 if self.app.jobs.get_job('timerHeating') is not None:
                     self.app.jobs.remove_job('timerHeating')
-            else:
-                self.app.boilKettle.heatToTemperature(self.boil['step_temp'])
+            # else:
+            #     self.app.boilKettle.heatToTemperature(self.boil['step_temp'])
         elif self.currentStep['name'] == 'sparge':
             step = self.sparge
             if self.app.boilKettle.getTemperature() >= step['infuse_temp']:
@@ -411,6 +411,7 @@ class Cooking:
                     self.app.boilKettle.heatToTemperature(step['infuse_temp'])
             
             if not preHeating:
+                self.app.boilKettle.heatToTemperature(step['infuse_temp'])
                 self.app.jobs.add_job(self.timerHeating, 'interval', seconds=1, args=[preHeating], id='timerHeating', replace_existing=True)
                 
                 if self.app.mashTun.getWaterLevel() > 1:
