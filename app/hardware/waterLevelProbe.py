@@ -115,11 +115,18 @@ class waterLevelProbe:
 
     def setPriorValue(self, value):
         if self.config.get('ENVIRONMENT') == 'production':
-            while not self.hx.is_ready():
-                pass
-            newValue = -1 * (float(value) * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
-            self.hx.reset()
-            self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
+            try:
+                self.runningTare = True
+                while not self.hx.is_ready():
+                    pass
+                newValue = -1 * (float(value) * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
+                self.hx.reset()
+                self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
+                self.runningTare = False
+                self.app.logger.info('Set prior WaterLevel value %s: %s', self.name, newValue)
+            except Exception as e:
+                self.app.logger.info('Exception setting prior WaterLevel value %s', self.name)
+                self.app.logger.exception(e)
         else:
             self.value += (float(value) * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
 
