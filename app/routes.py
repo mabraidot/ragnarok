@@ -186,7 +186,8 @@ class routes:
 
     def setMashTunWaterLevel(self, request):
         liters = request.match_info.get('liters', 0)
-        self.app.mashTun.setWaterLevel(liters)
+        # self.app.mashTun.setWaterLevel(liters)
+        self.app.mashTun.setPriorWaterLevel(liters)
         return web.json_response({'response': str(liters)})
     
     
@@ -204,7 +205,8 @@ class routes:
     
     def setBoilKettleWaterLevel(self, request):
         liters = request.match_info.get('liters', 0)
-        self.app.boilKettle.setWaterLevel(liters)
+        # self.app.boilKettle.setWaterLevel(liters)
+        self.app.boilKettle.setPriorWaterLevel(liters)
         return web.json_response({'response': str(liters)})
     
     
