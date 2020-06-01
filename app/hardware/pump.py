@@ -25,6 +25,7 @@ class pump:
         self.amountToMove = 0
         self.waterLevelReadingCount = 0
         self.initValves()
+        self.paused = False
 
         self.mashTunRecirculation = False
         self.boilKettleRecirculation = False
@@ -401,6 +402,11 @@ class pump:
                         task.start()
 
 
+        if ((self.app.cooking.isRunning() and self.app.cooking.isPaused()) or 
+            (self.app.cleaning.isRunning() and self.app.cleaning.isPaused())):
+            self.paused = True
+        else:
+            self.paused = False
 
         # Fill in the kettle with filtered or non-filtered tap water
         if self.getStatus() == waterActionsEnum.WATER_IN_FILTERED or self.getStatus() == waterActionsEnum.WATER_IN:
@@ -471,7 +477,8 @@ class pump:
                 task = threading.Thread(target=self.valvesRunMashTunToMashTun, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
             else:
-                self.time -= self.daemonTime
+                if not self.paused:
+                    self.time -= self.daemonTime
 
         # Recirculation through boil kettle
         if self.getStatus() == waterActionsEnum.KETTLE_TO_KETTLE:
@@ -481,7 +488,8 @@ class pump:
                 task = threading.Thread(target=self.valvesRunKettleToKettle, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
             else:
-                self.time -= self.daemonTime
+                if not self.paused:
+                    self.time -= self.daemonTime
 
         # Recirculation from boil kettle through chiller
         if self.getStatus() == waterActionsEnum.KETTLE_TO_CHILLER:
@@ -491,7 +499,8 @@ class pump:
                 task = threading.Thread(target=self.valvesRunKettleToChiller, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
             else:
-                self.time -= self.daemonTime
+                if not self.paused:
+                    self.time -= self.daemonTime
 
         # Dump water from boilkettle
         if self.getStatus() == waterActionsEnum.KETTLE_TO_DUMP:
