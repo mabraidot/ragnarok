@@ -152,16 +152,19 @@ class waterLevelProbe:
     def run(self):
         try:
             while True:
-                if not self.runningTare and self.hx.is_ready():
-                    oldValue = self.value
-                    newValue = self.hx.get_weight(5)
-                    if oldValue - newValue > -3000:
-                        self.value = newValue
-                        if self.value < 0:
-                            self.value = 0
+                if not self.runningTare:
+                    if self.hx.is_ready()
+                        oldValue = self.value
+                        newValue = self.hx.get_weight(5)
+                        if oldValue - newValue > -3000:
+                            self.value = newValue
+                            if self.value < 0:
+                                self.value = 0
 
-                    self.hx.reset()
-                    time.sleep(0.5)
+                        self.hx.reset()
+                        time.sleep(0.5)
+                    else:
+                        self.hx.reset()
         except Exception as e:
             self.app.logger.info('Exception calculating WaterLevel value %s', self.name)
             self.app.logger.exception(e)
