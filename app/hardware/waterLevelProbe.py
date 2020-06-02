@@ -86,7 +86,7 @@ class waterLevelProbe:
             self.value = -1000
             self.runningTare = True
             self.hx.reset()
-            self.hx.tare()
+            self.hx.tare(7)
             self.value = 0
             self.runningTare = False
         else:
@@ -103,7 +103,7 @@ class waterLevelProbe:
                 self.value = -1000
                 self.runningTare = True
                 self.hx.reset()
-                self.hx.tare()
+                self.hx.tare(7)
                 self.value = 0
                 self.runningTare = False
             else:
@@ -116,14 +116,20 @@ class waterLevelProbe:
     def setPriorValue(self, value):
         if self.config.get('ENVIRONMENT') == 'production':
             try:
+                timeout = 10
                 self.runningTare = True
-                while not self.hx.is_ready():
+                while not self.hx.is_ready() and timeout > 0:
+                    timeout -= 1
+                    time.sleep(0.5)
                     pass
-                newValue = -1 * (float(value) * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
-                self.hx.reset()
-                self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
-                self.runningTare = False
-                self.app.logger.info('Set prior WaterLevel value %s: %s', self.name, newValue)
+                if self.hx.is_ready():
+                    newValue = -1 * (float(value) * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
+                    self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
+                    self.hx.reset()
+                    self.runningTare = False
+                    self.app.logger.info('Set prior WaterLevel value %s: %s', self.name, newValue)
+                else:
+                    self.app.logger.error('Error set prior WaterLevel value %s: %s. Timeout', self.name, newValue)
             except Exception as e:
                 self.app.logger.info('Exception setting prior WaterLevel value %s', self.name)
                 self.app.logger.exception(e)
@@ -146,7 +152,7 @@ class waterLevelProbe:
     def run(self):
         try:
             while True:
-                if not self.runningTare:
+                if not self.runningTare and self.hx.is_ready():
                     oldValue = self.value
                     newValue = self.hx.get_weight(5)
                     if oldValue - newValue > -3000:
