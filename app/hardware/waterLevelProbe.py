@@ -153,7 +153,7 @@ class waterLevelProbe:
         try:
             while True:
                 if not self.runningTare:
-                    if self.hx.is_ready()
+                    if self.hx.is_ready():
                         oldValue = self.value
                         newValue = self.hx.get_weight(5)
                         if oldValue - newValue > -3000:
