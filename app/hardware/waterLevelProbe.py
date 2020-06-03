@@ -30,9 +30,10 @@ class waterLevelProbe:
                 self.hx = HX711(self.config.getint('WATER_LEVEL_SENSOR_DT'), self.config.getint('WATER_LEVEL_SENSOR_SCK'))
                 self.hx.set_reading_format("MSB", "MSB")
                 self.hx.set_reference_unit(self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
-                
-                tare = threading.Thread(target=self.runTare)
-                tare.start()
+
+                # tare = threading.Thread(target=self.runTare)
+                # tare.start()
+                self.tare()
 
                 task = threading.Thread(target=self.run)
                 task.start()
@@ -157,8 +158,8 @@ class waterLevelProbe:
                     newValue = self.hx.get_weight(5)
                     if oldValue - newValue > -3000:
                         self.value = newValue
-                        if self.value < 0:
-                            self.value = 0
+                        # if self.value < 0:
+                        #     self.value = 0
 
                     self.hx.reset()
                     time.sleep(0.5)
