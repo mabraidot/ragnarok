@@ -25,11 +25,8 @@ class waterLevelProbe:
                 GPIO.setmode(GPIO.BCM)
                 GPIO.setup(self.config.getint('WATER_LEVEL_SENSOR_DT'), GPIO.IN)
                 GPIO.setup(self.config.getint('WATER_LEVEL_SENSOR_SCK'), GPIO.OUT)
-                # https://github.com/tatobari/hx711py/blob/master/example.py
-                # https://tutorials-raspberrypi.com/digital-raspberry-pi-scale-weight-sensor-hx711/
-                self.hx = HX711(self.config.getint('WATER_LEVEL_SENSOR_DT'), self.config.getint('WATER_LEVEL_SENSOR_SCK'))
-                self.hx.set_reading_format("MSB", "MSB")
-                self.hx.set_reference_unit(self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
+                self.hx = HX711(dout_pin=self.config.getint('WATER_LEVEL_SENSOR_DT'), pd_sck_pin=self.config.getint('WATER_LEVEL_SENSOR_SCK'))
+                self.hx.set_scale_ratio(self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))
 
                 # tare = threading.Thread(target=self.runTare)
                 # tare.start()
@@ -82,12 +79,9 @@ class waterLevelProbe:
 
     def tare(self):
         if self.config.get('ENVIRONMENT') == 'production':
-            while not self.hx.is_ready():
-                pass
             self.value = -1000
             self.runningTare = True
-            self.hx.reset()
-            self.hx.tare(7)
+            self.hx.zero()
             self.value = 0
             self.runningTare = False
         else:
@@ -99,12 +93,9 @@ class waterLevelProbe:
         try:
             self.app.logger.info('Running Tare %s', self.name)
             if self.config.get('ENVIRONMENT') == 'production':
-                while not self.hx.is_ready():
-                    pass
                 self.value = -1000
                 self.runningTare = True
-                self.hx.reset()
-                self.hx.tare(7)
+                self.hx.zero()
                 self.value = 0
                 self.runningTare = False
             else:
@@ -117,20 +108,12 @@ class waterLevelProbe:
     def setPriorValue(self, value):
         if self.config.get('ENVIRONMENT') == 'production':
             try:
-                timeout = 10
                 self.runningTare = True
-                while not self.hx.is_ready() and timeout > 0:
-                    timeout -= 1
-                    time.sleep(0.5)
-                    pass
-                if self.hx.is_ready():
-                    newValue = -1 * (float(value) * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
-                    self.hx.set_offset(self.hx.get_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT')))
-                    self.hx.reset()
-                    self.runningTare = False
-                    self.app.logger.info('Set prior WaterLevel value %s: %s', self.name, newValue)
-                else:
-                    self.app.logger.error('Error set prior WaterLevel value %s: %s. Timeout', self.name, newValue)
+                newValue = -1 * (float(value) * self.config.getfloat('ONE_LITER_WEIGHT')) * 1000
+                self.hx.set_offset(offset=int(self.hx.get_current_offset() + (newValue * self.config.getfloat('WATER_LEVEL_SENSOR_REFERENCE_UNIT'))))
+                self.runningTare = False
+                self.app.logger.info('Set prior WaterLevel value %s: %s', self.name, newValue)
+
             except Exception as e:
                 self.app.logger.info('Exception setting prior WaterLevel value %s', self.name)
                 self.app.logger.exception(e)
@@ -153,16 +136,13 @@ class waterLevelProbe:
     def run(self):
         try:
             while True:
-                if not self.runningTare and self.hx.is_ready():
+                if not self.runningTare:
                     oldValue = self.value
-                    newValue = self.hx.get_weight(5)
+                    newValue = self.hx.get_weight_mean(4)
                     if oldValue - newValue > -3000:
                         self.value = newValue
                         # if self.value < 0:
                         #     self.value = 0
-
-                    self.hx.reset()
-                    time.sleep(0.5)
         except Exception as e:
             self.app.logger.info('Exception calculating WaterLevel value %s', self.name)
             self.app.logger.exception(e)
