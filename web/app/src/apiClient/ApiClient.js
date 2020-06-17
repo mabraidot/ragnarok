@@ -174,6 +174,7 @@ class ApiClient {
         url = '/cook/pause';
         break;
       case 'cleaningPaused':
+      default:
         url = '/clean/pause';
         break;
     }
