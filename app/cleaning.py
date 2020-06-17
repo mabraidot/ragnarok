@@ -299,6 +299,7 @@ class Cleaning:
         self.app.mashTun.stopHeating()
         self.app.boilKettle.stopHeating()
         self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
+        self.app.logger.info('===============================================================================')
         self.initialize()
 
     def startShort(self):

@@ -499,7 +499,7 @@ class Cooking:
                     self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                     'The cooking process has finished!. Please dump the wort manually.'
                 })
-                self.app.logger.info('[END] %s', self.currentStep)
+                self.app.logger.info('[END-COOK] %s', self.currentStep)
             self.app.logger.info('[CURRENT_STEP] %s', self.currentStep)
         else:
             return
@@ -529,6 +529,7 @@ class Cooking:
         self.app.mashTun.stopHeating()
         self.app.boilKettle.stopHeating()
         self.app.pump.moveWater(action=waterActionsEnum.FINISHED)
+        self.app.logger.info('===============================================================================')
         self.initialize()
 
 

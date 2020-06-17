@@ -11,6 +11,7 @@ class pump:
         self.value = False
         self.time = 0
         self.daemonTime = 0.5
+        self.daemonRunningTime = 0.0
         self.app.jobs.add_job(self.pumpDaemon, 'interval', seconds=self.daemonTime, id='pumpDaemon')
         self.status = waterActionsEnum.FINISHED
         self.pin = self.config.getint('GENERAL_PINS', 'PUMP')
@@ -80,6 +81,7 @@ class pump:
             GPIO.output(self.pin, GPIO.LOW)
         else:
             self.value = False
+            self.daemonRunningTime = 0
             GPIO.output(self.pin, GPIO.HIGH)
 
 
@@ -407,6 +409,9 @@ class pump:
             self.paused = True
         else:
             self.paused = False
+        
+        if self.get():
+            self.daemonRunningTime += self.daemonTime
 
         # Fill in the kettle with filtered or non-filtered tap water
         if self.getStatus() == waterActionsEnum.WATER_IN_FILTERED or self.getStatus() == waterActionsEnum.WATER_IN:
@@ -421,7 +426,8 @@ class pump:
 
         # Rack water from boilkettle to mashtun
         if self.getStatus() == waterActionsEnum.KETTLE_TO_MASHTUN:
-            if (self.get() 
+            if (self.get()
+                and self.daemonRunningTime > 1.0
                 and (abs(self.oldBoilKettleWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.01)
                 or (abs(self.oldMashTunWaterLevelValue - self.app.mashTun.getWaterLevel()) <= 0.01)):
                 self.waterLevelReadingCount += 1
@@ -437,6 +443,9 @@ class pump:
                 self.app.mashTun.getWaterLevel() >= self.config.getfloat('MASH_TUN_PINS', 'MAX_WATER_LEVEL')):
 
                 self.setStatus(waterActionsEnum.BUSY)
+                self.app.logger.info('[PUMP] Water to move: %s. ReadingCount: %s.', self.amountToMove, self.waterLevelReadingCount)
+                self.app.logger.info('[PUMP] Mashtun - OriginalValue: %s. NewValue: %s', self.originalMashTunWaterLevelValue, self.oldMashTunWaterLevelValue)
+                self.app.logger.info('[PUMP] Boilkettle - OriginalValue: %s. NewValue: %s', self.originalBoilKettleWaterLevelValue, self.oldBoilKettleWaterLevelValue)
                 task = threading.Thread(target=self.valvesRunKettleToMashTun, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
                 self.oldMashTunWaterLevelValue = 0
@@ -448,7 +457,8 @@ class pump:
 
         # Rack water from mashtun to boilkettle
         if self.getStatus() == waterActionsEnum.MASHTUN_TO_KETTLE:
-            if (self.get() 
+            if (self.get()
+                and self.daemonRunningTime > 1.0
                 and (abs(self.oldBoilKettleWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.01)
                 or (abs(self.oldMashTunWaterLevelValue - self.app.mashTun.getWaterLevel()) <= 0.01)):
                 self.waterLevelReadingCount += 1
@@ -464,6 +474,9 @@ class pump:
                 self.app.boilKettle.getWaterLevel() >= self.config.getfloat('BOIL_KETTLE_PINS', 'MAX_WATER_LEVEL')):
 
                 self.setStatus(waterActionsEnum.BUSY)
+                self.app.logger.info('[PUMP] Water to move: %s. ReadingCount: %s.', self.amountToMove, self.waterLevelReadingCount)
+                self.app.logger.info('[PUMP] Mashtun - OriginalValue: %s. NewValue: %s', self.originalMashTunWaterLevelValue, self.oldMashTunWaterLevelValue)
+                self.app.logger.info('[PUMP] Boilkettle - OriginalValue: %s. NewValue: %s', self.originalBoilKettleWaterLevelValue, self.oldBoilKettleWaterLevelValue)
                 task = threading.Thread(target=self.valvesRunMashTunToKettle, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
                 self.oldMashTunWaterLevelValue = 0
@@ -508,7 +521,9 @@ class pump:
 
         # Dump water from boilkettle
         if self.getStatus() == waterActionsEnum.KETTLE_TO_DUMP:
-            if self.get() and abs(self.oldBoilKettleWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.02:
+            if (self.get()
+                and self.daemonRunningTime > 1.0
+                and abs(self.oldBoilKettleWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.02):
                 self.waterLevelReadingCount += 1
             else:
                 self.waterLevelReadingCount = 0
@@ -519,6 +534,8 @@ class pump:
                 (self.amountToMove > 0 and abs(self.originalBoilKettleWaterLevelValue - self.oldBoilKettleWaterLevelValue) >= self.amountToMove)):
 
                 self.setStatus(waterActionsEnum.BUSY)
+                self.app.logger.info('[PUMP] Water to move: %s. ReadingCount: %s.', self.amountToMove, self.waterLevelReadingCount)
+                self.app.logger.info('[PUMP] Boilkettle - OriginalValue: %s. NewValue: %s', self.originalBoilKettleWaterLevelValue, self.oldBoilKettleWaterLevelValue)
                 task = threading.Thread(target=self.valvesRunKettleToDump, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
                 self.oldMashTunWaterLevelValue = 0
@@ -531,7 +548,9 @@ class pump:
 
         # Dump water from mashtun
         if self.getStatus() == waterActionsEnum.MASHTUN_TO_DUMP:
-            if self.get() and abs(self.oldMashTunWaterLevelValue - self.app.mashTun.getWaterLevel()) <= 0.02:
+            if (self.get()
+                and self.daemonRunningTime > 1.0
+                and abs(self.oldMashTunWaterLevelValue - self.app.mashTun.getWaterLevel()) <= 0.02):
                 self.waterLevelReadingCount += 1
             else:
                 self.waterLevelReadingCount = 0
@@ -542,6 +561,8 @@ class pump:
                 (self.amountToMove > 0 and abs(self.originalMashTunWaterLevelValue - self.oldMashTunWaterLevelValue) >= self.amountToMove)):
 
                 self.setStatus(waterActionsEnum.BUSY)
+                self.app.logger.info('[PUMP] Water to move: %s. ReadingCount: %s.', self.amountToMove, self.waterLevelReadingCount)
+                self.app.logger.info('[PUMP] Mashtun - OriginalValue: %s. NewValue: %s', self.originalMashTunWaterLevelValue, self.oldMashTunWaterLevelValue)
                 task = threading.Thread(target=self.valvesRunMashTunToDump, kwargs=dict(state=valveActions.CLOSE))
                 task.start()
                 self.oldMashTunWaterLevelValue = 0
