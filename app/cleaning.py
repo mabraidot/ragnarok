@@ -206,13 +206,13 @@ class Cleaning:
     def timerHeating(self):
         step = self.clean[self.currentStep['number']]
         if step['target'] == 'MashTun':
-            if self.app.mashTun.getTemperature() >= step['step_temp'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
+            if self.app.mashTun.getTemperature() >= step['step_temp'] and self.app.mashTun.getWaterLevel() >= step['water_amount'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
                 if step['kettle_recirculation_time'] > 0:
                     self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_MASHTUN, time=(step['kettle_recirculation_time'] * 60) + self.config.getint('DEFAULT', 'PUMP_PRIMING_TIME'))
                 self.app.jobs.remove_job('timerHeating')
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
             else:
-                if self.app.boilKettle.getWaterLevel() >= step['water_amount'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
+                if self.app.boilKettle.getWaterLevel() >= step['water_amount'] and self.app.boilKettle.getTemperature() >= step['step_temp'] and self.app.pump.getStatus() == waterActionsEnum.FINISHED:
                     self.app.boilKettle.stopHeating()
                     self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN)
                 self.app.mashTun.heatToTemperature(step['step_temp'])

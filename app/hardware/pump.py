@@ -427,7 +427,7 @@ class pump:
         # Rack water from boilkettle to mashtun
         if self.getStatus() == waterActionsEnum.KETTLE_TO_MASHTUN:
             if (self.get()
-                and self.daemonRunningTime > 1.0
+                and self.daemonRunningTime > 2.0
                 and (abs(self.oldBoilKettleWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.01)
                 or (abs(self.oldMashTunWaterLevelValue - self.app.mashTun.getWaterLevel()) <= 0.01)):
                 self.waterLevelReadingCount += 1
@@ -458,7 +458,7 @@ class pump:
         # Rack water from mashtun to boilkettle
         if self.getStatus() == waterActionsEnum.MASHTUN_TO_KETTLE:
             if (self.get()
-                and self.daemonRunningTime > 1.0
+                and self.daemonRunningTime > 2.0
                 and (abs(self.oldBoilKettleWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.01)
                 or (abs(self.oldMashTunWaterLevelValue - self.app.mashTun.getWaterLevel()) <= 0.01)):
                 self.waterLevelReadingCount += 1
@@ -522,7 +522,7 @@ class pump:
         # Dump water from boilkettle
         if self.getStatus() == waterActionsEnum.KETTLE_TO_DUMP:
             if (self.get()
-                and self.daemonRunningTime > 1.0
+                and self.daemonRunningTime > 2.0
                 and abs(self.oldBoilKettleWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.02):
                 self.waterLevelReadingCount += 1
             else:
@@ -549,7 +549,7 @@ class pump:
         # Dump water from mashtun
         if self.getStatus() == waterActionsEnum.MASHTUN_TO_DUMP:
             if (self.get()
-                and self.daemonRunningTime > 1.0
+                and self.daemonRunningTime > 2.0
                 and abs(self.oldMashTunWaterLevelValue - self.app.mashTun.getWaterLevel()) <= 0.02):
                 self.waterLevelReadingCount += 1
             else:
