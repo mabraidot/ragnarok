@@ -428,8 +428,21 @@ class pump:
         if self.getStatus() == waterActionsEnum.KETTLE_TO_MASHTUN:
             if (self.get()
                 and self.daemonRunningTime > 2.0
-                and (abs(self.oldBoilKettleWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.01)
-                or (abs(self.oldMashTunWaterLevelValue - self.app.mashTun.getWaterLevel()) <= 0.01)):
+                and (
+                    abs(abs(self.oldBoilKettleWaterLevelValue) - abs(self.app.boilKettle.getWaterLevel())) <= 0.01 or
+                    abs(abs(self.oldMashTunWaterLevelValue) - abs(self.app.mashTun.getWaterLevel())) <= 0.01
+                    )
+                ):
+                self.app.logger.info(
+                    '[PUMP READING COUNT] DaemonRunningTime: %s. OldBoilKettleWaterLevelValue: %s. BoilKettleWaterLevel: %s. OldBoilKettleWaterLevelValue-BoilKettleWaterLevel<=0.01: %s. oldMashTunWaterLevelValue: %s. MashTunWaterLevel: %s. oldMashTunWaterLevelValue-MashTunWaterLevel<=0.01: %s.', 
+                    self.daemonRunningTime, 
+                    self.oldBoilKettleWaterLevelValue, 
+                    self.app.boilKettle.getWaterLevel(),
+                    abs(abs(self.oldBoilKettleWaterLevelValue) - abs(self.app.boilKettle.getWaterLevel())),
+                    self.oldMashTunWaterLevelValue, 
+                    self.app.mashTun.getWaterLevel(),
+                    abs(abs(self.oldMashTunWaterLevelValue) - abs(self.app.mashTun.getWaterLevel()))
+                )
                 self.waterLevelReadingCount += 1
             else:
                 self.waterLevelReadingCount = 0
@@ -438,8 +451,8 @@ class pump:
 
             if (self.waterLevelReadingCount >= self.config.getint('DEFAULT', 'PUMP_READING_COUNT') or 
                 self.app.boilKettle.getWaterLevel() <= 0 or 
-                (self.amountToMove > 0 and abs(self.originalBoilKettleWaterLevelValue - self.oldBoilKettleWaterLevelValue) >= self.amountToMove) or 
-                (self.amountToMove > 0 and abs(self.originalMashTunWaterLevelValue - self.oldMashTunWaterLevelValue) >= self.amountToMove) or 
+                (self.amountToMove > 0 and abs(abs(self.originalBoilKettleWaterLevelValue) - abs(self.oldBoilKettleWaterLevelValue)) >= self.amountToMove) or 
+                (self.amountToMove > 0 and abs(abs(self.originalMashTunWaterLevelValue) - abs(self.oldMashTunWaterLevelValue)) >= self.amountToMove) or 
                 self.app.mashTun.getWaterLevel() >= self.config.getfloat('MASH_TUN_PINS', 'MAX_WATER_LEVEL')):
 
                 self.setStatus(waterActionsEnum.BUSY)
@@ -459,8 +472,21 @@ class pump:
         if self.getStatus() == waterActionsEnum.MASHTUN_TO_KETTLE:
             if (self.get()
                 and self.daemonRunningTime > 2.0
-                and (abs(self.oldBoilKettleWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.01)
-                or (abs(self.oldMashTunWaterLevelValue - self.app.mashTun.getWaterLevel()) <= 0.01)):
+                and (
+                    abs(abs(self.oldBoilKettleWaterLevelValue) - abs(self.app.boilKettle.getWaterLevel())) <= 0.01 or 
+                    abs(abs(self.oldMashTunWaterLevelValue) - abs(self.app.mashTun.getWaterLevel())) <= 0.01
+                    )
+                ):
+                self.app.logger.info(
+                    '[PUMP READING COUNT] DaemonRunningTime: %s. OldBoilKettleWaterLevelValue: %s. BoilKettleWaterLevel: %s. OldBoilKettleWaterLevelValue-BoilKettleWaterLevel<=0.01: %s. oldMashTunWaterLevelValue: %s. MashTunWaterLevel: %s. oldMashTunWaterLevelValue-MashTunWaterLevel<=0.01: %s.', 
+                    self.daemonRunningTime, 
+                    self.oldBoilKettleWaterLevelValue, 
+                    self.app.boilKettle.getWaterLevel(),
+                    abs(abs(self.oldBoilKettleWaterLevelValue) - abs(self.app.boilKettle.getWaterLevel())),
+                    self.oldMashTunWaterLevelValue, 
+                    self.app.mashTun.getWaterLevel(),
+                    abs(abs(self.oldMashTunWaterLevelValue) - abs(self.app.mashTun.getWaterLevel()))
+                )
                 self.waterLevelReadingCount += 1
             else:
                 self.waterLevelReadingCount = 0
@@ -469,8 +495,8 @@ class pump:
 
             if (self.waterLevelReadingCount >= self.config.getint('DEFAULT', 'PUMP_READING_COUNT') or 
                 self.app.mashTun.getWaterLevel() <= 0 or 
-                (self.amountToMove > 0 and abs(self.originalMashTunWaterLevelValue - self.oldMashTunWaterLevelValue) >= self.amountToMove) or 
-                (self.amountToMove > 0 and abs(self.originalBoilKettleWaterLevelValue - self.oldBoilKettleWaterLevelValue) >= self.amountToMove) or 
+                (self.amountToMove > 0 and abs(abs(self.originalMashTunWaterLevelValue) - abs(self.oldMashTunWaterLevelValue)) >= self.amountToMove) or 
+                (self.amountToMove > 0 and abs(abs(self.originalBoilKettleWaterLevelValue) - abs(self.oldBoilKettleWaterLevelValue)) >= self.amountToMove) or 
                 self.app.boilKettle.getWaterLevel() >= self.config.getfloat('BOIL_KETTLE_PINS', 'MAX_WATER_LEVEL')):
 
                 self.setStatus(waterActionsEnum.BUSY)
@@ -523,7 +549,7 @@ class pump:
         if self.getStatus() == waterActionsEnum.KETTLE_TO_DUMP:
             if (self.get()
                 and self.daemonRunningTime > 2.0
-                and abs(self.oldBoilKettleWaterLevelValue - self.app.boilKettle.getWaterLevel()) <= 0.02):
+                and abs(abs(self.oldBoilKettleWaterLevelValue) - abs(self.app.boilKettle.getWaterLevel())) <= 0.02):
                 self.waterLevelReadingCount += 1
             else:
                 self.waterLevelReadingCount = 0
@@ -531,7 +557,7 @@ class pump:
 
             if (self.waterLevelReadingCount >= self.config.getint('DEFAULT', 'PUMP_READING_COUNT') or 
                 self.app.boilKettle.getWaterLevel() <= 0 or 
-                (self.amountToMove > 0 and abs(self.originalBoilKettleWaterLevelValue - self.oldBoilKettleWaterLevelValue) >= self.amountToMove)):
+                (self.amountToMove > 0 and abs(abs(self.originalBoilKettleWaterLevelValue) - abs(self.oldBoilKettleWaterLevelValue)) >= self.amountToMove)):
 
                 self.setStatus(waterActionsEnum.BUSY)
                 self.app.logger.info('[PUMP] Water to move: %s. ReadingCount: %s.', self.amountToMove, self.waterLevelReadingCount)
@@ -550,7 +576,7 @@ class pump:
         if self.getStatus() == waterActionsEnum.MASHTUN_TO_DUMP:
             if (self.get()
                 and self.daemonRunningTime > 2.0
-                and abs(self.oldMashTunWaterLevelValue - self.app.mashTun.getWaterLevel()) <= 0.02):
+                and abs(abs(self.oldMashTunWaterLevelValue) - abs(self.app.mashTun.getWaterLevel())) <= 0.02):
                 self.waterLevelReadingCount += 1
             else:
                 self.waterLevelReadingCount = 0
@@ -558,7 +584,7 @@ class pump:
 
             if (self.waterLevelReadingCount >= self.config.getint('DEFAULT', 'PUMP_READING_COUNT') or 
                 self.app.mashTun.getWaterLevel() <= 0 or 
-                (self.amountToMove > 0 and abs(self.originalMashTunWaterLevelValue - self.oldMashTunWaterLevelValue) >= self.amountToMove)):
+                (self.amountToMove > 0 and abs(abs(self.originalMashTunWaterLevelValue) - abs(self.oldMashTunWaterLevelValue)) >= self.amountToMove)):
 
                 self.setStatus(waterActionsEnum.BUSY)
                 self.app.logger.info('[PUMP] Water to move: %s. ReadingCount: %s.', self.amountToMove, self.waterLevelReadingCount)
