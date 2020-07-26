@@ -200,12 +200,6 @@ class Home extends Component {
       }
       // console.log('[WS]: message!:', data);
     };
-
-    // this.props.enqueueSnackbar('hola sonido', { 
-    //   variant: 'success',
-    //   persist: true,
-    //   onClose: this.handleStopSounds,
-    // });
   }
 
   componentWillUnmount() {
