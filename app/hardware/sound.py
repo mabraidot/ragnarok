@@ -30,6 +30,14 @@ class Sound:
         self.stopSounds = True
 
 
+    def playSuccess(self):
+        pygame.mixer.music.load("app/sounds/success.mp3")
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            pygame.time.wait(1000)
+        self.stopSounds = True
+
+
     def playAlarm(self):
         while not self.stopSounds:
             pygame.mixer.music.load("app/sounds/alarm.mp3")
@@ -51,6 +59,10 @@ class Sound:
             elif tune == soundsEnum.ALARM:
                 self.stopSounds = False
                 self.task = threading.Thread(target=self.playAlarm)
+                self.task.start()
+            elif tune == soundsEnum.SUCCESS:
+                self.stopSounds = False
+                self.task = threading.Thread(target=self.playSuccess)
                 self.task.start()
 
             if duration > 0:

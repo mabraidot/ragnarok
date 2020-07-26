@@ -1,4 +1,4 @@
-from app.lib.sourcesEnum import waterActionsEnum, cleaningProgramsActions, cookingStates
+from app.lib.sourcesEnum import waterActionsEnum, cleaningProgramsActions, cookingStates, soundsEnum
 
 
 """
@@ -276,6 +276,7 @@ class Cleaning:
                 self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
                 'The cleaning process has finished!.'
             })
+            self.app.sound.play(soundsEnum.SUCCESS)
             self.app.logger.info('[END-CLEAN] %s', self.currentStep)
 
 

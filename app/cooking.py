@@ -312,6 +312,7 @@ class Cooking:
                 self.boil['state'] = cookingStates.FINISHED
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'paused'
+                self.app.sound.play(soundsEnum.SUCCESS)
                 self.app.jobs.remove_job('timerProcess')
         elif self.currentStep['name'] == 'cool':
             if self.boilKettleTimeProbe > 0:
@@ -323,6 +324,7 @@ class Cooking:
                 self.currentStep['number'] = -1
                 self.currentStep['name'] = 'finish'
                 self.app.jobs.remove_job('timerProcess')
+                self.app.sound.play(soundsEnum.SUCCESS)
                 self.setNextStep()
 
 
