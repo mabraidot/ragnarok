@@ -379,6 +379,7 @@ class Cooking:
                 #     self.app.mashTun.heatToTemperature(step['step_temp'])
         elif self.currentStep['name'] == 'boil':
             if self.app.boilKettle.getTemperature() >= self.boil['step_temp']:
+                self.app.boilKettle.heatToTemperature(self.boil['step_temp'] + 10)
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                 if self.app.jobs.get_job('timerHeating') is not None:
                     self.app.jobs.remove_job('timerHeating')
