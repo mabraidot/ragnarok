@@ -298,6 +298,17 @@ class ApiClient {
   }
 
 
+  async stopSounds() {
+
+    return client({
+      method: 'GET',
+      url: `/sounds/stop`,
+    }).then(resp => {
+      return resp.data;
+    })
+  }
+
+
 }
 
 export default new ApiClient();

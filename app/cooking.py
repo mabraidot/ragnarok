@@ -232,7 +232,7 @@ class Cooking:
                     # NOTIFY
                     adjunct['state'] = cookingStates.FINISHED
                     self.app.ws.setLog({
-                        self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
+                        self.config.get('DEFAULT', 'LOG_NOTICE_ADJUNCTS_LABEL'): 
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
                     })
                     self.app.sound.play(soundsEnum.ALARM, 25)
@@ -244,7 +244,7 @@ class Cooking:
                     # NOTIFY
                     adjunct['state'] = cookingStates.FINISHED
                     self.app.ws.setLog({
-                        self.config.get('DEFAULT', 'LOG_NOTICE_PERSISTENT_LABEL'): 
+                        self.config.get('DEFAULT', 'LOG_NOTICE_ADJUNCTS_LABEL'): 
                         '[' + self.decimalTotime(adjunct['time']) + '] Add ' + str(adjunct['amount'] * 1000) + ' grams of ' + adjunct['name'].upper()
                     })
                     self.app.sound.play(soundsEnum.ALARM, 25)

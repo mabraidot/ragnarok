@@ -59,6 +59,7 @@ class routes:
             web.get('/pump/set/{on}', self.setPump),
 
             web.get('/power/off', self.setPowerOff),
+            web.get('/sounds/stop', self.stopSounds),
 
         ])
 
@@ -87,6 +88,12 @@ class routes:
         message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The machine is turning off'}
         self.app.power.setOff()
         return web.json_response(message)
+
+    async def stopSounds(self, request):
+        message = {self.config['DEFAULT']['LOG_NOTICE_LABEL']: 'The sounds are shutted off'}
+        self.app.sound.stop()
+        return web.json_response(message)
+
 
 
     ## COOKING ############################

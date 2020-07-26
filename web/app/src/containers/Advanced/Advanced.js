@@ -247,6 +247,15 @@ class Advanced extends Component {
           });
         }
       }
+      if (data.adjuncts_notice) {
+        for(const message in data.adjuncts_notice){
+          this.props.enqueueSnackbar(data.adjuncts_notice[message], { 
+            variant: 'success',
+            persist: true,
+            onClose: this.handleStopSounds,
+          });
+        }
+      }
       // console.log('[WS]: message!:', data);
     };
   }
@@ -254,6 +263,12 @@ class Advanced extends Component {
   componentWillUnmount() {
     const { socket } = this.state.socket;
     socket.close();
+  }
+
+  handleStopSounds = () => {
+    ApiClient.stopSounds().then((resp) => {
+      console.log('[API]', resp);
+    });
   }
 
   intToMinutes = (number) => {
