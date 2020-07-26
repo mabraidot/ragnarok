@@ -261,21 +261,19 @@ class Cooking:
                         self.mashTunTimeProbe < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME') or
                         self.mash[self.currentStep['number']]['step_time'] < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')
                     ):
-                        # self.mash[self.currentStep['number'] + 1]['state'] == cookingStates.PREHEATING
                         return True
             elif self.sparge['state'] == cookingStates.PENDING:
                 if (
                     self.mashTunTimeProbe < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME') or
                     self.mash[self.currentStep['number']]['step_time'] < self.config.getfloat('DEFAULT', 'NEXT_STEP_PRE_HEATING_TIME')
                 ):
-                    # self.sparge['state'] = cookingStates.PREHEATING
                     return True
         return False
 
 
     def rackMushTunRest(self):
         if self.currentStep['name'] == 'boil':
-            if self.boil['state'] != cookingStates.RACKING and self.boilKettleTimeProbe > 0 and (self.boil['step_time'] - self.boilKettleTimeProbe) >= self.config.getfloat('DEFAULT', 'RACK_MASHTUN_REST_TIME'):
+            if self.boil['state'] != cookingStates.RACKING and self.app.boilKettle.getTemperature() > self.boil['step_temp'] - self.config.getfloat('DEFAULT', 'TEMP_LEFT_RACK_MASHTUN_REST'):
                 state = self.app.pump.moveWater(action=waterActionsEnum.MASHTUN_TO_KETTLE)
                 self.app.logger.info('[RACKING MASHTUN_TO_KETTLE] %s', state)
                 if state != waterActionsEnum.BUSY:
@@ -306,7 +304,6 @@ class Cooking:
                 if not self.isPaused():
                     self.boilKettleTimeProbe -= 1/60
                     self.notifyAdjuncts()
-                    self.rackMushTunRest()
             else:
                 self.boilKettleTimeProbe = 0
                 self.app.pump.setBoilKettleRecirculation(False)
@@ -333,7 +330,6 @@ class Cooking:
         if self.currentStep['name'] == 'mash' and self.currentStep['number'] >= 0 and self.currentStep['number'] < len(self.mash):
             step = self.mash[self.currentStep['number']]
             if step['type'] == 'Infusion':
-                # if self.app.pump.getStatus() != waterActionsEnum.KETTLE_TO_MASHTUN and self.app.pump.getStatus() != waterActionsEnum.BUSY and self.app.mashTun.getTemperature() >= step['step_temp']:
                 if self.app.pump.getStatus() == waterActionsEnum.FINISHED and self.app.mashTun.getTemperature() >= step['step_temp']:
                     self.app.pump.setMashTunRecirculation(True)
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
@@ -368,23 +364,19 @@ class Cooking:
                         self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
                         if self.app.jobs.get_job('timerHeating') is not None:
                             self.app.jobs.remove_job('timerHeating')
-                # else:
-                #     self.app.boilKettle.heatToTemperature(step['infuse_temp'])
             if step['type'] == 'Temperature':
                 if self.app.mashTun.getTemperature() >= step['step_temp']:
                     self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                     if self.app.jobs.get_job('timerHeating') is not None:
                         self.app.jobs.remove_job('timerHeating')
-                # else:
-                #     self.app.mashTun.heatToTemperature(step['step_temp'])
         elif self.currentStep['name'] == 'boil':
             if self.app.boilKettle.getTemperature() >= self.boil['step_temp']:
                 self.app.boilKettle.heatToTemperature(self.boil['step_temp'] + 10)
                 self.app.jobs.add_job(self.timerProcess, 'interval', seconds=1, id='timerProcess', replace_existing=True)
                 if self.app.jobs.get_job('timerHeating') is not None:
                     self.app.jobs.remove_job('timerHeating')
-            # else:
-            #     self.app.boilKettle.heatToTemperature(self.boil['step_temp'])
+            else:
+                self.rackMushTunRest()
         elif self.currentStep['name'] == 'sparge':
             step = self.sparge
             if self.app.boilKettle.getTemperature() >= step['infuse_temp']:
@@ -393,7 +385,6 @@ class Cooking:
                 else:
                     state = self.app.pump.moveWater(action=waterActionsEnum.KETTLE_TO_MASHTUN, amount=step['infuse_amount'])
                 if state != waterActionsEnum.BUSY:
-                    # self.app.mashTun.stopHeating()
                     self.app.jobs.add_job(self.timerPump, 'interval', seconds=1, id='timerPump', replace_existing=True)
                     if self.app.jobs.get_job('timerHeating') is not None:
                         self.app.jobs.remove_job('timerHeating')
