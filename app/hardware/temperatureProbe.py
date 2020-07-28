@@ -13,11 +13,11 @@ class temperatureProbe:
         self.sensor = None
 
         if self.config.get('ENVIRONMENT') == 'production':
-            if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
-                self.initSensorMax31865(1)
-            else:
-                # self.initSensorDS18B20()
-                self.initSensorMax31865(2)
+            self.initSensorMax31865(self.config.getint('TEMPERATURE_SENSOR_SPI_PORT'))
+            # if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
+            #     self.initSensorMax31865()
+            # else:
+            #     self.initSensorDS18B20()
 
 
     def initSensorDS18B20(self):
@@ -92,7 +92,7 @@ class temperatureProbe:
     def runMax31865(self):
         try:
             while True:
-                # oldValue = self.value
+                oldValue = self.value
                 # newValue = self.sensor.readTemp()
                 newValue = self.sensor.temperature
                 if abs(oldValue - newValue) < 50:
@@ -101,4 +101,4 @@ class temperatureProbe:
         except Exception as e:
             self.app.logger.info('Exception running Max31865 %s. Reloading ...', self.name)
             self.app.logger.exception(e)
-            self.initSensorMax31865()
+            self.initSensorMax31865(self.config.getint('TEMPERATURE_SENSOR_SPI_PORT'))
