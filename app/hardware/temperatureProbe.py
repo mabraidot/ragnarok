@@ -1,5 +1,8 @@
 import threading
 import time
+import busio
+import digitalio
+import adafruit_max31865
 
 class temperatureProbe:
     def __init__(self, app, config, name = 'MashTunTemperatureProbe'):
@@ -11,9 +14,10 @@ class temperatureProbe:
 
         if self.config.get('ENVIRONMENT') == 'production':
             if self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1:
-                self.initSensorMax31865()
+                self.initSensorMax31865(1)
             else:
-                self.initSensorDS18B20()
+                # self.initSensorDS18B20()
+                self.initSensorMax31865(2)
 
 
     def initSensorDS18B20(self):
@@ -27,12 +31,24 @@ class temperatureProbe:
             except Exception as e:
                 self.app.logger.exception(e)
 
-    def initSensorMax31865(self):
+    def initSensorMax31865(self, port):
         if self.config.get('ENVIRONMENT') == 'production':
             try:
                 self.app.logger.info('Init Max31865 sensor %s', self.name)
-                from app.lib import max31865
-                self.sensor = max31865.max31865(self.config.getint('TEMPERATURE_SENSOR_ADDRESS'), 9, 10, 11, 430, int(0xD2))
+                # from app.lib import max31865
+                # self.sensor = max31865.max31865(self.config.getint('TEMPERATURE_SENSOR_ADDRESS'), 9, 10, 11, 430, int(0xD2))
+                import board
+                spi = busio.SPI(
+                    board.SCK,
+                    board.MOSI,
+                    board.MISO)
+
+                if port == 1:
+                    cs = digitalio.DigitalInOut(board.D27)
+                else:
+                    cs = digitalio.DigitalInOut(board.D22)
+
+                self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
 
                 task = threading.Thread(target=self.runMax31865)
                 task.start()
@@ -77,9 +93,10 @@ class temperatureProbe:
         try:
             while True:
                 # oldValue = self.value
-                newValue = self.sensor.readTemp()
-                # if abs(oldValue - newValue) < 50:
-                self.value = newValue
+                # newValue = self.sensor.readTemp()
+                newValue = self.sensor.temperature
+                if abs(oldValue - newValue) < 50:
+                    self.value = newValue
                 time.sleep(0.5)
         except Exception as e:
             self.app.logger.info('Exception running Max31865 %s. Reloading ...', self.name)
