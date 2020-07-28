@@ -1,8 +1,8 @@
 import threading
 import time
-import busio
-import digitalio
-import adafruit_max31865
+# import busio
+# import digitalio
+# import adafruit_max31865
 
 class temperatureProbe:
     def __init__(self, app, config, name = 'MashTunTemperatureProbe'):
