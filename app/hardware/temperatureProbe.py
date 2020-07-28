@@ -35,20 +35,19 @@ class temperatureProbe:
         if self.config.get('ENVIRONMENT') == 'production':
             try:
                 self.app.logger.info('Init Max31865 sensor %s', self.name)
-                # from app.lib import max31865
-                # self.sensor = max31865.max31865(self.config.getint('TEMPERATURE_SENSOR_ADDRESS'), 9, 10, 11, 430, int(0xD2))
-                import board
-                spi = busio.SPI(
-                    board.SCK,
-                    board.MOSI,
-                    board.MISO)
+                from app.lib import max31865
+                self.sensor = max31865.max31865(self.config.getint('TEMPERATURE_SENSOR_ADDRESS'), 9, 10, 11, 430, int(0xD2))
+                # import board
+                # spi = busio.SPI(
+                #     board.SCK,
+                #     MOSI=board.MOSI,
+                #     MISO=board.MISO)
 
-                if port == 1:
-                    cs = digitalio.DigitalInOut(board.D27)
-                else:
-                    cs = digitalio.DigitalInOut(board.D22)
-
-                self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
+                # if port == 1:
+                #     cs = digitalio.DigitalInOut(board.D8)
+                # else:
+                #     cs = digitalio.DigitalInOut(board.D7)
+                # self.sensor = adafruit_max31865.MAX31865(spi, cs, rtd_nominal=100, ref_resistor=430.0, wires=3)
 
                 task = threading.Thread(target=self.runMax31865)
                 task.start()
@@ -93,8 +92,8 @@ class temperatureProbe:
         try:
             while True:
                 oldValue = self.value
-                # newValue = self.sensor.readTemp()
-                newValue = self.sensor.temperature
+                newValue = self.sensor.readTemp()
+                # newValue = self.sensor.temperature
                 if abs(oldValue - newValue) < 50:
                     self.value = newValue
                 time.sleep(0.5)
