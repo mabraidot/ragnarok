@@ -67,10 +67,10 @@ class temperatureProbe:
                 self.value -= 0.1
 
         currentTemperature = self.value + self.config.getint('TEMPERATURE_SENSOR_OFFSET')
-        if (currentTemperature > 25 
-            and self.config.get('ENVIRONMENT') == 'production' 
-            and self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1):
-            currentTemperature = ((47 / 35) * (currentTemperature - 25)) + 25
+        # if (currentTemperature > 25 
+        #     and self.config.get('ENVIRONMENT') == 'production' 
+        #     and self.config.getint('TEMPERATURE_SENSOR_SPI_PORT') == 1):
+        #     currentTemperature = ((47 / 35) * (currentTemperature - 25)) + 25
         return currentTemperature
 
 
