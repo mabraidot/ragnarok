@@ -167,6 +167,8 @@ class Cooking:
 
             if not isinstance(recipe["beer_json"]["RECIPES"]["RECIPE"]["HOPS"]["HOP"], list):
                 recipe["beer_json"]["RECIPES"]["RECIPE"]["HOPS"]["HOP"] = [recipe["beer_json"]["RECIPES"]["RECIPE"]["HOPS"]["HOP"]]
+            if not recipe["beer_json"]["RECIPES"]["RECIPE"].get('MISCS'):
+                recipe["beer_json"]["RECIPES"]["RECIPE"]["MISCS"] = {'MISC' : []}
             if not isinstance(recipe["beer_json"]["RECIPES"]["RECIPE"]["MISCS"]["MISC"], list):
                 recipe["beer_json"]["RECIPES"]["RECIPE"]["MISCS"]["MISC"] = [recipe["beer_json"]["RECIPES"]["RECIPE"]["MISCS"]["MISC"]]
             hopAdjuncts = recipe["beer_json"]["RECIPES"]["RECIPE"]["HOPS"]["HOP"]
