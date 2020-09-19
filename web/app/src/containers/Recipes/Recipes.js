@@ -136,10 +136,14 @@ class Recipes extends Component {
       recipe.RECIPES.RECIPE.HOPS.HOP = [];
       recipe.RECIPES.RECIPE.HOPS.HOP.push(hopsObj);
     }
-    if (typeof recipe.RECIPES.RECIPE.MISCS.MISC.length === 'undefined') {
-      const adjunctsObj = recipe.RECIPES.RECIPE.MISCS.MISC;
-      recipe.RECIPES.RECIPE.MISCS.MISC = [];
-      recipe.RECIPES.RECIPE.MISCS.MISC.push(adjunctsObj);
+    if (typeof recipe.RECIPES.RECIPE.MISCS === 'undefined' || typeof recipe.RECIPES.RECIPE.MISCS.MISC.length === 'undefined') {
+      if (typeof recipe.RECIPES.RECIPE.MISCS === 'undefined') {
+        recipe.RECIPES.RECIPE.MISCS = { MISC : [] };
+      } else {
+        const adjunctsObj = recipe.RECIPES.RECIPE.MISCS.MISC;
+        recipe.RECIPES.RECIPE.MISCS.MISC = [];
+        recipe.RECIPES.RECIPE.MISCS.MISC.push(adjunctsObj);
+      }
     }
     let adjuncts = [...recipe.RECIPES.RECIPE.HOPS.HOP, ...recipe.RECIPES.RECIPE.MISCS.MISC];
     adjuncts.sort((a, b) => (parseFloat(a.TIME) < parseFloat(b.TIME)) ? 1 : -1);
