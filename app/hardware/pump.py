@@ -215,7 +215,7 @@ class pump:
             if self.app.cleaning.isRunning():
                 self.app.mashTunValveInlet.set(100)
             else:
-                self.app.mashTunValveInlet.set(40)
+                self.app.mashTunValveInlet.set(70)
             self.app.mashTunValveOutlet.set(100)
             self.app.jobs.add_job(
                 self.setDelayedPumpState, 
@@ -246,7 +246,7 @@ class pump:
             if self.app.cleaning.isRunning():
                 self.app.boilKettleValveReturn.set(100)
             else:
-                self.app.boilKettleValveReturn.set(40)
+                self.app.boilKettleValveReturn.set(70)
             self.app.boilKettleValveOutlet.set(100)
             self.app.jobs.add_job(
                 self.setDelayedPumpState, 
