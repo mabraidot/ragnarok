@@ -160,7 +160,7 @@ then comment/uncomment appropriate section and adjust settings according environ
 # TEMP_LEFT_RACK_MASHTUN_REST=5
 # BOIL_TEMPERATURE=99
 # SPARGE_CYCLES_COUNT=6
-# SPARGE_INFUSE_AMOUNT=4
+# SPARGE_INFUSE_AMOUNT=5
 # COOL_TIME=30
 # PUMP_PRIMING_TIME=6
 ### DEVELOPMENT
