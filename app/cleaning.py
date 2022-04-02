@@ -78,7 +78,7 @@ class Cleaning:
             self.clean.append({
                 'state': cookingStates.PENDING,
                 'target': 'MashTun',
-                'water_amount': 5,
+                'water_amount': 4,
                 'kettle_recirculation_time': 0.5,
                 'chiller_recirculation_time': 0,
                 'step_temp': 0,
@@ -99,7 +99,7 @@ class Cleaning:
             self.clean.append({
                 'state': cookingStates.PENDING,
                 'target': 'MashTun',
-                'water_amount': 5,
+                'water_amount': 4,
                 'kettle_recirculation_time': 0.5,
                 'chiller_recirculation_time': 0,
                 'step_temp': 0,
@@ -138,7 +138,7 @@ class Cleaning:
             self.clean.append({
                 'state': cookingStates.PENDING,
                 'target': 'MashTun',
-                'water_amount': 5,
+                'water_amount': 4,
                 'kettle_recirculation_time': 0.5,
                 'chiller_recirculation_time': 0,
                 'step_temp': 0,
