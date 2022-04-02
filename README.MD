@@ -129,6 +129,13 @@ With the following content:
     wait $P1 $P2
 ~~~
 
+Check/Disable apt check for update at startup:
+~~~
+    systemctl list-timers
+    systemctl disable --now apt-daily.timer
+    systemctl disable --now apt-daily-upgrade.timer
+~~~
+
 
 Using DS18B20 temperature sensor
 --------------------------------
