@@ -1,6 +1,7 @@
 import xmltodict
 import datetime
 from app.database import Database
+import json as JSON
 
 class Recipes:
     def __init__(self, app, config):
@@ -29,7 +30,7 @@ class Recipes:
                                             final_gravity, ibu, abv, color, beer_json)
                 success = True
         except:
-            self.app.logger.info('[IMPORT RECIPE] %s', json)
+            self.app.logger.info('[IMPORT RECIPE] %s', JSON.dumps(json))
             success = False
 
         return success
