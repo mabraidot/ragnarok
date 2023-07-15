@@ -17,8 +17,7 @@ class Recipes:
                 name = json['RECIPES']['RECIPE']['NAME']
                 type_name = json['RECIPES']['RECIPE']['STYLE']['TYPE']
                 style_name = json['RECIPES']['RECIPE']['STYLE']['CATEGORY']
-                style_category = json['RECIPES']['RECIPE']['STYLE']['CATEGORY_NUMBER'] + '.' + \
-                                json['RECIPES']['RECIPE']['STYLE']['STYLE_LETTER']
+                style_category = json['RECIPES']['RECIPE']['STYLE']['CATEGORY_NUMBER']
                 original_gravity = json['RECIPES']['RECIPE']['EST_OG']
                 final_gravity = json['RECIPES']['RECIPE']['EST_FG']
                 ibu = json['RECIPES']['RECIPE']['IBU']
@@ -31,7 +30,6 @@ class Recipes:
                 success = True
         except Exception as error:
             self.app.logger.info('[IMPORT RECIPE] %s', error)
-            # self.app.logger.info('[IMPORT RECIPE] %s', JSON.dumps(json))
             success = False
 
         return success
