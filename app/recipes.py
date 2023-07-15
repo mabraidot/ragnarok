@@ -29,6 +29,7 @@ class Recipes:
                                             final_gravity, ibu, abv, color, beer_json)
                 success = True
         except:
+            self.app.logger.info('[IMPORT RECIPE] %s', json)
             success = False
 
         return success
