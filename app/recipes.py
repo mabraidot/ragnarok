@@ -29,8 +29,9 @@ class Recipes:
                 self.app.DB.insertRecipe(name, type_name, style_name, style_category, original_gravity, 
                                             final_gravity, ibu, abv, color, beer_json)
                 success = True
-        except:
-            self.app.logger.info('[IMPORT RECIPE] %s', JSON.dumps(json))
+        except Exception as error:
+            self.app.logger.info('[IMPORT RECIPE] %s', error)
+            # self.app.logger.info('[IMPORT RECIPE] %s', JSON.dumps(json))
             success = False
 
         return success
